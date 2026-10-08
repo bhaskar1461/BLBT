@@ -6,6 +6,7 @@ import { TerminalHeader } from './TerminalHeader';
 import { QuoteRow } from './QuoteRow';
 import type { Quote } from './types';
 import { Search, X, TrendingUp, TrendingDown } from 'lucide-react';
+import { terminalAudio } from '@/lib/terminalAudio';
 
 interface MarketsViewProps {
   quotes: Quote[];
@@ -19,30 +20,55 @@ export const MarketsView: React.FC<MarketsViewProps> = ({
   onAlertsClick,
 }) => {
   const [query, setQuery] = useState('');
+  const [selectedAssetClass, setSelectedAssetClass] = useState<'all' | 'india' | 'tech' | 'crypto' | 'commodities'>('all');
+
+  const assetClasses = [
+    { id: 'all', label: 'All Markets' },
+    { id: 'india', label: 'India Equities 🇮🇳' },
+    { id: 'tech', label: 'Global Tech 🇺🇸' },
+    { id: 'crypto', label: 'Crypto Majors 🌐' },
+    { id: 'commodities', label: 'Commodities 🟡' },
+  ] as const;
 
   const filteredQuotes = useMemo(() => {
-    if (!query.trim()) return quotes;
+    let list = quotes;
+    if (selectedAssetClass !== 'all') {
+      if (selectedAssetClass === 'india') {
+        list = quotes.filter((q) => q.category === 'india');
+      } else if (selectedAssetClass === 'tech') {
+        list = quotes.filter((q) => q.category === 'tech');
+      } else if (selectedAssetClass === 'crypto') {
+        list = quotes.filter((q) => q.category === 'crypto');
+      } else if (selectedAssetClass === 'commodities') {
+        list = quotes.filter((q) => ['GOLD', 'SILVER', 'BRENT'].includes(q.symbol));
+      }
+    }
+
+    if (!query.trim()) return list;
     const q = query.toLowerCase();
-    return quotes.filter(
+    return list.filter(
       (item) =>
         item.symbol.toLowerCase().includes(q) ||
         item.name.toLowerCase().includes(q)
     );
-  }, [quotes, query]);
+  }, [quotes, query, selectedAssetClass]);
 
-  // Major Indian and Global Market Indices matching SwiftUI MarketIndexStrip
+  // Major Indian and Global Market Indices matching Bloomberg WEI function
   const indices = [
     { title: 'NIFTY 50', value: '24,612.30', change: '-0.49%', isUp: false, region: '🇮🇳 NSE' },
     { title: 'SENSEX', value: '80,814.73', change: '+0.22%', isUp: true, region: '🇮🇳 BSE' },
-    { title: 'NASDAQ', value: '18,291.62', change: '+0.48%', isUp: true, region: '🇺🇸 US' },
     { title: 'BANKNIFTY', value: '51,320.10', change: '+0.34%', isUp: true, region: '🇮🇳 NSE' },
+    { title: 'NASDAQ', value: '18,291.62', change: '+0.48%', isUp: true, region: '🇺🇸 US' },
+    { title: 'S&P 500', value: '5,864.67', change: '+0.37%', isUp: true, region: '🇺🇸 US' },
+    { title: 'GOLD (XAU)', value: '$2,658.20', change: '+0.85%', isUp: true, region: '🟡 SPOT' },
+    { title: 'BRENT OIL', value: '$78.40', change: '-1.12%', isUp: false, region: '🛢️ CRUDE' },
   ];
 
   return (
     <div className="flex flex-col min-h-screen bg-black text-white select-none pb-24">
       <TerminalHeader
         title="Markets"
-        subtitle="GLOBAL & DOMESTIC"
+        subtitle="WORLD EQUITY INDICES <WEI>"
         onAlertsClick={onAlertsClick}
       />
 
@@ -54,12 +80,15 @@ export const MarketsView: React.FC<MarketsViewProps> = ({
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search symbol, company or index"
+            placeholder="Search symbol, company or index..."
             className="w-full bg-[#0e1118] border border-[#1b2230] rounded-xl pl-10 pr-9 py-2.5 text-[14px] text-white placeholder-[#5c6475] focus:outline-none focus:border-[#ff8800] transition-colors"
           />
           {query && (
             <button
-              onClick={() => setQuery('')}
+              onClick={() => {
+                terminalAudio.playTick();
+                setQuery('');
+              }}
               className="absolute right-3 text-[#8e95a5] hover:text-white p-1"
             >
               <X size={15} />
@@ -67,7 +96,7 @@ export const MarketsView: React.FC<MarketsViewProps> = ({
           )}
         </div>
 
-        {/* MarketIndexStrip: Horizontal Scrolling Chips */}
+        {/* MarketIndexStrip: Horizontal Scrolling Indices Chips */}
         <div className="flex gap-2.5 overflow-x-auto no-scrollbar -mx-4 px-4 pb-1">
           {indices.map((idx) => (
             <div
@@ -98,14 +127,37 @@ export const MarketsView: React.FC<MarketsViewProps> = ({
           ))}
         </div>
 
+        {/* Asset Class Filter Pills */}
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar -mx-4 px-4 pb-1">
+          {assetClasses.map((ac) => {
+            const isActive = selectedAssetClass === ac.id;
+            return (
+              <button
+                key={ac.id}
+                onClick={() => {
+                  terminalAudio.playTick();
+                  setSelectedAssetClass(ac.id as any);
+                }}
+                className={`px-3 py-1.5 rounded-full text-[12px] font-bold whitespace-nowrap transition-all cursor-pointer ${
+                  isActive
+                    ? 'bg-[#ff8800] text-black shadow-[0_0_8px_rgba(255,136,0,0.35)]'
+                    : 'bg-[#121622] text-[#8e95a5] hover:text-white border border-[#202738]'
+                }`}
+              >
+                {ac.label}
+              </button>
+            );
+          })}
+        </div>
+
         {/* Filtered Quotes List */}
-        <section className="flex flex-col gap-2 mt-2">
+        <section className="flex flex-col gap-2 mt-1">
           <div className="flex items-center justify-between px-1">
             <span className="text-[12px] font-extrabold tracking-[1px] text-[#8e95a5] uppercase">
-              {query ? `RESULTS (${filteredQuotes.length})` : 'ALL INSTRUMENTS'}
+              {query ? `MATCHING RESULTS (${filteredQuotes.length})` : `SPOT QUOTES (${filteredQuotes.length})`}
             </span>
             <span className="text-[10px] text-[#5c6475] font-mono">
-              REAL-TIME SPOT
+              REAL-TIME FEED
             </span>
           </div>
 

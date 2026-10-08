@@ -58,13 +58,22 @@ export const Shell: React.FC = () => {
 
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
-      const isMobile = window.innerWidth < 768;
+      const isMobile =
+        window.innerWidth < 1024 ||
+        /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) ||
+        Boolean((window as any).Capacitor);
+
       setIsMobileDevice(isMobile);
-      const saved = localStorage.getItem('bloomberg_mobile_view');
-      if (saved !== null) {
-        setShowBloombergMobile(saved === 'true');
+
+      if (isMobile) {
+        // ALWAYS enforce Bloomberg Anywhere mobile terminal on phone/Capacitor devices
+        setShowBloombergMobile(true);
+        try {
+          localStorage.setItem('bloomberg_mobile_view', 'true');
+        } catch {}
       } else {
-        setShowBloombergMobile(isMobile);
+        const saved = localStorage.getItem('bloomberg_mobile_view');
+        setShowBloombergMobile(saved === 'true');
       }
     }
   }, []);
@@ -235,12 +244,16 @@ export const Shell: React.FC = () => {
 
   const activeAlertsCount = alerts.filter((a) => a.active).length;
 
-  if (isMobileDevice && showBloombergMobile) {
+  if (isMobileDevice || showBloombergMobile) {
     return (
       <BloombergAnywhereMobileView
         onSwitchToProTerminal={() => {
-          setShowBloombergMobile(false);
-          localStorage.setItem('bloomberg_mobile_view', 'false');
+          if (!isMobileDevice) {
+            setShowBloombergMobile(false);
+            try {
+              localStorage.setItem('bloomberg_mobile_view', 'false');
+            } catch {}
+          }
         }}
       />
     );
@@ -248,6 +261,17 @@ export const Shell: React.FC = () => {
 
   return (
     <div className="flex flex-col w-screen h-screen overflow-hidden bg-canvas text-main font-sans">
+      {/* Mobile Return to Bloomberg Terminal */}
+      <button
+        onClick={() => {
+          setShowBloombergMobile(true);
+          try { localStorage.setItem('bloomberg_mobile_view', 'true'); } catch {}
+        }}
+        className="lg:hidden w-full py-2.5 bg-[#ff8800] hover:bg-[#e07700] text-black font-extrabold text-xs flex items-center justify-center gap-1.5 shadow-md cursor-pointer z-50 sticky top-0"
+      >
+        <span>← RETURN TO BLOOMBERG MOBILE TERMINAL</span>
+      </button>
+
       {/* 1. Top Header Bar: TradingView Pro Navigation (Pinned at y=0!) */}
       <TradingViewTopBar
         onOpenSymbolPicker={() => setIsCommandPaletteOpen(true)}

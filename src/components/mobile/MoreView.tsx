@@ -20,13 +20,13 @@ import {
 import Link from 'next/link';
 
 interface MoreViewProps {
-  onLaunchProTerminal: () => void;
+  onNavigateMarkets: () => void;
   onOpenAlerts: () => void;
   onOpenPortfolios: () => void;
 }
 
 export const MoreView: React.FC<MoreViewProps> = ({
-  onLaunchProTerminal,
+  onNavigateMarkets,
   onOpenAlerts,
   onOpenPortfolios,
 }) => {
@@ -148,14 +148,14 @@ export const MoreView: React.FC<MoreViewProps> = ({
           </div>
         </section>
 
-        {/* Action: Switch to Full Pro Candlestick Terminal */}
+        {/* Action: Explore Live Markets & Candlesticks */}
         <section className="flex flex-col gap-2">
           <button
-            onClick={onLaunchProTerminal}
+            onClick={onNavigateMarkets}
             className="w-full py-3.5 bg-gradient-to-r from-[#ff8800] to-[#e07700] hover:from-[#ff941a] hover:to-[#eb7f08] active:scale-[0.99] text-black font-extrabold text-[14px] rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-[#ff8800]/20 transition-all cursor-pointer"
           >
             <Sparkles size={17} />
-            <span>Launch Full Candlestick Terminal</span>
+            <span>Explore Live Markets &amp; Charts</span>
           </button>
         </section>
 

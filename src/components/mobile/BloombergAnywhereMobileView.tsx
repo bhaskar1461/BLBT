@@ -1,7 +1,7 @@
 // src/components/mobile/BloombergAnywhereMobileView.tsx
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import type { Quote, NewsItem, PortfolioSummary, MobileTab } from './types';
 import { HomeView } from './HomeView';
 import { MarketsView } from './MarketsView';
@@ -9,6 +9,8 @@ import { WatchlistView } from './WatchlistView';
 import { QuoteDetailView } from './QuoteDetailView';
 import { NewsView } from './NewsView';
 import { MoreView } from './MoreView';
+import { NewsArticleModal } from './NewsArticleModal';
+import { BloombergSearchModal } from './BloombergSearchModal';
 import { useTradingStore } from '@/stores/useTradingStore';
 import { useWatchlistStore } from '@/stores/useWatchlistStore';
 import {
@@ -18,25 +20,24 @@ import {
   FileText,
   MoreHorizontal,
   X,
-  Bell,
-  CheckCircle,
 } from 'lucide-react';
 import { formatPrice, formatInrCrore } from '@/lib/utils';
+import { terminalAudio } from '@/lib/terminalAudio';
 
 interface BloombergAnywhereMobileViewProps {
-  onSwitchToProTerminal: () => void;
+  onSwitchToProTerminal?: () => void;
 }
 
-export const BloombergAnywhereMobileView: React.FC<BloombergAnywhereMobileViewProps> = ({
-  onSwitchToProTerminal,
-}) => {
+export const BloombergAnywhereMobileView: React.FC<BloombergAnywhereMobileViewProps> = () => {
   const { account } = useTradingStore();
   const tickers = useWatchlistStore((s) => s.tickers);
 
   const [activeTab, setActiveTab] = useState<MobileTab>('home');
   const [selectedQuote, setSelectedQuote] = useState<Quote | null>(null);
+  const [selectedArticle, setSelectedArticle] = useState<NewsItem | null>(null);
   const [isAlertsModalOpen, setIsAlertsModalOpen] = useState(false);
   const [isPortfoliosModalOpen, setIsPortfoliosModalOpen] = useState(false);
+  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
 
   // Live Binance Spot feeds
   const btcTicker = tickers['BTCUSDT'];
@@ -50,7 +51,7 @@ export const BloombergAnywhereMobileView: React.FC<BloombergAnywhereMobileViewPr
   const solPrice = solTicker?.lastPrice || 154.40;
   const solChg = solTicker?.priceChangePercent || 4.20;
 
-  // Curated Quotes Dataset matching SwiftUI MarketModels.swift + Indian NSE/BSE & Global Tech
+  // Curated Quotes Dataset matching SwiftUI MarketModels.swift + Indian NSE/BSE & Global Tech & Commodities
   const quotes: Quote[] = useMemo(() => [
     {
       id: 'aapl',
@@ -157,6 +158,23 @@ export const BloombergAnywhereMobileView: React.FC<BloombergAnywhereMobileViewPr
       currency: 'INR',
     },
     {
+      id: 'gold',
+      symbol: 'GOLD',
+      name: 'Gold Spot (XAU/USD) 🟡',
+      price: 2658.20,
+      change: 22.40,
+      percent: 0.85,
+      positive: true,
+      category: 'all',
+      sparkline: [0.3, 0.4, 0.45, 0.6, 0.55, 0.7, 0.8, 0.9],
+      open: 2635.80,
+      prevClose: 2635.80,
+      high: 2664.10,
+      low: 2632.40,
+      volume: '$18.2B',
+      currency: 'USD',
+    },
+    {
       id: 'ethusd',
       symbol: 'ETHUSD',
       name: 'Ethereum Spot',
@@ -207,9 +225,26 @@ export const BloombergAnywhereMobileView: React.FC<BloombergAnywhereMobileViewPr
       volume: '$4.1B',
       currency: 'USD',
     },
+    {
+      id: 'brent',
+      symbol: 'BRENT',
+      name: 'Brent Crude Oil 🛢️',
+      price: 78.40,
+      change: -0.89,
+      percent: -1.12,
+      positive: false,
+      category: 'all',
+      sparkline: [0.7, 0.65, 0.8, 0.55, 0.6, 0.45, 0.35, 0.25],
+      open: 79.29,
+      prevClose: 79.29,
+      high: 79.80,
+      low: 77.95,
+      volume: '4.8M',
+      currency: 'USD',
+    },
   ], [btcPrice, btcChg, ethPrice, ethChg, solPrice, solChg]);
 
-  // Terminal News Items matching NewsView.swift
+  // Terminal News Items matching NewsView.swift + Bloomberg Analytical Wire
   const newsItems: NewsItem[] = [
     {
       id: 'news-1',
@@ -262,14 +297,49 @@ export const BloombergAnywhereMobileView: React.FC<BloombergAnywhereMobileViewPr
     },
   ];
 
+  // Bloomberg Mnemonic Function Code Handler
+  const handleSelectFunction = (fnCode: string) => {
+    terminalAudio.playTick();
+    switch (fnCode) {
+      case 'TOP':
+        setActiveTab('news');
+        setSelectedQuote(null);
+        break;
+      case 'WEI':
+        setActiveTab('markets');
+        setSelectedQuote(null);
+        break;
+      case 'PORT':
+        setIsPortfoliosModalOpen(true);
+        break;
+      case 'WL':
+        setActiveTab('watchlist');
+        setSelectedQuote(null);
+        break;
+      case 'GP':
+      case 'DES':
+        if (!selectedQuote) setSelectedQuote(quotes[0]);
+        break;
+      case 'SECF':
+        setIsSearchModalOpen(true);
+        break;
+      default:
+        setActiveTab('home');
+        setSelectedQuote(null);
+        break;
+    }
+  };
+
   return (
     <div className="w-full min-h-screen bg-black text-white font-sans flex flex-col justify-between selection:bg-[#ff8800]/30 select-none">
       {/* Detail View Mode (Instrument Deep Inspector) */}
       {selectedQuote ? (
         <QuoteDetailView
           quote={selectedQuote}
-          onBack={() => setSelectedQuote(null)}
-          onLaunchProTerminal={onSwitchToProTerminal}
+          onBack={() => {
+            terminalAudio.playTick();
+            setSelectedQuote(null);
+          }}
         />
       ) : (
         <main className="flex-1 flex flex-col">
@@ -279,12 +349,14 @@ export const BloombergAnywhereMobileView: React.FC<BloombergAnywhereMobileViewPr
               news={newsItems}
               portfolios={portfolios}
               onSelectQuote={setSelectedQuote}
+              onSelectNews={setSelectedArticle}
               onViewAllMarkets={() => setActiveTab('markets')}
               onViewAllPortfolios={() => setIsPortfoliosModalOpen(true)}
               onViewAllNews={() => setActiveTab('news')}
               onOpenProfile={() => setActiveTab('more')}
-              onSearchClick={() => setActiveTab('markets')}
+              onSearchClick={() => setIsSearchModalOpen(true)}
               onAlertsClick={() => setIsAlertsModalOpen(true)}
+              onSelectFunction={handleSelectFunction}
             />
           )}
 
@@ -300,7 +372,7 @@ export const BloombergAnywhereMobileView: React.FC<BloombergAnywhereMobileViewPr
             <WatchlistView
               quotes={quotes}
               onSelectQuote={setSelectedQuote}
-              onSearchClick={() => setActiveTab('markets')}
+              onSearchClick={() => setIsSearchModalOpen(true)}
               onAlertsClick={() => setIsAlertsModalOpen(true)}
             />
           )}
@@ -308,14 +380,15 @@ export const BloombergAnywhereMobileView: React.FC<BloombergAnywhereMobileViewPr
           {activeTab === 'news' && (
             <NewsView
               news={newsItems}
-              onSearchClick={() => setActiveTab('markets')}
+              onSelectNews={setSelectedArticle}
+              onSearchClick={() => setIsSearchModalOpen(true)}
               onAlertsClick={() => setIsAlertsModalOpen(true)}
             />
           )}
 
           {activeTab === 'more' && (
             <MoreView
-              onLaunchProTerminal={onSwitchToProTerminal}
+              onNavigateMarkets={() => setActiveTab('markets')}
               onOpenAlerts={() => setIsAlertsModalOpen(true)}
               onOpenPortfolios={() => setIsPortfoliosModalOpen(true)}
             />
@@ -327,7 +400,11 @@ export const BloombergAnywhereMobileView: React.FC<BloombergAnywhereMobileViewPr
       <nav className="fixed bottom-0 left-0 right-0 h-[60px] bg-[#080a0e]/95 backdrop-blur-lg border-t border-[#181d28] z-50 flex items-center justify-around px-2 pb-[env(safe-area-inset-bottom,0px)]">
         {/* Tab 1: Home */}
         <button
-          onClick={() => { setSelectedQuote(null); setActiveTab('home'); }}
+          onClick={() => {
+            terminalAudio.playTick();
+            setSelectedQuote(null);
+            setActiveTab('home');
+          }}
           className={`flex flex-col items-center justify-center flex-1 py-1 gap-1 cursor-pointer transition-all ${
             activeTab === 'home' && !selectedQuote
               ? 'text-[#ff8800]'
@@ -340,7 +417,11 @@ export const BloombergAnywhereMobileView: React.FC<BloombergAnywhereMobileViewPr
 
         {/* Tab 2: Markets */}
         <button
-          onClick={() => { setSelectedQuote(null); setActiveTab('markets'); }}
+          onClick={() => {
+            terminalAudio.playTick();
+            setSelectedQuote(null);
+            setActiveTab('markets');
+          }}
           className={`flex flex-col items-center justify-center flex-1 py-1 gap-1 cursor-pointer transition-all ${
             activeTab === 'markets' && !selectedQuote
               ? 'text-[#ff8800]'
@@ -353,7 +434,11 @@ export const BloombergAnywhereMobileView: React.FC<BloombergAnywhereMobileViewPr
 
         {/* Tab 3: Watchlist */}
         <button
-          onClick={() => { setSelectedQuote(null); setActiveTab('watchlist'); }}
+          onClick={() => {
+            terminalAudio.playTick();
+            setSelectedQuote(null);
+            setActiveTab('watchlist');
+          }}
           className={`flex flex-col items-center justify-center flex-1 py-1 gap-1 cursor-pointer transition-all ${
             activeTab === 'watchlist' && !selectedQuote
               ? 'text-[#ff8800]'
@@ -366,7 +451,11 @@ export const BloombergAnywhereMobileView: React.FC<BloombergAnywhereMobileViewPr
 
         {/* Tab 4: News */}
         <button
-          onClick={() => { setSelectedQuote(null); setActiveTab('news'); }}
+          onClick={() => {
+            terminalAudio.playTick();
+            setSelectedQuote(null);
+            setActiveTab('news');
+          }}
           className={`flex flex-col items-center justify-center flex-1 py-1 gap-1 cursor-pointer transition-all ${
             activeTab === 'news' && !selectedQuote
               ? 'text-[#ff8800]'
@@ -379,7 +468,11 @@ export const BloombergAnywhereMobileView: React.FC<BloombergAnywhereMobileViewPr
 
         {/* Tab 5: More */}
         <button
-          onClick={() => { setSelectedQuote(null); setActiveTab('more'); }}
+          onClick={() => {
+            terminalAudio.playTick();
+            setSelectedQuote(null);
+            setActiveTab('more');
+          }}
           className={`flex flex-col items-center justify-center flex-1 py-1 gap-1 cursor-pointer transition-all ${
             activeTab === 'more' && !selectedQuote
               ? 'text-[#ff8800]'
@@ -390,6 +483,27 @@ export const BloombergAnywhereMobileView: React.FC<BloombergAnywhereMobileViewPr
           <span className="text-[10px] font-bold">More</span>
         </button>
       </nav>
+
+      {/* Full Bloomberg News Article Modal */}
+      <NewsArticleModal
+        article={selectedArticle}
+        onClose={() => setSelectedArticle(null)}
+        onSelectQuote={(sym) => {
+          const match = quotes.find((q) => q.symbol.toUpperCase() === sym.toUpperCase());
+          if (match) setSelectedQuote(match);
+        }}
+      />
+
+      {/* Security Finder <SECF> & Bloomberg Command Search Modal */}
+      <BloombergSearchModal
+        isOpen={isSearchModalOpen}
+        onClose={() => setIsSearchModalOpen(false)}
+        quotes={quotes}
+        onSelectQuote={(q) => {
+          setSelectedQuote(q);
+        }}
+        onSelectFunction={handleSelectFunction}
+      />
 
       {/* Portfolios Modal */}
       {isPortfoliosModalOpen && (
@@ -404,7 +518,13 @@ export const BloombergAnywhereMobileView: React.FC<BloombergAnywhereMobileViewPr
             <div className="w-10 h-1 bg-[#3a455a] rounded-full mx-auto" />
             <div className="flex items-center justify-between">
               <h3 className="text-[17px] font-bold text-white">My Portfolios (PORT)</h3>
-              <button onClick={() => setIsPortfoliosModalOpen(false)} className="text-[#8e95a5] hover:text-white p-1">
+              <button
+                onClick={() => {
+                  terminalAudio.playTick();
+                  setIsPortfoliosModalOpen(false);
+                }}
+                className="text-[#8e95a5] hover:text-white p-1"
+              >
                 <X size={18} />
               </button>
             </div>
@@ -425,10 +545,14 @@ export const BloombergAnywhereMobileView: React.FC<BloombergAnywhereMobileViewPr
             </div>
 
             <button
-              onClick={() => { setIsPortfoliosModalOpen(false); onSwitchToProTerminal(); }}
+              onClick={() => {
+                terminalAudio.playTick();
+                setIsPortfoliosModalOpen(false);
+                setActiveTab('markets');
+              }}
               className="w-full py-3 bg-[#ff8800] text-black font-extrabold text-sm rounded-xl cursor-pointer"
             >
-              Trade Portfolio in Pro Terminal
+              Explore Markets &amp; Trade Instruments
             </button>
           </div>
         </div>
@@ -447,7 +571,13 @@ export const BloombergAnywhereMobileView: React.FC<BloombergAnywhereMobileViewPr
             <div className="w-10 h-1 bg-[#3a455a] rounded-full mx-auto" />
             <div className="flex items-center justify-between">
               <h3 className="text-[17px] font-bold text-white">Active Terminal Alerts</h3>
-              <button onClick={() => setIsAlertsModalOpen(false)} className="text-[#8e95a5] hover:text-white p-1">
+              <button
+                onClick={() => {
+                  terminalAudio.playTick();
+                  setIsAlertsModalOpen(false);
+                }}
+                className="text-[#8e95a5] hover:text-white p-1"
+              >
                 <X size={18} />
               </button>
             </div>
@@ -467,10 +597,20 @@ export const BloombergAnywhereMobileView: React.FC<BloombergAnywhereMobileViewPr
                 </div>
                 <span className="px-2 py-0.5 rounded bg-[#00c176]/15 text-[#00c176] font-bold text-[10px]">ACTIVE</span>
               </div>
+              <div className="py-2.5 flex justify-between items-center">
+                <div>
+                  <div className="font-bold text-white">GOLD (XAU) &gt; $2,700</div>
+                  <div className="text-[10px] text-[#8e95a5]">Safe haven breakout alert</div>
+                </div>
+                <span className="px-2 py-0.5 rounded bg-[#00c176]/15 text-[#00c176] font-bold text-[10px]">ACTIVE</span>
+              </div>
             </div>
 
             <button
-              onClick={() => setIsAlertsModalOpen(false)}
+              onClick={() => {
+                terminalAudio.playTick();
+                setIsAlertsModalOpen(false);
+              }}
               className="w-full py-2.5 bg-[#202735] text-white font-bold text-xs rounded-xl cursor-pointer"
             >
               Dismiss

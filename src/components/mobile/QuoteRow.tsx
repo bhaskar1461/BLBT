@@ -5,6 +5,7 @@ import React from 'react';
 import type { Quote } from './types';
 import { MiniSparkline } from './MiniSparkline';
 import { formatPrice } from '@/lib/utils';
+import { terminalAudio } from '@/lib/terminalAudio';
 
 interface QuoteRowProps {
   quote: Quote;
@@ -21,10 +22,15 @@ export const QuoteRow: React.FC<QuoteRowProps> = ({
   const changeFormatted = `${isPositive ? '+' : ''}${quote.change >= 0 ? quote.change.toFixed(2) : quote.change.toFixed(2)}`;
   const percentFormatted = `${isPositive ? '+' : ''}${quote.percent.toFixed(2)}%`;
 
+  const handleClick = () => {
+    terminalAudio.playTick();
+    onClick?.();
+  };
+
   return (
     <div
-      onClick={onClick}
-      className={`group flex items-center justify-between py-2.5 px-3 -mx-3 rounded-lg cursor-pointer active:bg-[#141923] hover:bg-[#0e121a] transition-colors select-none ${
+      onClick={handleClick}
+      className={`group flex items-center justify-between py-2.5 px-3 -mx-3 rounded-lg cursor-pointer active:scale-[0.99] active:bg-[#141923] hover:bg-[#0e121a] transition-all select-none ${
         showDivider ? 'border-b border-[#181d28]/60' : ''
       }`}
     >

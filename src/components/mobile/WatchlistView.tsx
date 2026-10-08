@@ -6,6 +6,7 @@ import { TerminalHeader } from './TerminalHeader';
 import { QuoteRow } from './QuoteRow';
 import type { Quote } from './types';
 import { Plus } from 'lucide-react';
+import { terminalAudio } from '@/lib/terminalAudio';
 
 interface WatchlistViewProps {
   quotes: Quote[];
@@ -20,14 +21,14 @@ export const WatchlistView: React.FC<WatchlistViewProps> = ({
   onSearchClick,
   onAlertsClick,
 }) => {
-  const categories = ['My Watchlist', 'Tech', 'India', 'Crypto'] as const;
+  const categories = ['My Watchlist', 'India 🇮🇳', 'Tech 🇺🇸', 'Crypto 🌐'] as const;
   const [selectedCategory, setSelectedCategory] = useState<string>('My Watchlist');
 
   const filteredQuotes = useMemo(() => {
     if (selectedCategory === 'My Watchlist') return quotes;
-    if (selectedCategory === 'Tech') return quotes.filter((q) => q.category === 'tech' || ['AAPL', 'TSLA', 'NVDA', 'MSFT'].includes(q.symbol));
-    if (selectedCategory === 'India') return quotes.filter((q) => q.category === 'india' || ['NIFTY', 'SENSEX', 'RELIANCE', 'TCS', 'HDFCBANK'].includes(q.symbol));
-    if (selectedCategory === 'Crypto') return quotes.filter((q) => q.category === 'crypto' || ['BTCUSD', 'BTCUSDT', 'ETHUSD', 'SOLUSD'].includes(q.symbol));
+    if (selectedCategory === 'Tech 🇺🇸') return quotes.filter((q) => q.category === 'tech' || ['AAPL', 'TSLA', 'NVDA', 'MSFT'].includes(q.symbol));
+    if (selectedCategory === 'India 🇮🇳') return quotes.filter((q) => q.category === 'india' || ['NIFTY', 'SENSEX', 'RELIANCE', 'TCS', 'HDFCBANK'].includes(q.symbol));
+    if (selectedCategory === 'Crypto 🌐') return quotes.filter((q) => q.category === 'crypto' || ['BTCUSD', 'BTCUSDT', 'ETHUSD', 'SOLUSD'].includes(q.symbol));
     return quotes;
   }, [quotes, selectedCategory]);
 
@@ -35,7 +36,7 @@ export const WatchlistView: React.FC<WatchlistViewProps> = ({
     <div className="flex flex-col min-h-screen bg-black text-white select-none pb-24">
       <TerminalHeader
         title="Watchlists"
-        subtitle="CURATED DESKS"
+        subtitle="CURATED DESKS <WL>"
         onSearchClick={onSearchClick}
         onAlertsClick={onAlertsClick}
       />
@@ -48,7 +49,10 @@ export const WatchlistView: React.FC<WatchlistViewProps> = ({
             return (
               <button
                 key={cat}
-                onClick={() => setSelectedCategory(cat)}
+                onClick={() => {
+                  terminalAudio.playTick();
+                  setSelectedCategory(cat);
+                }}
                 className={`px-3.5 py-1.5 rounded-full text-[12px] font-bold whitespace-nowrap transition-all cursor-pointer ${
                   isActive
                     ? 'bg-[#ff8800] text-black shadow-[0_0_10px_rgba(255,136,0,0.35)]'
@@ -61,7 +65,10 @@ export const WatchlistView: React.FC<WatchlistViewProps> = ({
           })}
 
           <button
-            onClick={onSearchClick}
+            onClick={() => {
+              terminalAudio.playTick();
+              onSearchClick();
+            }}
             className="w-7 h-7 rounded-full bg-[#141924] border border-[#232b3d] flex items-center justify-center text-[#8e95a5] hover:text-[#ff8800] shrink-0 ml-1 cursor-pointer"
             title="Add to Watchlist"
           >
@@ -74,7 +81,7 @@ export const WatchlistView: React.FC<WatchlistViewProps> = ({
           <span className="font-bold uppercase tracking-wider text-[#d1d5db]">
             {selectedCategory} ({filteredQuotes.length})
           </span>
-          <span className="font-mono">LIVE PRICES</span>
+          <span className="font-mono text-[#00c176]">● STREAMING LIVE</span>
         </div>
 
         {/* Quotes List */}

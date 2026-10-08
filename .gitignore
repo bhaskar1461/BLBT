@@ -34,3 +34,6 @@ build_output/
 *.tsbuildinfo
 
 .vercel
+
+TradingTerminal_SwiftUI.zip
+swiftui_src/

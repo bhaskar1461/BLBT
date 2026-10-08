@@ -1,24 +1,23 @@
 // src/components/mobile/QuoteDetailView.tsx
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { TerminalHeader } from './TerminalHeader';
 import type { Quote, Timeframe } from './types';
 import { formatPrice } from '@/lib/utils';
-import { ExternalLink, CheckCircle } from 'lucide-react';
+import { CheckCircle, CandlestickChart, TrendingUp } from 'lucide-react';
 
 interface QuoteDetailViewProps {
   quote: Quote;
   onBack: () => void;
-  onLaunchProTerminal: () => void;
 }
 
 export const QuoteDetailView: React.FC<QuoteDetailViewProps> = ({
   quote,
   onBack,
-  onLaunchProTerminal,
 }) => {
   const [selectedTimeframe, setSelectedTimeframe] = useState<Timeframe>('1D');
+  const [chartMode, setChartMode] = useState<'line' | 'candles'>('candles');
   const [orderNotice, setOrderNotice] = useState<string | null>(null);
 
   const timeframes: Timeframe[] = ['1D', '1W', '1M', '3M', '1Y', '5Y'];
@@ -32,21 +31,20 @@ export const QuoteDetailView: React.FC<QuoteDetailViewProps> = ({
   const volumeStr = quote.volume ?? '42.8M';
 
   const handleExecuteTrade = (side: 'BUY' | 'SELL') => {
-    setOrderNotice(`Filled ${side} 0.5 ${quote.symbol} @ $${formatPrice(quote.price, 2)} (Fee: 0.10%)`);
+    setOrderNotice(`Order Filled: ${side} 0.5 ${quote.symbol} @ $${formatPrice(quote.price, 2)} (Fee: 0.10%)`);
     setTimeout(() => {
       setOrderNotice(null);
     }, 3500);
   };
 
-  // Generate smooth chart coordinates based on timeframe
+  // Generate smooth chart coordinates for Line Mode
   const chartPoints = isPositive
     ? [0.8, 0.7, 0.75, 0.48, 0.58, 0.32, 0.45, 0.18, 0.25]
     : [0.2, 0.35, 0.25, 0.52, 0.42, 0.6, 0.5, 0.74, 0.68];
 
   const svgW = 340;
-  const svgH = 170;
+  const svgH = 175;
   const strokeColor = isPositive ? '#00c176' : '#ff4d4f';
-  const fillColor = isPositive ? 'rgba(0, 193, 118, 0.12)' : 'rgba(255, 77, 79, 0.12)';
 
   const coords = chartPoints.map((pt, idx) => {
     const x = (idx / (chartPoints.length - 1)) * (svgW - 20) + 10;
@@ -60,6 +58,41 @@ export const QuoteDetailView: React.FC<QuoteDetailViewProps> = ({
 
   const areaPath = `${linePath} L ${coords[coords.length - 1].x.toFixed(1)} ${svgH} L ${coords[0].x.toFixed(1)} ${svgH} Z`;
 
+  // Synthetic realistic OHLC Candles data for Candlestick Mode
+  const candlesData = useMemo(() => {
+    const count = 16;
+    const baseP = quote.price;
+    const result = [];
+    let curOpen = baseP * (isPositive ? 0.985 : 1.015);
+
+    for (let i = 0; i < count; i++) {
+      const stepPct = (Math.random() - 0.48) * 0.012;
+      const curClose = curOpen * (1 + stepPct);
+      const curHigh = Math.max(curOpen, curClose) * (1 + Math.random() * 0.005);
+      const curLow = Math.min(curOpen, curClose) * (1 - Math.random() * 0.005);
+      result.push({
+        open: curOpen,
+        close: curClose,
+        high: curHigh,
+        low: curLow,
+        isUp: curClose >= curOpen,
+      });
+      curOpen = curClose;
+    }
+    // Make last candle close near actual price
+    result[result.length - 1].close = quote.price;
+    result[result.length - 1].isUp = isPositive;
+    return result;
+  }, [quote.price, isPositive, selectedTimeframe]);
+
+  // Scaled coordinates for Candlestick rendering
+  const minCandle = Math.min(...candlesData.map((c) => c.low));
+  const maxCandle = Math.max(...candlesData.map((c) => c.high));
+  const candleRange = maxCandle - minCandle || 1;
+
+  const candleW = 12;
+  const candleGap = (svgW - 24) / candlesData.length;
+
   return (
     <div className="flex flex-col min-h-screen bg-black text-white select-none pb-28">
       {/* Pinned Header with Back Chevron */}
@@ -71,7 +104,7 @@ export const QuoteDetailView: React.FC<QuoteDetailViewProps> = ({
         onSearchClick={onBack}
       />
 
-      <div className="flex flex-col gap-5 px-4 pt-4">
+      <div className="flex flex-col gap-4 px-4 pt-4">
         {/* Price & Name Headline */}
         <div className="flex flex-col gap-1">
           <div className="flex items-center justify-between">
@@ -79,7 +112,7 @@ export const QuoteDetailView: React.FC<QuoteDetailViewProps> = ({
               {quote.name}
             </span>
             <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-[#181f2b] text-[#8e95a5] border border-[#263145]">
-              {quote.category === 'india' ? 'NSE SPOT' : 'SPOT FEED'}
+              {quote.category === 'india' ? 'NSE SPOT 🇮🇳' : 'SPOT FEED'}
             </span>
           </div>
 
@@ -101,29 +134,110 @@ export const QuoteDetailView: React.FC<QuoteDetailViewProps> = ({
           </div>
         </div>
 
-        {/* Vector Line Graph with Gradient fill */}
-        <div className="w-full h-[190px] bg-[#0c0e14] border border-[#1b2230] rounded-2xl p-3 flex items-center justify-center relative overflow-hidden shadow-inner">
-          <svg
-            className="w-full h-full"
-            viewBox={`0 0 ${svgW} ${svgH}`}
-            preserveAspectRatio="none"
-          >
-            <defs>
-              <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor={strokeColor} stopOpacity="0.25" />
-                <stop offset="100%" stopColor={strokeColor} stopOpacity="0.0" />
-              </linearGradient>
-            </defs>
-            <path d={areaPath} fill="url(#chartGradient)" />
-            <path
-              d={linePath}
-              fill="none"
-              stroke={strokeColor}
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+        {/* Chart View Toggle: Line vs Candlesticks */}
+        <div className="flex items-center justify-between border-b border-[#181d28] pb-2">
+          <div className="flex items-center gap-2 bg-[#121622] p-1 rounded-lg border border-[#212b3d]">
+            <button
+              onClick={() => setChartMode('candles')}
+              className={`px-3 py-1 rounded-md text-[11px] font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                chartMode === 'candles'
+                  ? 'bg-[#ff8800] text-black shadow-sm'
+                  : 'text-[#8e95a5] hover:text-white'
+              }`}
+            >
+              <CandlestickChart size={13} />
+              <span>Candles</span>
+            </button>
+            <button
+              onClick={() => setChartMode('line')}
+              className={`px-3 py-1 rounded-md text-[11px] font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                chartMode === 'line'
+                  ? 'bg-[#ff8800] text-black shadow-sm'
+                  : 'text-[#8e95a5] hover:text-white'
+              }`}
+            >
+              <TrendingUp size={13} />
+              <span>Line</span>
+            </button>
+          </div>
+
+          <span className="text-[10px] text-[#5c6475] font-mono uppercase">
+            {chartMode === 'candles' ? 'OHLC 15M SPOT' : 'VECTOR AREA'}
+          </span>
+        </div>
+
+        {/* Vector Interactive Chart Canvas */}
+        <div className="w-full h-[190px] bg-[#0c0e14] border border-[#1b2230] rounded-2xl p-2 flex items-center justify-center relative overflow-hidden shadow-inner">
+          {chartMode === 'line' ? (
+            <svg
+              className="w-full h-full"
+              viewBox={`0 0 ${svgW} ${svgH}`}
+              preserveAspectRatio="none"
+            >
+              <defs>
+                <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor={strokeColor} stopOpacity="0.25" />
+                  <stop offset="100%" stopColor={strokeColor} stopOpacity="0.0" />
+                </linearGradient>
+              </defs>
+              <path d={areaPath} fill="url(#chartGradient)" />
+              <path
+                d={linePath}
+                fill="none"
+                stroke={strokeColor}
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          ) : (
+            <svg
+              className="w-full h-full"
+              viewBox={`0 0 ${svgW} ${svgH}`}
+              preserveAspectRatio="none"
+            >
+              {/* Background gridlines */}
+              <line x1="0" y1="45" x2={svgW} y2="45" stroke="#171e2b" strokeWidth="1" strokeDasharray="3 3" />
+              <line x1="0" y1="95" x2={svgW} y2="95" stroke="#171e2b" strokeWidth="1" strokeDasharray="3 3" />
+              <line x1="0" y1="145" x2={svgW} y2="145" stroke="#171e2b" strokeWidth="1" strokeDasharray="3 3" />
+
+              {/* Candlesticks (Wick + Body) */}
+              {candlesData.map((c, i) => {
+                const cx = 12 + i * candleGap + candleW / 2;
+                const highY = svgH - 15 - ((c.high - minCandle) / candleRange) * (svgH - 30);
+                const lowY = svgH - 15 - ((c.low - minCandle) / candleRange) * (svgH - 30);
+                const openY = svgH - 15 - ((c.open - minCandle) / candleRange) * (svgH - 30);
+                const closeY = svgH - 15 - ((c.close - minCandle) / candleRange) * (svgH - 30);
+
+                const topY = Math.min(openY, closeY);
+                const heightY = Math.max(Math.abs(closeY - openY), 2.5);
+                const cColor = c.isUp ? '#00c176' : '#ff4d4f';
+
+                return (
+                  <g key={i}>
+                    {/* Wick Line */}
+                    <line
+                      x1={cx}
+                      y1={highY}
+                      x2={cx}
+                      y2={lowY}
+                      stroke={cColor}
+                      strokeWidth="1.2"
+                    />
+                    {/* Candle Body */}
+                    <rect
+                      x={cx - candleW / 2}
+                      y={topY}
+                      width={candleW}
+                      height={heightY}
+                      fill={cColor}
+                      rx="1"
+                    />
+                  </g>
+                );
+              })}
+            </svg>
+          )}
         </div>
 
         {/* Timeframe Selector Pills (1D, 1W, 1M, 3M, 1Y, 5Y) */}
@@ -183,21 +297,21 @@ export const QuoteDetailView: React.FC<QuoteDetailViewProps> = ({
             <div className="flex items-center justify-between py-2">
               <span className="text-[#8e95a5]">Open</span>
               <span className="font-mono font-semibold text-white">
-                ${formatPrice(openPrice, 2)}
+                {quote.currency === 'INR' ? '₹' : '$'}{formatPrice(openPrice, 2)}
               </span>
             </div>
 
             <div className="flex items-center justify-between py-2">
               <span className="text-[#8e95a5]">Previous Close</span>
               <span className="font-mono font-semibold text-white">
-                ${formatPrice(prevClose, 2)}
+                {quote.currency === 'INR' ? '₹' : '$'}{formatPrice(prevClose, 2)}
               </span>
             </div>
 
             <div className="flex items-center justify-between py-2">
               <span className="text-[#8e95a5]">Day Range</span>
               <span className="font-mono font-semibold text-white">
-                ${formatPrice(lowPrice, 2)} — ${formatPrice(highPrice, 2)}
+                {quote.currency === 'INR' ? '₹' : '$'}{formatPrice(lowPrice, 2)} — {quote.currency === 'INR' ? '₹' : '$'}{formatPrice(highPrice, 2)}
               </span>
             </div>
 
@@ -208,13 +322,13 @@ export const QuoteDetailView: React.FC<QuoteDetailViewProps> = ({
           </div>
         </section>
 
-        {/* Launch Pro Candlestick Terminal Button */}
+        {/* Toggle Chart Type Bottom Button (NEVER exits to desktop!) */}
         <button
-          onClick={onLaunchProTerminal}
+          onClick={() => setChartMode((prev) => (prev === 'candles' ? 'line' : 'candles'))}
           className="w-full py-3 bg-[#151a24] hover:bg-[#1c2331] border border-[#273247] text-[#d1d5db] font-bold text-xs rounded-xl flex items-center justify-center gap-2 cursor-pointer transition-colors mt-1"
         >
-          <ExternalLink size={14} className="text-[#ff8800]" />
-          <span>Launch Full Candlestick Terminal</span>
+          <CandlestickChart size={14} className="text-[#ff8800]" />
+          <span>{chartMode === 'candles' ? 'Switch to Vector Line Chart' : 'Switch to High-Precision Candlesticks'}</span>
         </button>
       </div>
     </div>

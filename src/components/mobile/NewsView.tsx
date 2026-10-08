@@ -4,16 +4,18 @@
 import React, { useState } from 'react';
 import { TerminalHeader } from './TerminalHeader';
 import type { NewsItem } from './types';
-import { Clock, TrendingUp, Globe, Shield } from 'lucide-react';
+import { terminalAudio } from '@/lib/terminalAudio';
 
 interface NewsViewProps {
   news: NewsItem[];
+  onSelectNews: (item: NewsItem) => void;
   onSearchClick: () => void;
   onAlertsClick: () => void;
 }
 
 export const NewsView: React.FC<NewsViewProps> = ({
   news,
+  onSelectNews,
   onSearchClick,
   onAlertsClick,
 }) => {
@@ -23,7 +25,7 @@ export const NewsView: React.FC<NewsViewProps> = ({
     <div className="flex flex-col min-h-screen bg-black text-white select-none pb-24">
       <TerminalHeader
         title="News"
-        subtitle="TERMINAL WIRE"
+        subtitle="TERMINAL WIRE <TOP>"
         onSearchClick={onSearchClick}
         onAlertsClick={onAlertsClick}
       />
@@ -33,7 +35,10 @@ export const NewsView: React.FC<NewsViewProps> = ({
         <div className="flex items-center justify-between border-b border-[#181d28] pb-2">
           <div className="flex items-center gap-6">
             <button
-              onClick={() => setActiveTab('for_you')}
+              onClick={() => {
+                terminalAudio.playTick();
+                setActiveTab('for_you');
+              }}
               className={`text-[12px] font-extrabold tracking-wider transition-all cursor-pointer ${
                 activeTab === 'for_you'
                   ? 'text-[#ff8800] border-b-2 border-[#ff8800] pb-1'
@@ -43,7 +48,10 @@ export const NewsView: React.FC<NewsViewProps> = ({
               FOR YOU
             </button>
             <button
-              onClick={() => setActiveTab('latest')}
+              onClick={() => {
+                terminalAudio.playTick();
+                setActiveTab('latest');
+              }}
               className={`text-[12px] font-extrabold tracking-wider transition-all cursor-pointer ${
                 activeTab === 'latest'
                   ? 'text-[#ff8800] border-b-2 border-[#ff8800] pb-1'
@@ -64,6 +72,10 @@ export const NewsView: React.FC<NewsViewProps> = ({
           {news.map((item) => (
             <div
               key={item.id}
+              onClick={() => {
+                terminalAudio.playTick();
+                onSelectNews(item);
+              }}
               className="bg-[#0e1118] border border-[#1b2230] rounded-xl p-3.5 flex gap-3.5 cursor-pointer hover:border-[#2f3b52] active:scale-[0.99] transition-all shadow-sm"
             >
               {/* Graphic Thumbnail */}
@@ -85,7 +97,10 @@ export const NewsView: React.FC<NewsViewProps> = ({
                       <circle cx="37" cy="32" r="7" fill="none" stroke="#ff8800" strokeWidth="1.5" />
                     </>
                   )}
-                  {item.category !== 'Technology' && item.category !== 'Macro' && item.category !== 'India' && (
+                  {item.category === 'Crypto' && (
+                    <path d="M12,46 L26,24 L40,32 L58,14" stroke="#00c176" strokeWidth="2.2" fill="none" />
+                  )}
+                  {item.category !== 'Technology' && item.category !== 'Macro' && item.category !== 'India' && item.category !== 'Crypto' && (
                     <path d="M12,46 L26,28 L42,36 L62,18" stroke="#2979ff" strokeWidth="2.2" fill="none" />
                   )}
                 </svg>
