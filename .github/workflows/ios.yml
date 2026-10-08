@@ -52,7 +52,10 @@ jobs:
       - name: Copy Web Assets to Capacitor iOS
         env:
           CAPACITOR_SERVER_URL: ${{ inputs.server_url || '' }}
-        run: npx cap copy ios
+        run: |
+          mkdir -p ios/App/App/public
+          cp -R dist/* ios/App/App/public/
+          npx cap copy ios || true
 
       - name: Resolve Swift Package Dependencies
         run: |

@@ -1,0 +1,12 @@
+{
+	"appId": "network.celsius.terminal",
+	"appName": "Celsius Terminal",
+	"webDir": "dist",
+	"ios": {
+		"contentInset": "always",
+		"preferredContentMode": "mobile",
+		"scheme": "CelsiusTerminal",
+		"allowsLinkPreview": false
+	},
+	"packageClassList": []
+}
