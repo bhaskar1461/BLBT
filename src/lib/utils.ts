@@ -41,3 +41,31 @@ export function formatInrCrore(usdtValue: number): string {
   return `₹${Math.round(inr).toLocaleString('en-IN')}`;
 }
 
+/**
+ * Format USDT value into Indian Rupees with full en-IN comma separation.
+ */
+export function formatInrExact(usdtValue: number): string {
+  if (isNaN(usdtValue)) return '₹0';
+  const inr = Math.round(usdtValue * 83.33333333);
+  const prefix = inr < 0 ? '-' : '';
+  return `${prefix}₹${Math.abs(inr).toLocaleString('en-IN')}`;
+}
+
+/**
+ * Format USDT value into Indian Crore / Lakh short notation with optional sign.
+ */
+export function formatInrShort(usdtValue: number, showSign = false): string {
+  if (isNaN(usdtValue)) return '₹0.00';
+  const sign = usdtValue < 0 ? '-' : (showSign && usdtValue > 0 ? '+' : '');
+  const absUsdt = Math.abs(usdtValue);
+  const inr = absUsdt * 83.33333333;
+  if (inr >= 10_000_000) {
+    return `${sign}₹${(inr / 10_000_000).toFixed(2)} Cr`;
+  }
+  if (inr >= 100_000) {
+    return `${sign}₹${(inr / 100_000).toFixed(2)} L`;
+  }
+  return `${sign}₹${Math.round(inr).toLocaleString('en-IN')}`;
+}
+
+

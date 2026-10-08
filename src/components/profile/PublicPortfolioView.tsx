@@ -123,7 +123,7 @@ export const PublicPortfolioView: React.FC<PublicPortfolioViewProps> = ({ profil
                 <span>·</span>
                 <span>Style: <strong className="text-white uppercase">{profile.tradingStyle || 'SWING'}</strong></span>
                 <span>·</span>
-                <span>Jurisdiction: <strong className="text-white">{profile.country || 'IN'}</strong></span>
+                <span>Jurisdiction: <strong className="text-white">🇮🇳 INDIA (IN)</strong></span>
               </div>
             </div>
           </div>

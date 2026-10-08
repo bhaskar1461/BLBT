@@ -507,6 +507,9 @@ export const TradingViewTopBar: React.FC<TradingViewTopBarProps> = ({
           <span className="font-bold text-white tabular-nums">
             ${account?.equity ? account.equity.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : '617,530'}
           </span>
+          <span className="text-[#f59e0b] font-bold text-[10px] hidden xs:inline">
+            (₹5.15 Cr)
+          </span>
         </Link>
 
         {/* Account Funds & Wallet Pill */}
