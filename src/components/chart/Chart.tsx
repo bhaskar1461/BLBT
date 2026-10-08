@@ -124,28 +124,28 @@ export const Chart: React.FC = () => {
       lineWidth: 1,
       title: 'EMA 9',
       priceLineVisible: false,
-      lastValueVisible: indicators.ema.enabled9,
+      lastValueVisible: false,
     });
     ema21Ref.current = chart.addSeries(LineSeries, {
       color: indicators.ema.color21,
       lineWidth: 1,
       title: 'EMA 21',
       priceLineVisible: false,
-      lastValueVisible: indicators.ema.enabled21,
+      lastValueVisible: false,
     });
     ema50Ref.current = chart.addSeries(LineSeries, {
       color: indicators.ema.color50,
       lineWidth: 1,
       title: 'EMA 50',
       priceLineVisible: false,
-      lastValueVisible: indicators.ema.enabled50,
+      lastValueVisible: false,
     });
     ema200Ref.current = chart.addSeries(LineSeries, {
       color: indicators.ema.color200,
       lineWidth: 2,
       title: 'EMA 200',
       priceLineVisible: false,
-      lastValueVisible: indicators.ema.enabled200,
+      lastValueVisible: false,
     });
 
     // SMAs
@@ -154,14 +154,14 @@ export const Chart: React.FC = () => {
       lineWidth: 1,
       title: 'SMA 20',
       priceLineVisible: false,
-      lastValueVisible: indicators.sma.enabled20,
+      lastValueVisible: false,
     });
     sma50Ref.current = chart.addSeries(LineSeries, {
       color: indicators.sma.color50,
       lineWidth: 1,
       title: 'SMA 50',
       priceLineVisible: false,
-      lastValueVisible: indicators.sma.enabled50,
+      lastValueVisible: false,
     });
 
     // Crosshair listener syncing to Zustand
@@ -339,12 +339,12 @@ export const Chart: React.FC = () => {
 
   // Indicator style updates
   useEffect(() => {
-    ema9Ref.current?.applyOptions({ visible: indicators.ema.enabled9, color: indicators.ema.color9, lastValueVisible: indicators.ema.enabled9 });
-    ema21Ref.current?.applyOptions({ visible: indicators.ema.enabled21, color: indicators.ema.color21, lastValueVisible: indicators.ema.enabled21 });
-    ema50Ref.current?.applyOptions({ visible: indicators.ema.enabled50, color: indicators.ema.color50, lastValueVisible: indicators.ema.enabled50 });
-    ema200Ref.current?.applyOptions({ visible: indicators.ema.enabled200, color: indicators.ema.color200, lastValueVisible: indicators.ema.enabled200 });
-    sma20Ref.current?.applyOptions({ visible: indicators.sma.enabled20, color: indicators.sma.color20, lastValueVisible: indicators.sma.enabled20 });
-    sma50Ref.current?.applyOptions({ visible: indicators.sma.enabled50, color: indicators.sma.color50, lastValueVisible: indicators.sma.enabled50 });
+    ema9Ref.current?.applyOptions({ visible: indicators.ema.enabled9, color: indicators.ema.color9, lastValueVisible: false });
+    ema21Ref.current?.applyOptions({ visible: indicators.ema.enabled21, color: indicators.ema.color21, lastValueVisible: false });
+    ema50Ref.current?.applyOptions({ visible: indicators.ema.enabled50, color: indicators.ema.color50, lastValueVisible: false });
+    ema200Ref.current?.applyOptions({ visible: indicators.ema.enabled200, color: indicators.ema.color200, lastValueVisible: false });
+    sma20Ref.current?.applyOptions({ visible: indicators.sma.enabled20, color: indicators.sma.color20, lastValueVisible: false });
+    sma50Ref.current?.applyOptions({ visible: indicators.sma.enabled50, color: indicators.sma.color50, lastValueVisible: false });
   }, [indicators]);
 
   const latest = candles[candles.length - 1];

@@ -75,21 +75,21 @@ interface WatchlistRowData {
 
 const DOCK_SYMBOLS: WatchlistRowData[] = [
   // Indices
-  { symbol: 'NIFTY', displaySymbol: 'NIFT', name: 'Nifty 50', badge: '50', category: 'INDICES' },
-  { symbol: 'BANKNIFTY', displaySymbol: 'BANI', name: 'Bank Nifty', badge: 'B', category: 'INDICES' },
-  { symbol: 'SENSEX', displaySymbol: 'SENS', name: 'Sensex', badge: 'S', category: 'INDICES' },
-  { symbol: 'CNXIT', displaySymbol: 'CNXI', name: 'Nifty IT', badge: 'C', category: 'INDICES' },
-  { symbol: 'SPX', displaySymbol: 'SPX', name: 'S&P 500', badge: '500', category: 'INDICES' },
+  { symbol: 'NIFTY', displaySymbol: 'NIFTY 50', name: 'Nifty 50', badge: '50', category: 'INDICES' },
+  { symbol: 'BANKNIFTY', displaySymbol: 'BANK NIFTY', name: 'Bank Nifty', badge: 'B', category: 'INDICES' },
+  { symbol: 'SENSEX', displaySymbol: 'SENSEX', name: 'Sensex', badge: 'S', category: 'INDICES' },
+  { symbol: 'CNXIT', displaySymbol: 'CNX IT', name: 'Nifty IT', badge: 'C', category: 'INDICES' },
+  { symbol: 'SPX', displaySymbol: 'S&P 500', name: 'S&P 500', badge: '500', category: 'INDICES' },
   // Crypto
-  { symbol: 'BTCUSDT', displaySymbol: 'BTC', name: 'Bitcoin', badge: '₿', category: 'CRYPTO' },
-  { symbol: 'ETHUSDT', displaySymbol: 'ETH', name: 'Ethereum', badge: 'Ξ', category: 'CRYPTO' },
-  { symbol: 'SOLUSDT', displaySymbol: 'SOL', name: 'Solana', badge: 'S', category: 'CRYPTO' },
+  { symbol: 'BTCUSDT', displaySymbol: 'BTC/USDT', name: 'Bitcoin', badge: '₿', category: 'CRYPTO' },
+  { symbol: 'ETHUSDT', displaySymbol: 'ETH/USDT', name: 'Ethereum', badge: 'Ξ', category: 'CRYPTO' },
+  { symbol: 'SOLUSDT', displaySymbol: 'SOL/USDT', name: 'Solana', badge: 'S', category: 'CRYPTO' },
   // Stocks
-  { symbol: 'RELIANCE', displaySymbol: 'RELI', name: 'Reliance Ind.', badge: 'R', category: 'STOCKS' },
-  { symbol: 'AXISBANK', displaySymbol: 'AXIS', name: 'Axis Bank', badge: 'A', category: 'STOCKS' },
-  { symbol: 'HDFCBANK', displaySymbol: 'HDFC', name: 'HDFC Bank', badge: 'H', category: 'STOCKS' },
-  { symbol: 'ICICIBANK', displaySymbol: 'ICICI', name: 'ICICI Bank', badge: 'I', category: 'STOCKS' },
-  { symbol: 'BAJFINANCE', displaySymbol: 'BAJF', name: 'Bajaj Finance', badge: 'B', category: 'STOCKS' },
+  { symbol: 'RELIANCE', displaySymbol: 'RELIANCE', name: 'Reliance Ind.', badge: 'R', category: 'STOCKS' },
+  { symbol: 'AXISBANK', displaySymbol: 'AXIS BANK', name: 'Axis Bank', badge: 'A', category: 'STOCKS' },
+  { symbol: 'HDFCBANK', displaySymbol: 'HDFC BANK', name: 'HDFC Bank', badge: 'H', category: 'STOCKS' },
+  { symbol: 'ICICIBANK', displaySymbol: 'ICICI BANK', name: 'ICICI Bank', badge: 'I', category: 'STOCKS' },
+  { symbol: 'BAJFINANCE', displaySymbol: 'BAJAJ FIN', name: 'Bajaj Finance', badge: 'B', category: 'STOCKS' },
 ];
 
 export const TradingViewRightDock: React.FC<TradingViewRightDockProps> = ({
@@ -306,15 +306,6 @@ export const TradingViewRightDock: React.FC<TradingViewRightDockProps> = ({
         </div>
 
         <div className="flex items-center gap-1.5 shrink-0">
-          {activeTab === 'watchlist' && (
-            <button
-              onClick={() => setWatchlistTitle(watchlistTitle === 'Daftar Pantau' ? 'Watchlist' : 'Daftar Pantau')}
-              className="text-[10px] text-[#787b86] hover:text-[#2962ff] px-1.5 py-0.5 rounded hover:bg-[#1e222d] transition-colors"
-            >
-              Lang
-            </button>
-          )}
-
           {/* Width expansion toggle for data-dense widgets like Option Chain */}
           <button
             onClick={toggleWideDock}
@@ -402,7 +393,6 @@ export const TradingViewRightDock: React.FC<TradingViewRightDockProps> = ({
                       <span className="font-semibold text-xs text-[#f0f3fa] group-hover:text-[#2962ff] transition-colors">
                         {item.displaySymbol}
                       </span>
-                      <span className="text-[9px] text-[#787b86] ml-1 font-mono hidden sm:inline">D</span>
                     </div>
                   </div>
 

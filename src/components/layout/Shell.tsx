@@ -48,9 +48,15 @@ export const Shell: React.FC = () => {
   const [terminalMode, setTerminalMode] = useState<'beginner' | 'pro'>('pro');
   const [viewMode, setViewMode] = useState<'summary' | 'chart'>('chart');
   const [activeDockTab, setActiveDockTab] = useState<RightDockTab>('watchlist');
-  const [isDockOpen, setIsDockOpen] = useState(true);
+  const [isDockOpen, setIsDockOpen] = useState(false);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [isBrokerModalOpen, setIsBrokerModalOpen] = useState(false);
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined' && window.innerWidth >= 1200) {
+      setIsDockOpen(true);
+    }
+  }, []);
 
   React.useEffect(() => {
     const savedView = localStorage.getItem('celsius_view_mode');

@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://blbt-auhi.vercel.app'),
   title: 'The Honest Terminal — The Only Trading Platform That Profits From You Not Losing Money | Celsius Network',
   description:
     'Free forever. Faster than everything. We show you what the herd is doing — and what happens to herds. Cryptographically verified paper trading, unbiased sentiment, and public figure accountability.',

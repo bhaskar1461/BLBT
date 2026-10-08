@@ -512,9 +512,9 @@
     <div class="modal-box">
       <div class="modal-title">Live Terminal Server</div>
       <p style="font-size:11px;color:var(--muted);margin-bottom:12px;line-height:1.4">
-        To load the full desktop trading interface from your laptop, enter your local Wi-Fi address (e.g. <code>http://192.168.0.5:3000</code>) or production URL.
+        Connect directly to your live production cloud server (<code>https://blbt-auhi.vercel.app</code>) or local development server.
       </p>
-      <input type="url" id="serverInput" class="input-box" placeholder="http://192.168.0.5:3000" style="width:100%;margin-bottom:10px" />
+      <input type="url" id="serverInput" class="input-box" value="https://blbt-auhi.vercel.app" placeholder="https://blbt-auhi.vercel.app" style="width:100%;margin-bottom:10px" />
       <button class="btn-connect" onclick="saveAndConnectServer()">Connect & Launch</button>
       <button class="btn-connect" style="background:#1e222d;color:var(--text);margin-top:6px" onclick="closeServerModal()">Stay in Mobile Mode</button>
     </div>
@@ -888,7 +888,7 @@
     // Server Modal & Connection
     function openServerModal() {
       document.getElementById('serverModal').classList.add('open');
-      const saved = localStorage.getItem('celsius_server_url') || 'http://192.168.0.5:3000';
+      const saved = localStorage.getItem('celsius_server_url') || 'https://blbt-auhi.vercel.app';
       document.getElementById('serverInput').value = saved;
     }
     function closeServerModal() {

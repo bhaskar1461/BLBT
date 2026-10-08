@@ -2,6 +2,13 @@
 	"appId": "network.celsius.terminal",
 	"appName": "Celsius Terminal",
 	"webDir": "dist",
+	"server": {
+		"url": "https://blbt-auhi.vercel.app",
+		"cleartext": false,
+		"allowNavigation": [
+			"*"
+		]
+	},
 	"ios": {
 		"contentInset": "always",
 		"preferredContentMode": "mobile",

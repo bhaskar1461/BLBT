@@ -62,7 +62,7 @@ export const TradingViewDrawingToolbar: React.FC = () => {
 
   return (
     <aside
-      className="w-11 bg-[#131722] border-r border-[#2a2e39] flex flex-col items-center py-2 select-none shrink-0 z-20 transition-colors"
+      className="hidden lg:flex w-11 bg-[#131722] border-r border-[#2a2e39] flex-col items-center py-2 select-none shrink-0 z-20 transition-colors"
       aria-label="TradingView Drawing Tools"
     >
       {/* Top Main Drawing Tools */}

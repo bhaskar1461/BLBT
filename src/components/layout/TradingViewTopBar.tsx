@@ -422,29 +422,29 @@ export const TradingViewTopBar: React.FC<TradingViewTopBarProps> = ({
       </div>
 
       {/* ======================================================== */}
-      {/* Center: View Mode Toggle (Summary vs Supercharts) & Clocks */}
+      {/* Center: View Mode Toggle (Summary vs Supercharts)        */}
       {/* ======================================================== */}
       <div className="flex items-center gap-2 shrink-0">
         {onToggleViewMode && (
-          <div className="hidden md:flex items-center bg-[#171b26] p-0.5 rounded-md border border-[#2a2e39] text-[11px] font-semibold">
+          <div className="hidden md:flex items-center bg-[#161b22] p-0.5 rounded-md border border-[#212a36] text-[11px]">
             <button
               onClick={() => onToggleViewMode('summary')}
-              className={`px-2.5 py-0.5 rounded transition-all flex items-center gap-1.5 ${
+              className={`px-3 py-1 rounded transition-all flex items-center gap-1.5 ${
                 viewMode === 'summary'
-                  ? 'bg-[#1e222d] text-white ring-1 ring-[#2962ff]/40 font-bold'
-                  : 'text-[#787b86] hover:text-[#d1d4dc] hover:bg-[#1e222d]'
+                  ? 'bg-[#21262d] text-white font-bold shadow-sm'
+                  : 'text-[#787b86] hover:text-[#d1d4dc] hover:bg-[#1c2128]'
               }`}
-              title="Vibrant Market Summary Overview"
+              title="Market Summary Overview"
             >
               <TrendingUp size={12} className={viewMode === 'summary' ? 'text-[#2962ff]' : ''} />
               <span>Market summary</span>
             </button>
             <button
               onClick={() => onToggleViewMode('chart')}
-              className={`px-2.5 py-0.5 rounded transition-all flex items-center gap-1.5 ${
+              className={`px-3 py-1 rounded transition-all flex items-center gap-1.5 ${
                 viewMode === 'chart'
-                  ? 'bg-[#1e222d] text-white ring-1 ring-[#2962ff]/40 font-bold'
-                  : 'text-[#787b86] hover:text-[#d1d4dc] hover:bg-[#1e222d]'
+                  ? 'bg-[#21262d] text-white font-bold shadow-sm'
+                  : 'text-[#787b86] hover:text-[#d1d4dc] hover:bg-[#1c2128]'
               }`}
               title="Candlestick Supercharts Terminal"
             >
@@ -453,9 +453,6 @@ export const TradingViewTopBar: React.FC<TradingViewTopBarProps> = ({
             </button>
           </div>
         )}
-
-        {/* Financial World Clocks (OpenTerminal) */}
-        <WorldClocks />
       </div>
 
       {/* ======================================================== */}
