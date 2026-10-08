@@ -1,0 +1,56 @@
+feature,area,priority,original,clone,notes
+Market order execution against live Binance Spot,trading,must,yes,yes,Server-side real Binance execution
+Limit order submission and cancellation,trading,must,yes,yes,Evaluated against live prices
+Take-Profit and Stop-Loss brackets on positions,trading,must,yes,yes,Server-side evaluated
+Lightweight interactive candlestick chart,trading,must,yes,yes,Lightweight-charts 60fps canvas
+Integer math 8-decimal base units (cents/satoshi),trading,must,yes,yes,Zero floating point drift in DB
+Append-only immutable paper transactions ledger,trading,must,yes,yes,Update/Delete blocked at DB level
+Flat 0.10% transaction fee deduction on all orders,trading,must,yes,yes,Integer fee arithmetic
+Multi-pair symbol switching (BTC ETH SOL BNB),trading,must,yes,yes,TopBar symbol selector
+Live positions dock with unrealized P&L,trading,must,yes,yes,Real-time calculated
+Close position at live market price,trading,must,yes,yes,Server-side Binance tick fill
+Hard 5% daily loss limit circuit breaker,protection,must,yes,yes,Trading locks with calm screen
+Invariant: User cannot raise daily cap on losing day,protection,must,yes,yes,Enforced server-side
+Revenge trade detector on 3+ rapid trades after loss,protection,should,yes,yes,15-min window detection
+Calm 5-minute cooldown break prompt,protection,should,yes,yes,Client & server cooldown lock
+Post-session honest review card,protection,should,yes,yes,Summarizes fees and passive holding
+Cryptographic SHA-256 trade hash chaining,transparency,must,yes,yes,Chained ledger_hash on all trades
+Daily automated cron snapshot sealing,transparency,must,yes,yes,Vercel daily 00:00 UTC cron
+Public /transparency page with latest root hash,transparency,must,yes,yes,Sub-second server rendered
+Copy-to-clipboard hash fingerprint button,transparency,should,yes,yes,Instant clipboard copy
+Cryptographic chain audit verifying zero broken links,transparency,must,yes,yes,Automated integrity check
+Public server-rendered /reality page,reality,must,yes,yes,No login required sub-1s load
+Dynamic render-time computation of trader profitability,reality,must,yes,yes,Zero hand-written marketing numbers
+Median and average trader loss statistics,reality,must,yes,yes,Computed from database ledger
+P&L distribution curve visual chart,reality,should,yes,yes,6-bucket histogram distribution
+30-Day and 90-Day reality timeframe switcher,reality,should,yes,yes,Dynamic period parameter
+Dynamic 1200x630 OpenGraph social share cards,reality,should,yes,yes,Edge image response
+Aggregate retail positioning (% long vs short),sentiment,must,yes,yes,Hourly aggregated snapshots
+Structural privacy barrier (25-user cohort minimum),sentiment,must,yes,yes,Suppresses low cohorts
+Contrarian crowd vs price historical accuracy metric,sentiment,must,yes,yes,Calculates error rate
+Public 24h-delayed sentiment chart page,sentiment,should,yes,yes,Delayed for public free tier
+In-terminal one-line sentiment context strip,sentiment,should,yes,yes,Zero layout shift under chart
+Public trader profile route /u/[username],profiles,must,yes,yes,Public verified track record
+User toggle: Make my track record public,profiles,must,yes,yes,All-or-nothing toggle
+Public profile stamped with daily ledger root hash,profiles,must,yes,yes,Proves no retroactive edits
+Equal billing for losing trades in profile,profiles,must,yes,yes,Identical typography & layout
+Verified Record badge linking to /transparency,profiles,should,yes,yes,Explains cryptographic proofs
+Community public figure trading call submission,scoreboard,must,yes,yes,Community submission modal
+Authoritative Binance Spot scoring at call expiry,scoreboard,must,yes,yes,Scored correct wrong undefined
+Caller accuracy leaderboard with sample size,scoreboard,must,yes,yes,Ranked by accuracy %
+Factual neutral litigator-proof copy,scoreboard,must,yes,yes,No editorializing or ad hominem
+Dynamic OpenGraph scoreboard share card,scoreboard,should,yes,yes,1200x630 Edge image
+Preset strategy library (MA RSI Breakout DCA),backtest,must,yes,yes,4 presets in library
+Real Binance Spot historical candles simulation,backtest,must,yes,yes,Daily and 4h klines
+Mandatory Buy-and-Hold benchmark mirror permanently visible,backtest,must,yes,yes,Never collapsible
+0.10% transaction fee deduction on every trade,backtest,must,yes,yes,Models real turnover drag
+Max drawdown win rate profit factor and equity curve,backtest,must,yes,yes,Responsive SVG chart
+Data-bound honest summary verdict line,backtest,must,yes,yes,Rolling window computed
+One-click Run forward in paper trading adoption,backtest,should,yes,yes,Enforces 1.0% risk cap
+Server-side role protection in middleware,admin,must,yes,yes,Blocks non-admin from /admin
+Immutable admin audit logging,admin,must,yes,yes,admin_audit_log table
+Freeze and unfreeze user accounts,admin,must,yes,yes,Blocks frozen users from trading
+Feature flags administration gate,admin,should,yes,yes,Runtime feature enablement
+Real-money fiat bank withdrawals,banking,must,no,skip,Out of scope for paper trading terminal
+Passport KYC identity verification,compliance,must,no,skip,Out of scope for zero-custody terminal
+High-frequency margin liquidation casino,leverage,must,no,skip,Anti-casino brand invariant

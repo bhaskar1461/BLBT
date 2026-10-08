@@ -1,0 +1,124 @@
+<USER_REQUEST>
+🏗️ The Honest Terminal — Full 10-Phase Build Plan
+Mission: The fastest, lightest, 100%-free trading terminal — funded by trust, not by users.
+Positioning: "The only trading platform that profits from you not losing money."
+Revenue stack: Donations (day 1) → Sentiment API (at scale) → nothing else. Ever.
+Rule for every phase: If a feature sells hope, cuts honesty, or bloats the app — don't build it.
+
+Phase 1 — The Verifiable Ledger (the foundation)
+Prompt 1.1 — Hash-chained trade history
+"Read /docs/PRD.md and AGENTS.md. Make all paper trades tamper-evident: add a ledger_hash column to the paper_trades table. Create a Vercel Cron job running daily at 00:00 UTC that: (1) fetches all trades from the last 24h, (2) computes SHA-256 of (previous day's root hash + serialized trade data), (3) stores it in a new ledger_snapshots table (date, root_hash, user_count, trade_count). Snapshots must be immutable — no update/delete endpoints. Show the latest snapshot hash in the admin console. Add a /transparency page with plain-language copy: 'Every day we publish a cryptographic fingerprint of all trading activity. History cannot be silently edited.' Include a copy-to-clipboard button for the hash."
+
+Prompt 1.2 — Performance discipline (the "lighter than everyone" promise)
+"Audit the app for speed and leanness: (1) ensure all pages server-render where possible, (2) remove any unused dependencies, analytics scripts, and fonts — system fonts only, (3) lazy-load charts, (4) set a hard budget: every page must load under 1 second on a mid-range phone and total JS shipped must stay under 150KB gzipped. Add a note to AGENTS.md: 'Performance budget is permanent. Any feature that breaks it must justify itself or be cut.' This is a core selling point, not an optimization."
+
+✅ Exit: Daily hashes publishing, /transparency live, app measurably lean with a documented performance budget.
+
+Phase 2 — The Reality Page (the story)
+Prompt 2.1 — Public truth statistics
+"Build a public /reality page — no login required, server-rendered, load-time prioritized. A daily cron computes and caches aggregate stats: % of paper traders profitable over 30/90 days, median and average P&L, P&L distribution curve (chart), average hold time, most common losing pattern (e.g., increased trade frequency after a loss), and top 3 most-traded assets vs their actual performance. Brutally plain copy, on the user's side against the industry — never preachy. Tone: 'Everyone shows you their wins. We show you everything.' Add OG meta tags so the page is shareable. Add an honesty rule to AGENTS.md: 'Every number on /reality must be computed from the database at render time — no hand-written stats, ever.'"
+
+✅ Exit: /reality is live, honest, shareable, and loads in under a second.
+
+Phase 3 — Truth in Every Screen (the brand everywhere)
+Prompt 3.1 — Buy-and-hold benchmark everywhere
+"Wherever P&L or strategy performance is shown — dashboard, trade history, performance summary — display a comparison: 'Same capital in BTC buy-and-hold over the same period: +X%. You: +Y%.' Compute server-side from real Binance historical data. Never hide or de-emphasize it when buy-and-hold wins. Add to AGENTS.md: 'No result is ever shown without context: drawdown, sample size, and buy-and-hold comparison.'"
+
+Prompt 3.2 — Honest onboarding
+"Redesign the post-signup flow: first screen shows the reality stats from /reality ('X% of paper traders lost money last month — here's how to not be one of them'), then a 3-step setup: pick instruments, set a risk-per-trade cap (default 1%), get a paper account. The product's day-one promise is protection, not excitement. Keep it under 60 seconds total."
+
+Prompt 3.3 — Loss-protection features
+"Build: (1) a hard daily loss limit on paper accounts — when hit, trading locks with a calm 'you're done for today' screen; the user can adjust the cap but can never disable it on a losing day; (2) a revenge-trade detector — if trade frequency doubles within an hour of a loss, show a gentle inline warning; (3) a post-session review card summarizing the day honestly. Gate rollout behind an admin flag loss_limits."
+
+✅ Exit: The app now actively protects users and every screen tells the truth with context.
+
+Phase 4 — The Sentiment Index (your unfair advantage) 📊
+Prompt 4.1 — Aggregate sentiment engine
+"Build the Sentiment Index pipeline: a cron job that hourly aggregates ALL paper trading positions into per-asset metrics — % long vs short, net positioning, buy/sell flow trend, number of unique traders per asset. Store as time series in a sentiment_snapshots table. Privacy rules (add to AGENTS.md and the privacy policy): aggregate-only, minimum cohort size of 25 traders before any stat is displayed, no user IDs ever leave the aggregation layer, no per-user export exists. This is structural, not a promise."
+
+Prompt 4.2 — The public sentiment page
+"Build /sentiment: free, public, no login. Show per-asset retail positioning charts over time, overlaid against actual price — and headline the honest findings: 'Retail was 78% long before the last drop.' Include a 'Crowd vs Price' accuracy stat: when the crowd leaned one way, how often did price agree? Delay data by 24 hours on the free page. Make each asset's sentiment chart shareable as an OG card. Tone: 'See what the herd is doing. Then consider not being the herd.'"
+
+Prompt 4.3 — Sentiment-in-terminal integration
+"Inside the terminal, next to every asset's chart, show a one-line honest context strip: 'Retail paper traders here: 71% long · crowd has been wrong 8 of last 12 significant moves on this asset.' Link to /sentiment for detail. Keep it one line — the performance budget rules."
+
+✅ Exit: You now publish data nobody else on earth has — honestly, freely, and structurally anonymized.
+
+Phase 5 — Verified Public Records (the trust moat)
+Prompt 5.1 — Public track records
+"Add optional public profiles: a user toggle 'Make my track record public.' Public view shows the COMPLETE trade history — every win and loss, server-computed, stamped with the ledger snapshot hash. All-or-nothing: no selective display, no hiding losing months. Add a 'verified record' badge concept explained on /transparency. A public profile is a resume, not a highlight reel."
+
+✅ Exit: Unforgeable, complete, public track records exist — the thing screenshots can never be.
+
+Phase 6 — The Scoreboard (the controversy engine)
+Prompt 6.1 — Public call scoring
+"Build /scoreboard: anyone can submit a public trading call (public figure name, platform, asset, direction, entry price/date, stated timeframe, optional link). A cron scores each call against real Binance prices when its timeframe expires: correct/wrong/undefined, with % move. Public leaderboard ranked by accuracy, always displaying sample size and a confidence note ('3 calls is not a track record'). Strictly factual tone — score the call, never the character; no editorial words like 'scam.' Include a right-of-reply field the scored person's side can submit, displayed alongside. Moderation queue in the admin console. Add legal-care notes to /terms: factual statements only, no defamation."
+
+✅ Exit: Signal-sellers get scored by reality. Neutral, data-only, litigator-proof.
+
+Phase 7 — The Backtester (the retention engine)
+Prompt 7.1 — Honest backtesting
+"Build a backtester with a preset strategy library (MA crossover, RSI thresholds, breakouts, DCA). Runs against real historical Binance data. Results page must show: equity curve, max drawdown, win rate, total fees paid, AND the buy-and-hold comparison — permanently visible, never collapsible. Every result ends with an honest summary line, e.g., 'This strategy underperformed holding BTC in 62% of tested periods.' One-click 'run this forward in paper trading.' Respect the performance budget: run backtests server-side, stream results."
+
+✅ Exit: Users can test dreams against reality before risking anything.
+
+Phase 8 — Community without casino vibes
+Prompt 8.1 — Risk-adjusted tournaments
+"Build tournaments: admin creates one (duration, rules, starting balance). The enforced per-trade risk cap carries over. Leaderboard ranks by risk-adjusted return, not raw P&L. All tournament history is permanent and ledger-verified. Auto-flag impossible win rates for admin review. No entry fees — tournaments are free, always."
+
+Prompt 8.2 — Honest share cards
+"Rework sharing: losing trades get equal-quality share cards as winners — losing is a badge of honesty ('Took a -4% loss. Full record verified.'). Add share cards for /reality and /sentiment stats. Every card carries the platform mark and the line 'Full record, verified.'"
+
+✅ Exit: Growth loops exist that spread truth instead of hype.
+
+Phase 9 — Transparent Funding + the API 💰
+Prompt 9.1 — The funding page
+"Build /funding — radical financial transparency: show current monthly server costs (updated manually by admin), current donations received, and current runway in plain numbers. Add a 'support the truth' contribution option (Stripe, one-time or monthly, suggested $3–5). Hard rules for AGENTS.md and the page itself: no ads, no affiliate exchange links, no sponsored content — ever. 'We show you our money so you know who we work for: you.'"
+
+Prompt 9.2 — The Sentiment API (the business)
+"Build a public API for the sentiment data: free tier = 24h-delayed aggregate data with attribution required; paid tier (Stripe, $49/mo) = real-time feeds, full history, per-asset breakdowns, webhooks. Rate-limited, API-key managed in the user dashboard, usage dashboard included. All data remains aggregate-only under the Phase 4 privacy rules. Add /api docs page — server-rendered, minimal."
+
+✅ Exit: Servers paid by donations at small scale, by professionals at large scale — never by selling users out.
+
+Phase 10 — Launch the Story 🚀
+Prompt 10.1 — The rebrand rewrite
+"Rewrite the entire public surface around the mission: landing hero = 'The only trading platform that profits from you not losing money.' Sub: 'Free forever. Faster than everything. We show you what the herd is doing — and what happens to herds.' Rewrite /about and /terms in plain language. Add a public /changelog page — the platform's own evolution is transparent too. Update all OG/meta tags. Keep the terminal aesthetic: calm, professional, zero casino."
+
+Prompt 10.2 — The launch actions (not prompts — your work)
+Post /reality first — r/CryptoCurrency, r/algotrading, trading Discords. The stats page is the hook; the app is the follow-through.
+Seed /scoreboard by hand — score 10 famous public calls before launch so the page isn't empty.
+Publish the sentiment charts as shareable cards weekly — "what retail did this week" is endlessly quotable content.
+Trade publicly yourself on your own ledger — founder record, wins and losses. The single most credible marketing in the industry.
+Expect attacks from signal sellers. Respond with data only. Never drama. That is the brand.
+📌 The Permanent Rules (add to AGENTS.md verbatim)
+No result shown without context: drawdown, sample size, buy-and-hold.
+Every public number is computed from the database — never hand-written.
+Losses get equal billing to wins, everywhere.
+Aggregate-only data, 25-user minimum cohort, no per-user export — structural, not promissory.
+No ads, no affiliate links, no signals, no "premium predictions" — ever, at any revenue level.
+Performance budget is permanent: sub-1s pages, <150KB JS.
+If a feature would make a signal-seller money, it's off-brand. If it would get us banned from a signal Discord, it's on-brand.
+Execution order & honest pacing
+When	Phases	Milestone
+Week 1–2	1, 2	Ledger + /reality → your first public post
+Week 3–4	3, 4	Truth everywhere + Sentiment Index live
+Month 2	5, 6	Public records + Scoreboard
+Month 3	7, 8	Backtester + tournaments
+Month 4+	9, 10	Funding page + API + launch
+Honest expectation: donations cover a $10–20 server bill almost immediately if the story lands. The API becomes real money only at thousands of active users — months away. That's fine: the moat is the time, because nobody can fast-forward trust.
+
+Start with Prompt 1.1 today. 🔗
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-10-06T23:56:03+05:30.
+
+The user's current state is as follows:
+Active Document: c:\Users\bhask\Desktop\att2\docs\audit\ADMIN_INVENTORY_.md (LANGUAGE_MARKDOWN)
+Cursor is on line: 331
+Other open documents:
+- c:\Users\bhask\Desktop\att2\scratch\analyze_admin_endpoints.py (LANGUAGE_PYTHON)
+- c:\Users\bhask\Desktop\att2\CHANGES_MADE_AND_WORK_DONE.md (LANGUAGE_MARKDOWN)
+- c:\Users\bhask\Desktop\att2\scratch\execute_sheet_update.py (LANGUAGE_PYTHON)
+- c:\Users\bhask\Desktop\att2\scratch\check_fsd_attendance.py (LANGUAGE_PYTHON)
+- c:\Users\bhask\Desktop\att2\scratch\get_table_counts.py (LANGUAGE_PYTHON)
+</ADDITIONAL_METADATA>

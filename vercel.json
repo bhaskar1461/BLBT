@@ -1,0 +1,20 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/ledger-snapshot",
+      "schedule": "0 0 * * *"
+    },
+    {
+      "path": "/api/cron/reality-stats",
+      "schedule": "0 0 * * *"
+    },
+    {
+      "path": "/api/cron/sentiment",
+      "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/cron/scoreboard",
+      "schedule": "0 * * * *"
+    }
+  ]
+}

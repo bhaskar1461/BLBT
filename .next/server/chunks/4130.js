@@ -1,0 +1,1 @@
+"use strict";exports.id=4130,exports.ids=[4130],exports.modules={4130:(o,s,r)=>{r.r(s),r.d(s,{HolographicCoin:()=>e});let e=(0,r(8570).createProxy)(String.raw`C:\Users\bhask\Desktop\Celsius Network\src\components\3d\HolographicCoin.tsx#HolographicCoin`)}};
