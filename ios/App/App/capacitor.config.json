@@ -1,6 +1,6 @@
 {
 	"appId": "network.celsius.terminal",
-	"appName": "Celsius Terminal",
+	"appName": "Bloomberg Professional",
 	"webDir": "dist",
 	"server": {
 		"url": "https://blbt-auhi.vercel.app",

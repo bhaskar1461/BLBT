@@ -10,7 +10,7 @@ const serverUrl = process.env.CAPACITOR_SERVER_URL || 'https://blbt-auhi.vercel.
 
 const config: CapacitorConfig = {
   appId: 'network.celsius.terminal',
-  appName: 'Celsius Terminal',
+  appName: 'Bloomberg Professional',
   webDir: 'dist',
   server: {
     url: serverUrl,

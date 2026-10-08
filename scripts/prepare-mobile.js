@@ -37,7 +37,7 @@ const mobileTerminalHtml = `<!doctype html>
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>Celsius Terminal — Mobile</title>
+  <title>Bloomberg Professional</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <style>
     :root {
@@ -452,8 +452,8 @@ const mobileTerminalHtml = `<!doctype html>
     <div class="brand">
       <div class="bloomberg-logo">B</div>
       <div>
-        <div class="brand-title">CELSIUS TERMINAL</div>
-        <div class="brand-sub">BINANCE HIGH-FREQUENCY ENGINE</div>
+        <div class="brand-title">BLOOMBERG PROFESSIONAL</div>
+        <div class="brand-sub">FOR BLOOMBERG ANYWHERE CLIENTS</div>
       </div>
     </div>
     <div class="header-actions">
