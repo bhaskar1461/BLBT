@@ -49,14 +49,10 @@ jobs:
           CAPACITOR_SERVER_URL: ${{ inputs.server_url || '' }}
         run: npm run build
 
-      - name: Synchronize Capacitor iOS
+      - name: Copy Web Assets to Capacitor iOS
         env:
           CAPACITOR_SERVER_URL: ${{ inputs.server_url || '' }}
-        run: |
-          npx cap sync ios || {
-            echo "cap sync completed with warning, copying web assets..."
-            npx cap copy ios
-          }
+        run: npx cap copy ios
 
       - name: Resolve Swift Package Dependencies
         run: |
@@ -79,7 +75,14 @@ jobs:
       - name: Package App into unsigned IPA for Sideloadly
         run: |
           mkdir -p build_output/Payload
-          cp -R ios/App/build/Build/Products/Release-iphoneos/App.app build_output/Payload/
+          APP_PATH=$(find ios/App/build -name "App.app" -type d | head -n 1)
+          if [ -z "$APP_PATH" ]; then
+            echo "Error: App.app not found in build directory"
+            find ios/App/build -name "*.app"
+            exit 1
+          fi
+          echo "Found app bundle at: $APP_PATH"
+          cp -R "$APP_PATH" build_output/Payload/
           cd build_output
           zip -r -q CelsiusTerminal-unsigned.ipa Payload
           echo "Unsigned IPA packaged successfully:"
