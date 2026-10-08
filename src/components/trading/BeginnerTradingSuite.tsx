@@ -16,6 +16,7 @@ import {
   X,
   Play,
   Award,
+  Wallet,
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { TiltCard3D } from '@/components/3d/TiltCard3D';
@@ -40,10 +41,12 @@ import { fromBaseUnits } from '@/lib/tradeUnits';
 
 interface BeginnerTradingSuiteProps {
   onSwitchToPro: () => void;
+  onOpenWallet?: (tab?: 'buy' | 'redeem' | 'info') => void;
 }
 
 export const BeginnerTradingSuite: React.FC<BeginnerTradingSuiteProps> = ({
   onSwitchToPro,
+  onOpenWallet,
 }) => {
   const activeSymbol = useChartStore((s) => s.activeSymbol);
   const setActiveSymbol = useChartStore((s) => s.setActiveSymbol);
@@ -215,6 +218,17 @@ export const BeginnerTradingSuite: React.FC<BeginnerTradingSuiteProps> = ({
             <HelpCircle size={14} className="text-amber-400" />
             <span>Trading 101</span>
           </button>
+
+          {onOpenWallet && (
+            <button
+              onClick={() => onOpenWallet('redeem')}
+              className="px-3 py-1.5 rounded-xl bg-bull/20 hover:bg-bull/30 text-bull border border-bull/40 text-xs font-bold flex items-center gap-1.5 transition-all shadow-sm shadow-bull/20"
+              title="Redeem virtual balance to external wallet or bank"
+            >
+              <Wallet size={14} />
+              <span>Redeem (${balanceUsdt.toLocaleString()})</span>
+            </button>
+          )}
 
           <button
             onClick={onSwitchToPro}

@@ -21,9 +21,11 @@ import {
   RotateCcw,
   Heart,
   Sparkles,
+  Wallet,
 } from 'lucide-react';
 import { useChartStore } from '@/stores/useChartStore';
 import { useWatchlistStore } from '@/stores/useWatchlistStore';
+import { useTradingStore } from '@/stores/useTradingStore';
 import { getSymbolInfo } from '@/services/symbols';
 import { formatPrice, formatNumber } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
@@ -37,6 +39,7 @@ interface TopBarProps {
   onOpenAuth: () => void;
   onOpenProfile?: () => void;
   onOpenFeedback: () => void;
+  onOpenWallet?: (tab?: 'buy' | 'redeem' | 'info') => void;
   onToggleWatchlist: () => void;
   onToggleTradePanel: () => void;
   isWatchlistOpen: boolean;
@@ -62,7 +65,9 @@ export const TopBar: React.FC<TopBarProps> = ({
   streakDays = 5,
   terminalMode = 'beginner',
   onToggleTerminalMode,
+  onOpenWallet,
 }) => {
+  const account = useTradingStore((s) => s.account);
   const activeSymbol = useChartStore((s) => s.activeSymbol);
   const connectionStatus = useChartStore((s) => s.connectionStatus);
   const latencyMs = useChartStore((s) => s.latencyMs);
@@ -321,6 +326,23 @@ export const TopBar: React.FC<TopBarProps> = ({
               {terminalMode === 'beginner' ? 'Beginner Mode' : 'Pro Mode'}
             </span>
           </button>
+        )}
+
+        {/* Quick Wallet & Redeem Balance Button */}
+        {onOpenWallet && (
+          <Button
+            variant="default"
+            size="sm"
+            onClick={() => onOpenWallet('buy')}
+            className="gap-1.5 border-cardborder bg-card/80 hover:bg-hover text-white"
+            title="Open Quick Wallet — Instant Buy & Redeem Balance"
+          >
+            <Wallet size={13} className="text-bull" />
+            <span className="font-mono font-bold">
+              ${account ? account.balance.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : '10,000'}
+            </span>
+            <span className="text-[10px] text-bull font-semibold hidden md:inline">USDT</span>
+          </Button>
         )}
 
         {/* Paper Trade Panel Toggle */}

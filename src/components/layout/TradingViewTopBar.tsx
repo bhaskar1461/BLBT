@@ -16,9 +16,11 @@ import {
   Heart,
   BarChart2,
   ExternalLink,
+  Wallet,
 } from 'lucide-react';
 import { useChartStore } from '@/stores/useChartStore';
 import { useWatchlistStore } from '@/stores/useWatchlistStore';
+import { useTradingStore } from '@/stores/useTradingStore';
 
 interface TradingViewTopBarProps {
   onOpenSymbolPicker: () => void;
@@ -27,6 +29,7 @@ interface TradingViewTopBarProps {
   onOpenAuth: () => void;
   onOpenProfile?: () => void;
   onOpenFeedback: () => void;
+  onOpenWallet?: (tab?: 'buy' | 'redeem' | 'info') => void;
   activeAlertsCount: number;
   streakDays?: number;
   terminalMode?: 'beginner' | 'pro';
@@ -44,7 +47,9 @@ export const TradingViewTopBar: React.FC<TradingViewTopBarProps> = ({
   streakDays = 5,
   terminalMode = 'pro',
   onToggleTerminalMode,
+  onOpenWallet,
 }) => {
+  const account = useTradingStore((s) => s.account);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const activeSymbol = useChartStore((s) => s.activeSymbol);
   const connectionStatus = useChartStore((s) => s.connectionStatus);
@@ -291,6 +296,21 @@ export const TradingViewTopBar: React.FC<TradingViewTopBarProps> = ({
           >
             <Sparkles size={12} className={terminalMode === 'beginner' ? 'text-[#089981]' : 'text-[#2962ff]'} />
             <span>{terminalMode === 'beginner' ? 'Beginner' : 'Pro'}</span>
+          </button>
+        )}
+
+        {/* Quick Wallet Pill (Balance & Buy/Redeem) */}
+        {onOpenWallet && (
+          <button
+            onClick={() => onOpenWallet('buy')}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#1e222d] hover:bg-[#2a2e39] border border-[#2a2e39] hover:border-[#2962ff]/50 text-xs text-[#d1d4dc] transition-all shadow-inner group cursor-pointer"
+            title="Celsius Quick Wallet: 1-Click Buy & Redeem Balance"
+          >
+            <Wallet size={13} className="text-[#089981] group-hover:text-[#2962ff] transition-colors" />
+            <span className="font-mono font-bold text-white">
+              ${account ? account.balance.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : '10,000'}
+            </span>
+            <span className="text-[10px] text-[#089981] font-semibold hidden md:inline">USDT</span>
           </button>
         )}
 

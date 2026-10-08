@@ -30,6 +30,7 @@ import { PostSessionReviewModal } from '@/components/trading/PostSessionReviewMo
 import { LandingHeroBanner } from './LandingHeroBanner';
 import { TerminalSentimentStrip } from '@/components/sentiment/TerminalSentimentStrip';
 import { BeginnerTradingSuite } from '@/components/trading/BeginnerTradingSuite';
+import { QuickWalletModal } from '@/components/wallet/QuickWalletModal';
 import type { SessionReviewSummary } from '@/lib/lossProtectionService';
 import { WeeklyRecapBanner } from '@/components/notifications/WeeklyRecapBanner';
 import { analytics } from '@/lib/analytics';
@@ -52,9 +53,16 @@ export const Shell: React.FC = () => {
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const [isOnboardingOpen, setIsOnboardingOpen] = useState(false);
   const [isSessionReviewOpen, setIsSessionReviewOpen] = useState(false);
+  const [isWalletOpen, setIsWalletOpen] = useState(false);
+  const [walletInitialTab, setWalletInitialTab] = useState<'buy' | 'redeem' | 'info'>('buy');
   const [sessionReview, setSessionReview] = useState<SessionReviewSummary | null>(null);
   const [streakDays, setStreakDays] = useState(5);
   const [weeklyRecap, setWeeklyRecap] = useState<WeeklyRecap | null>(null);
+
+  const handleOpenWallet = (tab: 'buy' | 'redeem' | 'info' = 'buy') => {
+    setWalletInitialTab(tab);
+    setIsWalletOpen(true);
+  };
 
   React.useEffect(() => {
     const savedMode = localStorage.getItem('celsius_terminal_mode');
@@ -187,6 +195,7 @@ export const Shell: React.FC = () => {
         streakDays={streakDays}
         terminalMode={terminalMode}
         onToggleTerminalMode={handleToggleTerminalMode}
+        onOpenWallet={handleOpenWallet}
       />
 
       {/* 2.5 Landing Mission Hero Banner (Prompt 10.1) */}
@@ -200,6 +209,7 @@ export const Shell: React.FC = () => {
               setTerminalMode('pro');
               localStorage.setItem('celsius_terminal_mode', 'pro');
             }}
+            onOpenWallet={handleOpenWallet}
           />
         </div>
       ) : (
@@ -338,6 +348,13 @@ export const Shell: React.FC = () => {
           review={sessionReview}
         />
       )}
+
+      {/* 5d. Quick Wallet Modal (Instant Buy & Redeem) */}
+      <QuickWalletModal
+        isOpen={isWalletOpen}
+        onClose={() => setIsWalletOpen(false)}
+        initialTab={walletInitialTab}
+      />
 
       {/* 6. Toasts */}
       <ToastContainer />

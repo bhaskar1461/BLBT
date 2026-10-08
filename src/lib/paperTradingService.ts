@@ -56,7 +56,7 @@ export interface PaperTransactionRecord {
   user_id: string;
   account_id: string;
   order_id?: string | null;
-  type: 'initial_funding' | 'order_fill' | 'fee' | 'realized_pnl' | 'reset' | 'limit_rejected';
+  type: 'initial_funding' | 'order_fill' | 'fee' | 'realized_pnl' | 'reset' | 'limit_rejected' | 'withdrawal' | 'deposit';
   amount_units: string;
   balance_after_units: string;
   symbol?: string | null;
@@ -476,6 +476,145 @@ class ServerPaperTradingStore {
     this.transactions.set(cleanUserId, txList);
 
     return { account, transaction: resetTx };
+  }
+
+  /**
+   * Redeem / Cash-out balance to an external crypto wallet or bank account (simulated withdrawal).
+   * Strictly enforces 8-decimal integer arithmetic and immutable append-only ledger logging.
+   */
+  public async redeemBalance(
+    userId: string,
+    amountUsdt: number,
+    destinationAddress: string,
+    network: string = 'TRC-20'
+  ): Promise<{
+    success: boolean;
+    error?: string;
+    account?: PaperAccountRecord;
+    transaction?: PaperTransactionRecord;
+    txHash?: string;
+  }> {
+    const cleanUserId = userId || 'usr_celsius_demo';
+    const { account } = await this.getOrCreateAccount(cleanUserId);
+
+    if (isNaN(amountUsdt) || amountUsdt <= 0) {
+      return { success: false, error: 'Invalid redemption amount. Must be greater than 0 USDT.' };
+    }
+
+    if (!destinationAddress || destinationAddress.trim().length < 6) {
+      return { success: false, error: 'Invalid destination address. Please provide a valid wallet or account address.' };
+    }
+
+    const currentBalanceUnits = BigInt(account.balance_units);
+    const redeemAmountUnits = toBaseUnits(amountUsdt);
+
+    if (currentBalanceUnits < redeemAmountUnits) {
+      return {
+        success: false,
+        error: `Insufficient balance. Available: ${fromBaseUnits(currentBalanceUnits).toFixed(2)} USDT, Requested: ${amountUsdt.toFixed(2)} USDT.`,
+      };
+    }
+
+    const newBalanceUnits = currentBalanceUnits - redeemAmountUnits;
+    const now = new Date().toISOString();
+
+    account.balance_units = newBalanceUnits.toString();
+    account.updated_at = now;
+    this.accounts.set(cleanUserId, account);
+
+    // Simulated cryptographic transaction hash
+    const pseudoRandom = Math.random().toString(36).substring(2, 12) + Math.random().toString(36).substring(2, 12);
+    const txHash = `0x${pseudoRandom}${Date.now().toString(16)}`;
+
+    const redeemTx: PaperTransactionRecord = {
+      id: `tx_${Date.now()}_redeem`,
+      user_id: cleanUserId,
+      account_id: account.id,
+      order_id: null,
+      type: 'withdrawal',
+      amount_units: (-redeemAmountUnits).toString(),
+      balance_after_units: newBalanceUnits.toString(),
+      symbol: 'USDT',
+      details: {
+        destinationAddress: destinationAddress.trim(),
+        network,
+        txHash,
+        requestedAmount: amountUsdt,
+        feeAmount: 1.0,
+        status: 'confirmed',
+        explorerUrl: network.includes('TRC')
+          ? `https://tronscan.org/#/transaction/${txHash}`
+          : `https://etherscan.io/tx/${txHash}`,
+      },
+      created_at: now,
+    };
+
+    const txList = this.transactions.get(cleanUserId) || [];
+    txList.unshift(redeemTx);
+    this.transactions.set(cleanUserId, txList);
+
+    return {
+      success: true,
+      account,
+      transaction: redeemTx,
+      txHash,
+    };
+  }
+
+  /**
+   * Top-up / Deposit paper trading funds
+   */
+  public async quickDeposit(
+    userId: string,
+    amountUsdt: number,
+    method: string = 'Demo Voucher'
+  ): Promise<{
+    success: boolean;
+    error?: string;
+    account?: PaperAccountRecord;
+    transaction?: PaperTransactionRecord;
+  }> {
+    const cleanUserId = userId || 'usr_celsius_demo';
+    const { account } = await this.getOrCreateAccount(cleanUserId);
+
+    if (isNaN(amountUsdt) || amountUsdt <= 0) {
+      return { success: false, error: 'Invalid deposit amount.' };
+    }
+
+    const currentBalanceUnits = BigInt(account.balance_units);
+    const depositAmountUnits = toBaseUnits(amountUsdt);
+    const newBalanceUnits = currentBalanceUnits + depositAmountUnits;
+    const now = new Date().toISOString();
+
+    account.balance_units = newBalanceUnits.toString();
+    account.updated_at = now;
+    this.accounts.set(cleanUserId, account);
+
+    const depositTx: PaperTransactionRecord = {
+      id: `tx_${Date.now()}_deposit`,
+      user_id: cleanUserId,
+      account_id: account.id,
+      order_id: null,
+      type: 'deposit',
+      amount_units: depositAmountUnits.toString(),
+      balance_after_units: newBalanceUnits.toString(),
+      symbol: 'USDT',
+      details: {
+        method,
+        status: 'confirmed',
+      },
+      created_at: now,
+    };
+
+    const txList = this.transactions.get(cleanUserId) || [];
+    txList.unshift(depositTx);
+    this.transactions.set(cleanUserId, txList);
+
+    return {
+      success: true,
+      account,
+      transaction: depositTx,
+    };
   }
 
   /**
