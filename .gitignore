@@ -26,3 +26,9 @@ dist-ssr
 
 # graft's local graph cache — regenerable, not committed (run `graft build`).
 /graft/
+
+# Mobile & IPA build artifacts
+*.ipa
+Payload/
+build_output/
+*.tsbuildinfo

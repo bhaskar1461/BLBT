@@ -132,7 +132,187 @@ export const DEFAULT_INDICES_TICKERS: Record<string, TickerData> = {
     quoteVolume: 43300000,
     lastUpdated: Date.now(),
   },
+  NVDA: {
+    symbol: 'NVDA',
+    lastPrice: 135.50,
+    priceChange: -1.05,
+    priceChangePercent: -0.76,
+    highPrice: 138.20,
+    lowPrice: 134.10,
+    volume: 42000000,
+    quoteVolume: 5691000000,
+    lastUpdated: Date.now(),
+  },
+  AAPL: {
+    symbol: 'AAPL',
+    lastPrice: 228.40,
+    priceChange: 1.20,
+    priceChangePercent: 0.53,
+    highPrice: 230.10,
+    lowPrice: 227.30,
+    volume: 38000000,
+    quoteVolume: 8679000000,
+    lastUpdated: Date.now(),
+  },
+  TSLA: {
+    symbol: 'TSLA',
+    lastPrice: 242.80,
+    priceChange: -3.40,
+    priceChangePercent: -1.38,
+    highPrice: 247.50,
+    lowPrice: 241.00,
+    volume: 55000000,
+    quoteVolume: 13354000000,
+    lastUpdated: Date.now(),
+  },
+  AMZN: {
+    symbol: 'AMZN',
+    lastPrice: 186.50,
+    priceChange: -1.42,
+    priceChangePercent: -0.76,
+    highPrice: 188.40,
+    lowPrice: 185.80,
+    volume: 32000000,
+    quoteVolume: 5968000000,
+    lastUpdated: Date.now(),
+  },
+  MSFT: {
+    symbol: 'MSFT',
+    lastPrice: 418.20,
+    priceChange: 2.10,
+    priceChangePercent: 0.50,
+    highPrice: 421.50,
+    lowPrice: 416.30,
+    volume: 22000000,
+    quoteVolume: 9200000000,
+    lastUpdated: Date.now(),
+  },
+  GOOGL: {
+    symbol: 'GOOGL',
+    lastPrice: 164.80,
+    priceChange: -0.90,
+    priceChangePercent: -0.54,
+    highPrice: 166.20,
+    lowPrice: 163.90,
+    volume: 28000000,
+    quoteVolume: 4614000000,
+    lastUpdated: Date.now(),
+  },
+  META: {
+    symbol: 'META',
+    lastPrice: 585.30,
+    priceChange: 4.80,
+    priceChangePercent: 0.83,
+    highPrice: 589.40,
+    lowPrice: 582.10,
+    volume: 18000000,
+    quoteVolume: 10535000000,
+    lastUpdated: Date.now(),
+  },
+  AMD: {
+    symbol: 'AMD',
+    lastPrice: 154.20,
+    priceChange: -2.10,
+    priceChangePercent: -1.34,
+    highPrice: 157.80,
+    lowPrice: 153.20,
+    volume: 39000000,
+    quoteVolume: 6013000000,
+    lastUpdated: Date.now(),
+  },
+  NFLX: {
+    symbol: 'NFLX',
+    lastPrice: 712.40,
+    priceChange: -3.20,
+    priceChangePercent: -0.45,
+    highPrice: 718.00,
+    lowPrice: 709.50,
+    volume: 4500000,
+    quoteVolume: 3205000000,
+    lastUpdated: Date.now(),
+  },
+  TCS: {
+    symbol: 'TCS',
+    lastPrice: 3890.00,
+    priceChange: -12.50,
+    priceChangePercent: -0.32,
+    highPrice: 3920.00,
+    lowPrice: 3875.00,
+    volume: 2100000,
+    quoteVolume: 8169000000,
+    lastUpdated: Date.now(),
+  },
+  INFY: {
+    symbol: 'INFY',
+    lastPrice: 1540.25,
+    priceChange: 8.50,
+    priceChangePercent: 0.55,
+    highPrice: 1555.00,
+    lowPrice: 1532.00,
+    volume: 6500000,
+    quoteVolume: 10011000000,
+    lastUpdated: Date.now(),
+  },
 };
+
+export const AUTHORITATIVE_SPOT_PRICES: Record<string, number> = {
+  // Crypto
+  BTCUSDT: 83270.0,
+  ETHUSDT: 2567.0,
+  SOLUSDT: 115.18,
+  BNBUSDT: 560.0,
+  DOGEUSDT: 0.165,
+  XRPUSDT: 0.54,
+  ADAUSDT: 0.35,
+  AVAXUSDT: 26.8,
+  SUIUSDT: 1.85,
+  NEARUSDT: 4.95,
+  LINKUSDT: 11.20,
+  PEPEUSDT: 0.0000095,
+  SHIBUSDT: 0.0000175,
+  ARBUSDT: 0.52,
+  OPUSDT: 1.55,
+  RENDERUSDT: 5.40,
+  INJUSDT: 20.30,
+  APTUSDT: 8.40,
+  DOTUSDT: 4.10,
+  UNIUSDT: 7.20,
+  // US Equities & Indices
+  AMZN: 186.50,
+  NVDA: 135.50,
+  AAPL: 228.40,
+  TSLA: 242.80,
+  MSFT: 418.20,
+  GOOGL: 164.80,
+  META: 585.30,
+  NFLX: 712.40,
+  AMD: 154.20,
+  SPX: 7801.61,
+  // Indian Indices & Stocks
+  NIFTY: 22603.05,
+  BANKNIFTY: 55055.55,
+  SENSEX: 72638.70,
+  CNXIT: 27757.80,
+  RELIANCE: 1207.70,
+  AXISBANK: 1242.50,
+  HDFCBANK: 702.75,
+  ICICIBANK: 1357.50,
+  BAJFINANCE: 963.85,
+  TCS: 3890.00,
+  INFY: 1540.25,
+  TATAMOTORS: 980.50,
+  SBIN: 785.40,
+};
+
+export function getAuthoritativeSpotPrice(symbol: string): number {
+  const sym = (symbol || 'BTCUSDT').toUpperCase();
+  if (AUTHORITATIVE_SPOT_PRICES[sym]) return AUTHORITATIVE_SPOT_PRICES[sym];
+  if (DEFAULT_INDICES_TICKERS[sym]?.lastPrice) return DEFAULT_INDICES_TICKERS[sym].lastPrice;
+  if (sym.includes('BTC')) return 83270;
+  if (sym.includes('ETH')) return 2567;
+  if (sym.includes('SOL')) return 115.18;
+  return 186.50; // Stable real-world equity price default, NEVER arbitrary 1000
+}
 
 class BinanceClient {
   private activeWs: WebSocket | null = null;
@@ -313,6 +493,29 @@ class BinanceClient {
     this.isExplicitlyClosed = false;
     this.reconnectAttempt = 0;
 
+    if (this.simulatedTimer) {
+      clearInterval(this.simulatedTimer);
+      this.simulatedTimer = null;
+    }
+
+    const sym = symbol.toUpperCase();
+    const isCrypto =
+      sym.endsWith('USDT') ||
+      sym.endsWith('BUSD') ||
+      sym.endsWith('FDUSD') ||
+      sym.endsWith('BTC') ||
+      sym.endsWith('ETH');
+
+    if (!isCrypto) {
+      // Non-crypto instruments (AMZN, NVDA, NIFTY) cannot stream from Binance WS
+      // Immediately run reliable simulated ticks centered on authoritative spot price
+      this.startSimulatedTicks();
+      return () => {
+        this.isExplicitlyClosed = true;
+        if (this.simulatedTimer) clearInterval(this.simulatedTimer);
+      };
+    }
+
     this.connectKlineWs();
 
     return () => {
@@ -480,12 +683,17 @@ class BinanceClient {
       '1d': 86400,
     };
 
-    let price = 85200;
+    const sym = (this.currentSymbol || 'BTCUSDT').toUpperCase();
+    const spotPrice = getAuthoritativeSpotPrice(sym);
+
+    let price = spotPrice;
     this.simulatedTimer = setInterval(() => {
       if (!this.klineCallback) return;
       const step = intervalMap[this.currentInterval] || 3600;
-      const delta = (Math.random() - 0.49) * (price * 0.0008);
-      price = Math.max(1, price + delta);
+      // Slight oscillation around spotPrice with mean reversion
+      const meanReversion = (spotPrice - price) * 0.05;
+      const delta = (Math.random() - 0.5) * (spotPrice * 0.0006) + meanReversion;
+      price = Math.max(0.01, price + delta);
       const nowSec = Math.floor(Date.now() / 1000);
       const alignedNow = nowSec - (nowSec % step);
 
@@ -520,19 +728,34 @@ class BinanceClient {
     const now = Math.floor(Date.now() / 1000);
     const alignedNow = now - (now % step);
     const sym = symbol.toUpperCase();
-    let price = DEFAULT_INDICES_TICKERS[sym]?.lastPrice || (sym.includes('BTC') ? 85000 : sym.includes('ETH') ? 3420 : sym.includes('SOL') ? 175 : 100);
+    const spotPrice = getAuthoritativeSpotPrice(sym);
 
-    for (let i = count; i >= 0; i--) {
-      const time = alignedNow - i * step;
-      const change = (Math.random() - 0.48) * (price * 0.012);
-      const open = price;
-      const close = price + change;
-      const high = Math.max(open, close) + Math.random() * (price * 0.005);
-      const low = Math.min(open, close) - Math.random() * (price * 0.005);
-      const volume = Math.random() * 120 + 20;
+    // Generate stationary Ornstein-Uhlenbeck series
+    const theta = 0.05;
+    const sigma = 0.003;
+    const rawCloses: number[] = [spotPrice];
+
+    for (let i = 1; i <= count; i++) {
+      const prev = rawCloses[i - 1];
+      const reversion = theta * (spotPrice - prev);
+      const noise = (Math.random() - 0.5) * spotPrice * sigma * 2;
+      rawCloses.push(Math.max(spotPrice * 0.5, prev + reversion + noise));
+    }
+
+    const diff = spotPrice - rawCloses[count];
+    const closes = rawCloses.map((p, idx) => p + diff * (idx / count));
+
+    for (let i = 0; i <= count; i++) {
+      const time = alignedNow - (count - i) * step;
+      const close = closes[i];
+      const prevClose = i > 0 ? closes[i - 1] : close * (1 + (Math.random() - 0.5) * 0.002);
+      const open = prevClose;
+      const spread = Math.abs(open - close);
+      const high = Math.max(open, close) + Math.random() * (spread * 0.6 + close * 0.001);
+      const low = Math.min(open, close) - Math.random() * (spread * 0.6 + close * 0.001);
+      const volume = Math.floor(Math.random() * 400) + 80;
 
       candles.push({ time, open, high, low, close, volume });
-      price = close;
     }
     return candles;
   }

@@ -72,30 +72,30 @@ export function TerminalSentimentStrip({
   return (
     <div
       data-testid="terminal-sentiment-strip"
-      className={`h-6 min-h-[24px] bg-surface/80 border-b border-subtle/60 px-3 flex items-center justify-between text-[11px] font-mono text-muted select-none transition-colors ${className}`}
+      className={`h-[22px] min-h-[22px] bg-[#131722] border-b border-[#2a2e39]/50 px-3 flex items-center justify-between text-[11px] font-mono text-[#787b86] select-none transition-colors ${className}`}
     >
       <div className="flex items-center gap-2 overflow-hidden truncate">
         {data.isCohortSufficient ? (
           <>
-            <span className="flex items-center gap-1 text-primary/80 font-medium shrink-0">
-              <Users size={12} className="text-muted" />
+            <span className="flex items-center gap-1 text-[#787b86] font-medium shrink-0">
+              <Users size={12} className="text-[#787b86]" />
               <span>Retail paper traders:</span>
             </span>
 
             <span className="truncate">
-              <span className={data.longPct >= 60 ? 'text-amber-400 font-semibold' : 'text-main'}>
+              <span className={data.longPct >= 60 ? 'text-amber-400 font-semibold' : 'text-[#d1d4dc]'}>
                 {data.longPct}% long
               </span>
               {' · '}
               <span>
                 crowd has been wrong{' '}
                 <strong className="text-amber-400 font-medium">{data.crowdWrong}</strong> of last{' '}
-                <strong>{data.crowdTotal}</strong> significant moves on this asset.
+                <strong className="text-[#d1d4dc]">{data.crowdTotal}</strong> significant moves on this asset.
               </span>
             </span>
           </>
         ) : (
-          <span className="flex items-center gap-1.5 text-muted truncate">
+          <span className="flex items-center gap-1.5 text-[#787b86] truncate">
             <ShieldAlert size={12} className="text-amber-500/80 shrink-0" />
             <span className="truncate">{data.stripText}</span>
           </span>
@@ -104,7 +104,7 @@ export function TerminalSentimentStrip({
 
       <Link
         href={`/sentiment?symbol=${(symbol || 'BTCUSDT').toUpperCase()}`}
-        className="flex items-center gap-0.5 text-muted hover:text-primary transition-colors shrink-0 ml-2 group"
+        className="flex items-center gap-0.5 text-[#787b86] hover:text-[#2962ff] transition-colors shrink-0 ml-2 group"
         title="View comprehensive sentiment index and contrarian history"
       >
         <span className="text-[10px] tracking-tight group-hover:underline">View Sentiment</span>

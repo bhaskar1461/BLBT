@@ -32,6 +32,17 @@ export const POPULAR_SYMBOLS: SymbolInfo[] = [
   { symbol: 'HDFCBANK', baseAsset: 'HDFCBANK', quoteAsset: 'INR', name: 'HDFC Bank', category: 'Stock', pricePrecision: 2, minQty: 1 },
   { symbol: 'ICICIBANK', baseAsset: 'ICICIBANK', quoteAsset: 'INR', name: 'ICICI Bank', category: 'Stock', pricePrecision: 2, minQty: 1 },
   { symbol: 'BAJFINANCE', baseAsset: 'BAJFINANCE', quoteAsset: 'INR', name: 'Bajaj Finance', category: 'Stock', pricePrecision: 2, minQty: 1 },
+  { symbol: 'TCS', baseAsset: 'TCS', quoteAsset: 'INR', name: 'Tata Consultancy Services', category: 'Stock', pricePrecision: 2, minQty: 1 },
+  { symbol: 'INFY', baseAsset: 'INFY', quoteAsset: 'INR', name: 'Infosys Limited', category: 'Stock', pricePrecision: 2, minQty: 1 },
+  // US Equities
+  { symbol: 'AMZN', baseAsset: 'AMZN', quoteAsset: 'USD', name: 'Amazon.com, Inc.', category: 'Stock', pricePrecision: 2, minQty: 1 },
+  { symbol: 'NVDA', baseAsset: 'NVDA', quoteAsset: 'USD', name: 'NVIDIA Corporation', category: 'Stock', pricePrecision: 2, minQty: 1 },
+  { symbol: 'AAPL', baseAsset: 'AAPL', quoteAsset: 'USD', name: 'Apple Inc.', category: 'Stock', pricePrecision: 2, minQty: 1 },
+  { symbol: 'TSLA', baseAsset: 'TSLA', quoteAsset: 'USD', name: 'Tesla, Inc.', category: 'Stock', pricePrecision: 2, minQty: 1 },
+  { symbol: 'MSFT', baseAsset: 'MSFT', quoteAsset: 'USD', name: 'Microsoft Corporation', category: 'Stock', pricePrecision: 2, minQty: 1 },
+  { symbol: 'GOOGL', baseAsset: 'GOOGL', quoteAsset: 'USD', name: 'Alphabet Inc.', category: 'Stock', pricePrecision: 2, minQty: 1 },
+  { symbol: 'META', baseAsset: 'META', quoteAsset: 'USD', name: 'Meta Platforms, Inc.', category: 'Stock', pricePrecision: 2, minQty: 1 },
+  { symbol: 'AMD', baseAsset: 'AMD', quoteAsset: 'USD', name: 'Advanced Micro Devices', category: 'Stock', pricePrecision: 2, minQty: 1 },
 ];
 
 export const DEFAULT_WATCHLIST = ['NIFTY', 'BANKNIFTY', 'SENSEX', 'CNXIT', 'SPX', 'BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'RELIANCE', 'AXISBANK', 'HDFCBANK', 'ICICIBANK', 'BAJFINANCE'];

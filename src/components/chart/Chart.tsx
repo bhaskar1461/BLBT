@@ -18,6 +18,7 @@ import { calculateEMA, calculateSMA } from '@/lib/indicators';
 import { formatPrice, formatNumber } from '@/lib/utils';
 import { getSymbolInfo } from '@/services/symbols';
 import type { Candle } from '@/types/chart';
+import { ChartDrawingOverlay } from './ChartDrawingOverlay';
 
 export const Chart: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -389,6 +390,9 @@ export const Chart: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Interactive Drawing Overlay & Action Bar */}
+      <ChartDrawingOverlay />
 
       <div ref={containerRef} className="w-full h-full" />
     </div>

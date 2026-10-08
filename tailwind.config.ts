@@ -10,24 +10,24 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        canvas: '#0b0e14',
-        surface: '#10141e',
-        panel: '#131826',
-        card: '#151a27',
-        elevated: '#1b2233',
-        hover: '#222b40',
-        input: '#0e121b',
-        subtle: '#1e2638',
-        cardborder: '#252f45',
+        canvas: '#131722',
+        surface: '#1e222d',
+        panel: '#171b26',
+        card: '#1e222d',
+        elevated: '#2a2e39',
+        hover: '#2a2e39',
+        input: '#131722',
+        subtle: '#2a2e39',
+        cardborder: '#2a2e39',
         bull: {
-          DEFAULT: '#22C55E',
-          glow: 'rgba(34, 197, 94, 0.25)',
-          bg: 'rgba(34, 197, 94, 0.12)',
+          DEFAULT: '#089981',
+          glow: 'rgba(8, 153, 129, 0.25)',
+          bg: 'rgba(8, 153, 129, 0.12)',
         },
         bear: {
-          DEFAULT: '#EF4444',
-          glow: 'rgba(239, 68, 68, 0.25)',
-          bg: 'rgba(239, 68, 68, 0.12)',
+          DEFAULT: '#f23645',
+          glow: 'rgba(242, 54, 69, 0.25)',
+          bg: 'rgba(242, 54, 69, 0.12)',
         },
         primary: {
           DEFAULT: '#2962ff',
@@ -38,9 +38,15 @@ const config: Config = {
           DEFAULT: '#f59e0b',
           bg: 'rgba(245, 158, 11, 0.12)',
         },
-        muted: '#94a3b8',
-        faint: '#64748b',
-        main: '#f0f4f8',
+        muted: '#787b86',
+        faint: '#50535e',
+        main: '#d1d4dc',
+      },
+      borderRadius: {
+        sm: '4px',
+        md: '6px',
+        lg: '8px',
+        xl: '12px',
       },
       fontFamily: {
         sans: [

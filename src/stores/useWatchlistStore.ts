@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import type { TickerData } from '../types/chart';
 import { DEFAULT_WATCHLIST } from '../services/symbols';
+import { DEFAULT_INDICES_TICKERS } from '../lib/binance';
 
 interface WatchlistState {
   watchlist: string[];
@@ -17,8 +18,8 @@ interface WatchlistState {
 
 export const useWatchlistStore = create<WatchlistState>((set) => ({
   watchlist: DEFAULT_WATCHLIST,
-  tickers: {},
-  favorites: ['BTCUSDT', 'ETHUSDT', 'SOLUSDT'],
+  tickers: { ...DEFAULT_INDICES_TICKERS },
+  favorites: ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'AMZN', 'NVDA'],
 
   setWatchlist: (watchlist) => set({ watchlist }),
 

@@ -3,6 +3,14 @@ import type { Candle, Timeframe, IndicatorConfig, CrosshairData } from '../types
 import type { WsStatus } from '../lib/binance';
 import { DEFAULT_INDICATORS } from '../services/storage';
 
+export interface ChartDrawing {
+  id: string;
+  tool: string;
+  color?: string;
+  points: Array<{ time: number; price: number }>;
+  text?: string;
+}
+
 interface ChartState {
   activeSymbol: string;
   timeframe: Timeframe;
@@ -14,6 +22,13 @@ interface ChartState {
   connectionStatus: WsStatus;
   latencyMs: number;
 
+  // Drawing tools state
+  activeDrawingTool: string;
+  isMagnetMode: boolean;
+  isDrawingsLocked: boolean;
+  isDrawingsHidden: boolean;
+  drawings: ChartDrawing[];
+
   setActiveSymbol: (symbol: string) => void;
   setTimeframe: (tf: Timeframe) => void;
   setChartType: (type: 'candles' | 'line') => void;
@@ -23,6 +38,15 @@ interface ChartState {
   setIndicators: (indicators: IndicatorConfig) => void;
   setCrosshairData: (data: CrosshairData | null) => void;
   setConnectionStatus: (status: WsStatus, latency?: number) => void;
+
+  // Drawing actions
+  setActiveDrawingTool: (tool: string) => void;
+  setMagnetMode: (active: boolean) => void;
+  setDrawingsLocked: (locked: boolean) => void;
+  setDrawingsHidden: (hidden: boolean) => void;
+  addDrawing: (drawing: ChartDrawing) => void;
+  removeDrawing: (id: string) => void;
+  clearDrawings: () => void;
 }
 
 export const useChartStore = create<ChartState>((set) => ({
@@ -36,11 +60,27 @@ export const useChartStore = create<ChartState>((set) => ({
   connectionStatus: 'connecting',
   latencyMs: 24,
 
-  setActiveSymbol: (activeSymbol) => set({ activeSymbol }),
+  // Default drawing state
+  activeDrawingTool: 'crosshair',
+  isMagnetMode: false,
+  isDrawingsLocked: false,
+  isDrawingsHidden: false,
+  drawings: [],
+
+  setActiveSymbol: (activeSymbol) =>
+    set({ activeSymbol, candles: [], isLoading: true, drawings: [], activeDrawingTool: 'crosshair' }),
   setTimeframe: (timeframe) => set({ timeframe }),
   setChartType: (chartType) => set({ chartType }),
   setCandles: (candles) => set({ candles, isLoading: false }),
   setIsLoading: (isLoading) => set({ isLoading }),
+
+  setActiveDrawingTool: (activeDrawingTool) => set({ activeDrawingTool }),
+  setMagnetMode: (isMagnetMode) => set({ isMagnetMode }),
+  setDrawingsLocked: (isDrawingsLocked) => set({ isDrawingsLocked }),
+  setDrawingsHidden: (isDrawingsHidden) => set({ isDrawingsHidden }),
+  addDrawing: (drawing) => set((s) => ({ drawings: [...s.drawings, drawing] })),
+  removeDrawing: (id) => set((s) => ({ drawings: s.drawings.filter((d) => d.id !== id) })),
+  clearDrawings: () => set({ drawings: [], activeDrawingTool: 'crosshair' }),
 
   updateCandle: (candle, _isClosed) =>
     set((state) => {

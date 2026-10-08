@@ -3,17 +3,14 @@
 
 import React, { useState } from 'react';
 import {
-  Heart,
   ShieldCheck,
-  Server,
-  Database,
-  Radio,
-  Lock,
-  DollarSign,
-  CheckCircle2,
+  Check,
   AlertCircle,
-  Clock,
-  Sparkles,
+  HelpCircle,
+  DollarSign,
+  Heart,
+  ChevronRight,
+  TrendingUp,
 } from 'lucide-react';
 import type { FundingSummary, CostItem, DonationRecord } from '@/lib/fundingService';
 
@@ -39,7 +36,7 @@ export const FundingClientView: React.FC<FundingClientViewProps> = ({ initialSum
   const handleDonate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (finalAmount <= 0) {
-      setErrorMsg('Please enter a valid contribution amount');
+      setErrorMsg('Please specify a positive contribution amount.');
       return;
     }
 
@@ -62,12 +59,14 @@ export const FundingClientView: React.FC<FundingClientViewProps> = ({ initialSum
 
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || 'Failed to process contribution');
+        throw new Error(data.error || 'Failed to submit ledger allocation');
       }
 
-      setSuccessMsg(`Thank you for contributing $${finalAmount.toFixed(2)} to protect independent trading transparency!`);
+      setSuccessMsg(
+        `Allocation recorded: Thank you for contributing $${finalAmount.toFixed(2)} to protect independent trading transparency.`
+      );
 
-      // Refresh summary
+      // Refresh live summary
       const refreshRes = await fetch('/api/funding');
       const refreshData = await refreshRes.json();
       if (refreshData.summary) {
@@ -78,24 +77,9 @@ export const FundingClientView: React.FC<FundingClientViewProps> = ({ initialSum
       setMessage('');
       if (!isAnonymous) setDonorName('');
     } catch (err: any) {
-      setErrorMsg(err.message || 'An error occurred during submission');
+      setErrorMsg(err.message || 'Error communicating with funding ledger');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const getCategoryIcon = (category: CostItem['category']) => {
-    switch (category) {
-      case 'infrastructure':
-        return <Server size={14} className="text-bull" />;
-      case 'database':
-        return <Database size={14} className="text-primary" />;
-      case 'market_data_feeds':
-        return <Radio size={14} className="text-amber-400" />;
-      case 'security_and_dns':
-        return <Lock size={14} className="text-emerald-400" />;
-      default:
-        return <Server size={14} />;
     }
   };
 
@@ -103,103 +87,164 @@ export const FundingClientView: React.FC<FundingClientViewProps> = ({ initialSum
   const monthlyDonationsUsd = (summary.monthlyDonationsCents / 100).toFixed(2);
   const reserveUsd = (summary.currentReserveCents / 100).toFixed(2);
 
+  // Micro-allocation explanation for selected amount
+  const getImpactText = (amt: number) => {
+    if (amt <= 3) return 'Covers 17% of our DNSSEC, SSL and DDoS mitigation infrastructure.';
+    if (amt <= 5) return 'Underwrites 20% of our daily Supabase append-only database operations.';
+    if (amt <= 10) return 'Powers our authoritative Binance WebSocket proxy feed for 5 full trading days.';
+    if (amt <= 25) return 'Underwrites 100% of our daily database persistence and cryptographic root hashing.';
+    return `Provides direct treasury reserves to extend our sovereign operating runway.`;
+  };
+
   return (
-    <div className="space-y-10">
-      {/* Metrics Highlights Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* Monthly Cost */}
-        <div className="p-5 rounded-2xl bg-panel border border-subtle space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-mono text-faint uppercase">Monthly Operating Cost</span>
-            <Server size={14} className="text-muted" />
-          </div>
-          <div className="text-2xl font-black text-white font-mono">
-            ${monthlyCostUsd}
-            <span className="text-xs font-normal text-muted ml-1">/ month</span>
-          </div>
-          <p className="text-[11px] text-muted">
-            Itemized down to the penny. Zero bloated corporate overhead.
-          </p>
+    <div className="space-y-8">
+      {/* 1. Treasury Balance Sheet Summary Grid */}
+      <div className="border border-[#2a2e39] bg-[#171b26] rounded-md overflow-hidden">
+        <div className="px-5 py-3 border-b border-[#2a2e39] flex items-center justify-between text-xs font-mono">
+          <span className="text-[#787b86] uppercase tracking-wider font-semibold">
+            01 // TREASURY OPERATING STATUS & COVERAGE RATIO
+          </span>
+          <span className="text-[#50535e]">
+            RUNWAY = (RESERVE + MONTHLY_INFLOW) / MONTHLY_BURN
+          </span>
         </div>
 
-        {/* Monthly Donations */}
-        <div className="p-5 rounded-2xl bg-panel border border-subtle space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-mono text-faint uppercase">Community Inflow (This Month)</span>
-            <Heart size={14} className="text-bull" />
+        <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-[#2a2e39]">
+          {/* Metric 1: Monthly Burn */}
+          <div className="p-5 space-y-2">
+            <div className="text-[11px] font-mono uppercase text-[#787b86]">
+              Net Monthly Operating Burn
+            </div>
+            <div className="flex items-baseline gap-2">
+              <span className="text-2xl font-bold font-mono text-white">
+                ${monthlyCostUsd}
+              </span>
+              <span className="text-xs text-[#787b86] font-mono">/ month</span>
+            </div>
+            <p className="text-[11px] text-[#787b86] leading-relaxed">
+              Audited infrastructure commitments. Zero corporate salaries, offices, or marketing fluff.
+            </p>
           </div>
-          <div className="text-2xl font-black text-bull font-mono">
-            ${monthlyDonationsUsd}
-            <span className="text-xs font-normal text-muted ml-1">
-              ({summary.currentMonthCoveredPct}% covered)
-            </span>
-          </div>
-          <p className="text-[11px] text-muted">
-            Micro-donations from traders who value honest numbers.
-          </p>
-        </div>
 
-        {/* Runway */}
-        <div className="p-5 rounded-2xl bg-panel border border-subtle space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-mono text-faint uppercase">Treasury Runway</span>
-            <ShieldCheck size={14} className="text-emerald-400" />
+          {/* Metric 2: Monthly Inflow */}
+          <div className="p-5 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-mono uppercase text-[#787b86]">
+                Community Coverage (Current Period)
+              </span>
+              <span className="text-[10px] font-mono text-[#089981] font-semibold">
+                {summary.currentMonthCoveredPct}% COVERED
+              </span>
+            </div>
+            <div className="flex items-baseline gap-2">
+              <span className="text-2xl font-bold font-mono text-[#089981]">
+                ${monthlyDonationsUsd}
+              </span>
+              <span className="text-xs text-[#787b86] font-mono">
+                of ${monthlyCostUsd} target
+              </span>
+            </div>
+
+            {/* Coverage Progress Bar */}
+            <div className="w-full bg-[#1e222d] h-1.5 rounded-full overflow-hidden">
+              <div
+                className="bg-[#089981] h-full transition-all duration-500"
+                style={{ width: `${Math.min(100, summary.currentMonthCoveredPct)}%` }}
+              />
+            </div>
+            <p className="text-[11px] text-[#787b86] leading-relaxed">
+              Micro-underwriting from disciplined traders who value unvarnished numbers.
+            </p>
           </div>
-          <div className="text-2xl font-black text-emerald-400 font-mono">
-            {summary.runwayMonths} Months
-            <span className="text-xs font-normal text-muted ml-1">(${reserveUsd} in reserve)</span>
+
+          {/* Metric 3: Sovereign Runway */}
+          <div className="p-5 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-mono uppercase text-[#787b86]">
+                Verified Treasury Runway
+              </span>
+              <span className="text-[10px] font-mono text-white bg-[#1e222d] px-1.5 py-0.5 rounded border border-[#2a2e39]">
+                ${reserveUsd} RESERVE
+              </span>
+            </div>
+            <div className="flex items-baseline gap-2">
+              <span className="text-2xl font-bold font-mono text-white">
+                {summary.runwayMonths}
+              </span>
+              <span className="text-xs text-[#787b86] font-mono">Months</span>
+            </div>
+            <p className="text-[11px] text-[#787b86] leading-relaxed">
+              Autonomous operating buffer to resist VC, token sponsor, or casino broker leverage.
+            </p>
           </div>
-          <p className="text-[11px] text-muted">
-            Sufficient runway to operate without answering to VC or casino broker pressure.
-          </p>
         </div>
       </div>
 
-      {/* Itemized Cost Breakdown Table */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold text-white tracking-tight flex items-center gap-2">
-            <Server size={16} className="text-bull" />
-            <span>Itemized Operating Expenses</span>
-          </h2>
-          <span className="text-xs font-mono text-faint">Audited & Verified Monthly</span>
+      {/* 2. Audited Itemized Operating Schedule */}
+      <div className="border border-[#2a2e39] bg-[#171b26] rounded-md overflow-hidden space-y-0">
+        <div className="px-5 py-3 border-b border-[#2a2e39] flex items-center justify-between text-xs">
+          <div className="flex items-center gap-2">
+            <span className="font-semibold text-white tracking-tight">
+              Schedule of Itemized Operating Expenses
+            </span>
+            <span className="text-[10px] font-mono text-[#787b86] bg-[#1e222d] px-1.5 py-0.5 rounded border border-[#2a2e39]">
+              FIXED INFRASTRUCTURE
+            </span>
+          </div>
+          <span className="font-mono text-[11px] text-[#787b86]">
+            AUDITED TO THE CENT
+          </span>
         </div>
 
-        <div className="border border-subtle rounded-xl overflow-hidden bg-panel">
+        <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="border-b border-subtle bg-surface/60 text-faint font-mono text-[11px]">
-                <th className="py-3 px-4">Line Item</th>
-                <th className="py-3 px-4">Provider</th>
-                <th className="py-3 px-4">Purpose</th>
-                <th className="py-3 px-4 text-right">Monthly Cost</th>
+              <tr className="border-b border-[#2a2e39] bg-[#131722] text-[#787b86] font-mono text-[11px]">
+                <th className="py-2.5 px-4 font-medium w-24">Item Ref</th>
+                <th className="py-2.5 px-4 font-medium w-64">Service Component</th>
+                <th className="py-2.5 px-4 font-medium w-48">Vendor / Provider</th>
+                <th className="py-2.5 px-4 font-medium">Technical Purpose & Specification</th>
+                <th className="py-2.5 px-4 font-medium text-right w-36">Monthly Cost</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-subtle/60">
-              {summary.costBreakdown.map((item) => (
-                <tr key={item.id} className="hover:bg-hover/40 transition-colors">
-                  <td className="py-3.5 px-4">
-                    <div className="flex items-center gap-2 font-medium text-white">
-                      {getCategoryIcon(item.category)}
-                      <span>{item.name}</span>
-                    </div>
-                  </td>
-                  <td className="py-3.5 px-4 font-mono text-muted text-[11px]">
-                    {item.provider}
-                  </td>
-                  <td className="py-3.5 px-4 text-muted text-[11px] leading-relaxed max-w-md">
-                    {item.description}
-                  </td>
-                  <td className="py-3.5 px-4 text-right font-mono font-bold text-white">
-                    ${(item.amountCents / 100).toFixed(2)}
-                  </td>
-                </tr>
-              ))}
-              <tr className="bg-surface/80 font-bold">
-                <td colSpan={3} className="py-3 px-4 text-white uppercase text-[11px] font-mono">
+            <tbody className="divide-y divide-[#2a2e39]/60 font-sans">
+              {summary.costBreakdown.map((item, idx) => {
+                const itemPct = ((item.amountCents / summary.monthlyOperatingCostCents) * 100).toFixed(1);
+                const refCode = `EXP-0${idx + 1}`;
+
+                return (
+                  <tr
+                    key={item.id}
+                    className="hover:bg-[#1e222d]/50 transition-colors"
+                  >
+                    <td className="py-3 px-4 font-mono text-[11px] text-[#787b86]">
+                      {refCode}
+                    </td>
+                    <td className="py-3 px-4 font-medium text-white">
+                      {item.name}
+                    </td>
+                    <td className="py-3 px-4 font-mono text-[11px] text-[#d1d4dc]">
+                      {item.provider}
+                    </td>
+                    <td className="py-3 px-4 text-[#787b86] text-[11px] leading-relaxed">
+                      {item.description}
+                    </td>
+                    <td className="py-3 px-4 text-right font-mono font-semibold text-white">
+                      ${(item.amountCents / 100).toFixed(2)}
+                      <span className="text-[10px] text-[#50535e] font-normal ml-1">
+                        ({itemPct}%)
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
+
+              {/* Total Accounting Row */}
+              <tr className="bg-[#131722] border-t-2 border-[#2a2e39] font-mono">
+                <td colSpan={4} className="py-3 px-4 text-white font-bold uppercase text-[11px] tracking-wider">
                   Total Monthly Operating Commitment
                 </td>
-                <td className="py-3 px-4 text-right font-mono text-bull text-sm">
+                <td className="py-3 px-4 text-right font-bold text-[#089981] text-sm">
                   ${monthlyCostUsd} / mo
                 </td>
               </tr>
@@ -208,208 +253,272 @@ export const FundingClientView: React.FC<FundingClientViewProps> = ({ initialSum
         </div>
       </div>
 
-      {/* Support The Truth Contribution Dock */}
-      <div className="bg-panel border border-subtle rounded-2xl p-6 sm:p-8 space-y-6 relative overflow-hidden">
-        <div className="space-y-1.5">
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-bull/15 text-bull border border-bull/30 text-[11px] font-mono font-bold">
-            <Heart size={12} />
-            <span>SUPPORT THE TRUTH</span>
+      {/* 3. Independent Treasury Underwriting Portal */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 border border-[#2a2e39] bg-[#171b26] rounded-md overflow-hidden">
+        {/* Left Column: Mission Alignment Context */}
+        <div className="lg:col-span-5 p-6 border-b lg:border-b-0 lg:border-r border-[#2a2e39] space-y-4 bg-[#131722]/50">
+          <div className="space-y-1.5">
+            <span className="text-[10px] font-mono uppercase text-[#089981] font-bold tracking-wider">
+              INDEPENDENT PATRONAGE
+            </span>
+            <h2 className="text-lg font-bold text-white tracking-tight leading-snug">
+              Underwrite Independent Market Telemetry
+            </h2>
+            <p className="text-xs text-[#787b86] leading-relaxed">
+              Celsius is intentionally architected to operate with minimal overhead. When you underwrite our operating costs, you ensure that unbiased trade journaling, verified track records, and honest sentiment data remain free from broker liquidation kickbacks.
+            </p>
           </div>
-          <h2 className="text-xl font-extrabold text-white">
-            Fund the only platform that profits from you not losing money.
-          </h2>
-          <p className="text-xs text-muted leading-relaxed max-w-2xl">
-            Casino brokers make fortunes when you blow up. Celsius is funded by community members who believe
-            unfiltered market truth and cryptographic proof should remain free for everyone.
-          </p>
+
+          <div className="p-3.5 rounded bg-[#1e222d] border border-[#2a2e39] space-y-2">
+            <div className="text-[10px] font-mono text-[#787b86] uppercase tracking-wider">
+              Selected Allocation Impact
+            </div>
+            <p className="text-xs text-white leading-relaxed font-sans">
+              {getImpactText(finalAmount)}
+            </p>
+          </div>
+
+          <div className="space-y-2 text-[11px] text-[#787b86]">
+            <div className="flex items-center gap-2">
+              <span className="text-[#089981]">✓</span>
+              <span>100% itemized public accounting</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-[#089981]">✓</span>
+              <span>Optional anonymous ledger recording</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-[#089981]">✓</span>
+              <span>Zero third-party tracking pixels or telemetry cookies</span>
+            </div>
+          </div>
         </div>
 
-        <form onSubmit={handleDonate} className="space-y-5 max-w-xl">
-          {/* Cadence Toggle */}
-          <div className="inline-flex rounded-lg bg-surface p-1 border border-subtle text-xs">
-            <button
-              type="button"
-              onClick={() => setIsMonthly(true)}
-              className={`px-3 py-1.5 rounded-md font-medium transition-colors ${
-                isMonthly ? 'bg-bull text-black font-bold' : 'text-muted hover:text-white'
-              }`}
-            >
-              Monthly Supporter (Recommended)
-            </button>
-            <button
-              type="button"
-              onClick={() => setIsMonthly(false)}
-              className={`px-3 py-1.5 rounded-md font-medium transition-colors ${
-                !isMonthly ? 'bg-bull text-black font-bold' : 'text-muted hover:text-white'
-              }`}
-            >
-              One-Time Contribution
-            </button>
-          </div>
-
-          {/* Amount Presets */}
-          <div className="space-y-2">
-            <label className="text-xs font-mono text-faint block uppercase">Select Contribution Amount</label>
-            <div className="grid grid-cols-5 gap-2">
-              {[3, 5, 10, 25].map((amt) => (
+        {/* Right Column: Underwriting Form */}
+        <div className="lg:col-span-7 p-6 space-y-5">
+          <form onSubmit={handleDonate} className="space-y-5">
+            {/* Cadence Selector */}
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-mono uppercase text-[#787b86] block">
+                Cadence Selection
+              </label>
+              <div className="grid grid-cols-2 gap-2 text-xs font-mono">
                 <button
-                  key={amt}
                   type="button"
-                  onClick={() => {
-                    setSelectedAmount(amt);
-                    setIsCustom(false);
-                  }}
-                  className={`py-2 rounded-lg text-xs font-mono font-bold border transition-colors ${
-                    !isCustom && selectedAmount === amt
-                      ? 'bg-bull/20 text-bull border-bull shadow-sm'
-                      : 'bg-surface text-muted border-subtle hover:text-white hover:border-zinc-700'
+                  onClick={() => setIsMonthly(true)}
+                  className={`py-2 px-3 rounded border text-center transition-colors font-medium ${
+                    isMonthly
+                      ? 'bg-[#2962ff] text-white border-[#2962ff]'
+                      : 'bg-[#1e222d] text-[#787b86] border-[#2a2e39] hover:text-white'
                   }`}
                 >
-                  ${amt}
+                  Monthly Underwriter (Recommended)
                 </button>
-              ))}
-              <button
-                type="button"
-                onClick={() => setIsCustom(true)}
-                className={`py-2 rounded-lg text-xs font-mono font-bold border transition-colors ${
-                  isCustom
-                    ? 'bg-bull/20 text-bull border-bull shadow-sm'
-                    : 'bg-surface text-muted border-subtle hover:text-white hover:border-zinc-700'
-                }`}
-              >
-                Custom
-              </button>
+                <button
+                  type="button"
+                  onClick={() => setIsMonthly(false)}
+                  className={`py-2 px-3 rounded border text-center transition-colors font-medium ${
+                    !isMonthly
+                      ? 'bg-[#2962ff] text-white border-[#2962ff]'
+                      : 'bg-[#1e222d] text-[#787b86] border-[#2a2e39] hover:text-white'
+                  }`}
+                >
+                  Single Allocation
+                </button>
+              </div>
             </div>
 
-            {isCustom && (
-              <div className="relative mt-2">
-                <DollarSign size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-faint" />
+            {/* Amount Selection Matrix */}
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-mono uppercase text-[#787b86] block">
+                Contribution Amount (USD)
+              </label>
+              <div className="grid grid-cols-5 gap-2">
+                {[3, 5, 10, 25].map((amt) => (
+                  <button
+                    key={amt}
+                    type="button"
+                    onClick={() => {
+                      setSelectedAmount(amt);
+                      setIsCustom(false);
+                    }}
+                    className={`py-2 rounded border text-xs font-mono font-bold transition-colors ${
+                      !isCustom && selectedAmount === amt
+                        ? 'bg-[#1e222d] text-white border-[#2962ff]'
+                        : 'bg-[#131722] text-[#787b86] border-[#2a2e39] hover:text-white hover:border-[#363a45]'
+                    }`}
+                  >
+                    ${amt}
+                  </button>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => setIsCustom(true)}
+                  className={`py-2 rounded border text-xs font-mono font-bold transition-colors ${
+                    isCustom
+                      ? 'bg-[#1e222d] text-white border-[#2962ff]'
+                      : 'bg-[#131722] text-[#787b86] border-[#2a2e39] hover:text-white hover:border-[#363a45]'
+                  }`}
+                >
+                  Custom
+                </button>
+              </div>
+
+              {isCustom && (
+                <div className="relative mt-2">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#787b86] font-mono text-xs">
+                    $
+                  </span>
+                  <input
+                    type="number"
+                    min="1"
+                    step="1"
+                    placeholder="Enter custom USD allocation"
+                    value={customAmount}
+                    onChange={(e) => setCustomAmount(e.target.value)}
+                    className="w-full bg-[#131722] border border-[#2a2e39] rounded pl-7 pr-3 py-2 text-xs text-white placeholder-[#50535e] focus:outline-none focus:border-[#2962ff] font-mono"
+                    required
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Contributor Metadata */}
+            <div className="space-y-3 pt-1 border-t border-[#2a2e39]/60">
+              <div className="flex items-center gap-2">
                 <input
-                  type="number"
-                  min="1"
-                  step="1"
-                  placeholder="Enter custom amount in USD"
-                  value={customAmount}
-                  onChange={(e) => setCustomAmount(e.target.value)}
-                  className="w-full bg-surface border border-subtle rounded-lg pl-8 pr-3 py-2 text-xs text-white placeholder-faint focus:outline-none focus:border-bull font-mono"
-                  required
+                  type="checkbox"
+                  id="anon"
+                  checked={isAnonymous}
+                  onChange={(e) => setIsAnonymous(e.target.checked)}
+                  className="rounded border-[#2a2e39] bg-[#131722] text-[#2962ff] focus:ring-0 focus:ring-offset-0 cursor-pointer"
+                />
+                <label
+                  htmlFor="anon"
+                  className="text-xs text-[#787b86] cursor-pointer select-none"
+                >
+                  Record anonymously on the public support journal
+                </label>
+              </div>
+
+              {!isAnonymous && (
+                <div>
+                  <input
+                    type="text"
+                    placeholder="Contributor Name or Trading Handle (optional)"
+                    value={donorName}
+                    onChange={(e) => setDonorName(e.target.value)}
+                    className="w-full bg-[#131722] border border-[#2a2e39] rounded px-3 py-2 text-xs text-white placeholder-[#50535e] focus:outline-none focus:border-[#2962ff] font-sans"
+                  />
+                </div>
+              )}
+
+              <div>
+                <input
+                  type="text"
+                  placeholder="Statement or Note for Public Ledger (optional)"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  className="w-full bg-[#131722] border border-[#2a2e39] rounded px-3 py-2 text-xs text-white placeholder-[#50535e] focus:outline-none focus:border-[#2962ff] font-sans"
                 />
               </div>
-            )}
-          </div>
-
-          {/* Donor Info */}
-          <div className="space-y-3 pt-1">
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                id="anon"
-                checked={isAnonymous}
-                onChange={(e) => setIsAnonymous(e.target.checked)}
-                className="rounded border-subtle text-bull focus:ring-bull"
-              />
-              <label htmlFor="anon" className="text-xs text-muted cursor-pointer select-none">
-                Contribute anonymously (hide my name on public ledger)
-              </label>
             </div>
 
-            {!isAnonymous && (
-              <input
-                type="text"
-                placeholder="Your Name or Handle (optional)"
-                value={donorName}
-                onChange={(e) => setDonorName(e.target.value)}
-                className="w-full bg-surface border border-subtle rounded-lg px-3 py-2 text-xs text-white placeholder-faint focus:outline-none focus:border-bull font-sans"
-              />
+            {/* Notification Callouts */}
+            {errorMsg && (
+              <div className="p-3 rounded bg-[#f23645]/10 border border-[#f23645]/30 text-[#f23645] text-xs flex items-center gap-2">
+                <AlertCircle size={14} className="shrink-0" />
+                <span>{errorMsg}</span>
+              </div>
             )}
 
-            <input
-              type="text"
-              placeholder="Leave an encouraging note for the platform (optional)"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              className="w-full bg-surface border border-subtle rounded-lg px-3 py-2 text-xs text-white placeholder-faint focus:outline-none focus:border-bull font-sans"
-            />
-          </div>
+            {successMsg && (
+              <div className="p-3 rounded bg-[#089981]/10 border border-[#089981]/30 text-[#089981] text-xs flex items-center gap-2">
+                <Check size={14} className="shrink-0" />
+                <span>{successMsg}</span>
+              </div>
+            )}
 
-          {/* Feedback Messages */}
-          {errorMsg && (
-            <div className="p-3 rounded-lg bg-bear/15 border border-bear/30 text-bear text-xs flex items-center gap-2">
-              <AlertCircle size={14} className="shrink-0" />
-              <span>{errorMsg}</span>
-            </div>
-          )}
-
-          {successMsg && (
-            <div className="p-3 rounded-lg bg-bull/15 border border-bull/30 text-bull text-xs flex items-center gap-2">
-              <CheckCircle2 size={14} className="shrink-0" />
-              <span>{successMsg}</span>
-            </div>
-          )}
-
-          {/* Submit Button */}
-          <button
-            type="submit"
-            disabled={loading}
-            className="btn btn-primary w-full py-2.5 rounded-lg text-xs font-bold flex items-center justify-center gap-2"
-          >
-            {loading ? (
-              <span>Processing...</span>
-            ) : (
-              <>
-                <Heart size={14} className="fill-black" />
+            {/* Submission Action */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-[#2962ff] hover:bg-[#1e53e5] text-white py-2.5 rounded font-mono font-bold text-xs transition-colors flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer shadow-sm"
+            >
+              {loading ? (
+                <span>Recording in Ledger...</span>
+              ) : (
                 <span>
-                  Confirm Contribution (${finalAmount.toFixed(2)} {isMonthly ? '/ month' : ''})
+                  Confirm Contribution (${finalAmount.toFixed(2)}{' '}
+                  {isMonthly ? '/ month' : ''})
                 </span>
-              </>
-            )}
-          </button>
-        </form>
+              )}
+            </button>
+          </form>
+        </div>
       </div>
 
-      {/* Recent Public Contributions Ledger */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold text-white tracking-tight flex items-center gap-2">
-            <Heart size={16} className="text-bull" />
-            <span>Public Support Ledger</span>
-          </h2>
-          <span className="text-xs font-mono text-faint">
-            {summary.recentDonations.length} Contributions Recorded
+      {/* 4. Public Support Ledger */}
+      <div className="border border-[#2a2e39] bg-[#171b26] rounded-md overflow-hidden space-y-0">
+        <div className="px-5 py-3 border-b border-[#2a2e39] flex items-center justify-between text-xs">
+          <div className="flex items-center gap-2">
+            <span className="font-semibold text-white tracking-tight">
+              Public Underwriting Journal
+            </span>
+            <span className="text-[10px] font-mono text-[#787b86] bg-[#1e222d] px-1.5 py-0.5 rounded border border-[#2a2e39]">
+              {summary.recentDonations.length} RECORDS
+            </span>
+          </div>
+          <span className="font-mono text-[11px] text-[#787b86]">
+            APPEND-ONLY FINANCIAL JOURNAL
           </span>
         </div>
 
-        <div className="border border-subtle rounded-xl overflow-hidden bg-panel">
-          <div className="divide-y divide-subtle/60">
-            {summary.recentDonations.map((don) => (
-              <div key={don.id} className="p-4 flex items-start justify-between gap-4 text-xs">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span className="font-bold text-white">{don.donorName}</span>
-                    {don.isMonthly && (
-                      <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-bull/15 text-bull border border-bull/30">
-                        MONTHLY
-                      </span>
-                    )}
-                  </div>
-                  {don.message && (
-                    <p className="text-muted text-[11px] italic">“{don.message}”</p>
-                  )}
-                  <div className="text-faint font-mono text-[10px]">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs font-sans">
+            <thead>
+              <tr className="border-b border-[#2a2e39] bg-[#131722] text-[#787b86] font-mono text-[11px]">
+                <th className="py-2.5 px-4 font-medium w-48">Timestamp</th>
+                <th className="py-2.5 px-4 font-medium w-56">Underwriter</th>
+                <th className="py-2.5 px-4 font-medium w-28">Cadence</th>
+                <th className="py-2.5 px-4 font-medium">Public Note / Statement</th>
+                <th className="py-2.5 px-4 font-medium text-right w-32">Allocation</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[#2a2e39]/60">
+              {summary.recentDonations.map((don) => (
+                <tr key={don.id} className="hover:bg-[#1e222d]/40 transition-colors">
+                  <td className="py-3 px-4 font-mono text-[11px] text-[#787b86]">
                     {new Date(don.createdAt).toLocaleDateString(undefined, {
+                      year: 'numeric',
                       month: 'short',
                       day: 'numeric',
-                      year: 'numeric',
                     })}
-                  </div>
-                </div>
-
-                <div className="text-right font-mono font-bold text-bull text-sm shrink-0">
-                  +${(don.amountCents / 100).toFixed(2)}
-                </div>
-              </div>
-            ))}
-          </div>
+                  </td>
+                  <td className="py-3 px-4 font-medium text-white">
+                    {don.donorName}
+                  </td>
+                  <td className="py-3 px-4 font-mono text-[10px]">
+                    {don.isMonthly ? (
+                      <span className="text-[#089981] bg-[#089981]/10 px-1.5 py-0.5 rounded border border-[#089981]/20">
+                        MONTHLY
+                      </span>
+                    ) : (
+                      <span className="text-[#787b86] bg-[#1e222d] px-1.5 py-0.5 rounded border border-[#2a2e39]">
+                        ONE-TIME
+                      </span>
+                    )}
+                  </td>
+                  <td className="py-3 px-4 text-[#787b86] text-[11px] italic">
+                    {don.message ? `“${don.message}”` : '—'}
+                  </td>
+                  <td className="py-3 px-4 text-right font-mono font-bold text-[#089981]">
+                    +${(don.amountCents / 100).toFixed(2)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

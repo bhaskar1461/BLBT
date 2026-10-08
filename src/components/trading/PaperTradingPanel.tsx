@@ -7,11 +7,13 @@ import {
   Lock,
   AlertTriangle,
   Clock,
+  Server,
 } from 'lucide-react';
 import { alertsEngine } from '../../services/alertsEngine';
 import { formatPrice, getSymbolInfo } from '../../services/symbols';
 import { storage } from '../../services/storage';
 import { useTradingStore } from '@/stores/useTradingStore';
+import { openAlgoGateway } from '@/lib/broker/openalgo';
 import type { Portfolio } from '../../types/trading';
 import { BenchmarkComparisonBanner } from './BenchmarkComparisonBanner';
 import { DailyLossLockBanner } from './DailyLossLockBanner';
@@ -22,13 +24,22 @@ interface PaperTradingPanelProps {
   currentSymbol: string;
   currentPrice: number;
   portfolio: Portfolio;
+  onOpenBrokerModal?: () => void;
 }
 
 export const PaperTradingPanel: React.FC<PaperTradingPanelProps> = ({
   currentSymbol,
   currentPrice,
   portfolio,
+  onOpenBrokerModal,
 }) => {
+  const [activeBroker, setActiveBroker] = useState(() => openAlgoGateway.getActiveBroker());
+
+  React.useEffect(() => {
+    return openAlgoGateway.subscribe(() => {
+      setActiveBroker(openAlgoGateway.getActiveBroker());
+    });
+  }, []);
   const [side, setSide] = useState<'buy' | 'sell'>('buy');
   const [orderType, setOrderType] = useState<'market' | 'limit'>('market');
   const [limitPrice, setLimitPrice] = useState(currentPrice > 0 ? String(currentPrice) : '');
@@ -174,49 +185,38 @@ export const PaperTradingPanel: React.FC<PaperTradingPanelProps> = ({
   }
 
   return (
-    <aside className="terminal-trade-panel">
+    <aside className="bg-[#131722] border-l border-[#212a36] flex flex-col h-full select-none text-xs">
       {/* Panel Header */}
-      <div
-        style={{
-          padding: '12px 14px',
-          borderBottom: '1px solid var(--border-subtle)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <DollarSign size={15} color="var(--bull)" />
-          <span style={{ fontWeight: 600, fontSize: '13px', color: 'var(--text-main)' }}>
-            Paper Trading
-          </span>
-          <span className="badge badge-bull" style={{ fontSize: '10px' }}>
-            SIMULATED
+      <div className="h-8 px-3 border-b border-[#212a36] bg-[#161b22] flex items-center justify-between shrink-0">
+        <div className="flex items-center gap-1.5">
+          <DollarSign size={13} className="text-[#00c176]" />
+          <span className="font-semibold text-xs text-white">Order Ticket</span>
+          <span className="px-1.5 py-0.2 rounded-[2px] bg-[#00c176]/15 border border-[#00c176]/30 text-[#00c176] text-[9px] font-mono font-bold">
+            PAPER
           </span>
         </div>
         <button
-          className="btn"
           onClick={async () => {
             if (confirm('Reset simulated paper balance back to 10,000.00 USDT?')) {
               await resetAccount(user.id);
             }
           }}
-          style={{ padding: '3px 8px', fontSize: '11px', gap: '4px' }}
+          className="flex items-center gap-1 text-[10px] text-[#787b86] hover:text-[#ff4d4f] transition-colors px-1.5 py-0.5 rounded hover:bg-[#1e222d]"
           title="Reset paper trading funds"
         >
-          <RotateCcw size={11} />
+          <RotateCcw size={10} />
           <span>Reset</span>
         </button>
       </div>
 
-      {/* 🚫 CRITICAL FROZEN USER BANNER (Prompt 2 & 5 Requirement) */}
+      {/* 🚫 CRITICAL FROZEN USER BANNER */}
       {isFrozen && (
-        <div className="bg-bear/20 border-b border-bear/40 p-3 flex items-start gap-2.5 text-xs text-bear animate-pulse">
-          <Lock size={15} className="shrink-0 mt-0.5 text-bear" />
+        <div className="bg-[#ff4d4f]/15 border-b border-[#ff4d4f]/30 p-2.5 flex items-start gap-2 text-xs text-[#ff4d4f]">
+          <Lock size={14} className="shrink-0 mt-0.5" />
           <div>
             <div className="font-bold">Trading Privileges Suspended</div>
-            <div className="text-[11px] text-white/90 mt-0.5">
-              Your account has been frozen by an administrator. Order submission and closing positions are disabled.
+            <div className="text-[10px] text-white/90 mt-0.5">
+              Account frozen by admin. Order submission disabled.
             </div>
           </div>
         </div>
@@ -235,270 +235,257 @@ export const PaperTradingPanel: React.FC<PaperTradingPanelProps> = ({
       )}
 
       {/* Account Equity Bar */}
-      <div
-        style={{
-          padding: '12px 14px',
-          background: 'var(--bg-card)',
-          borderBottom: '1px solid var(--border-subtle)',
-        }}
-      >
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-          <span style={{ fontSize: '11px', color: 'var(--text-faint)' }}>Wallet Equity</span>
-          <span className="font-mono" style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-main)' }}>
+      <div className="px-3 py-2 bg-[#161b22]/70 border-b border-[#212a36] flex flex-col gap-1">
+        <div className="flex justify-between items-center text-[11px]">
+          <span className="text-[#787b86]">Wallet Equity</span>
+          <span className="font-mono font-bold text-white tabular-nums">
             ${account?.formattedEquity ?? formatPrice(portfolio.equity, 2)}
           </span>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px' }}>
-          <span style={{ color: 'var(--text-muted)' }}>Avail Balance:</span>
-          <span className="font-mono" style={{ color: 'var(--text-main)', fontWeight: 600 }}>
+        <div className="flex justify-between items-center text-[11px]">
+          <span className="text-[#787b86]">Avail Balance</span>
+          <span className="font-mono text-[#00c176] font-semibold tabular-nums">
             ${account?.formattedBalance ?? formatPrice(portfolio.balance, 2)}
           </span>
         </div>
       </div>
 
       {/* ₿ PROMPT 3.1: BTC BUY-AND-HOLD BENCHMARK CONTEXT */}
-      <div className="p-2.5 bg-canvas border-b border-subtle">
+      <div className="p-2 bg-[#131722] border-b border-[#212a36]">
         <BenchmarkComparisonBanner userId={user.id} variant="banner" />
       </div>
 
-      {/* Buy / Sell Tabs */}
-      <div style={{ display: 'flex', padding: '10px 14px 4px', gap: '8px' }}>
-        <button
-          type="button"
-          onClick={() => setSide('buy')}
-          className={`btn ${side === 'buy' ? 'btn-bull' : ''}`}
-          style={{ flex: 1, padding: '8px 0', fontSize: '13px' }}
-        >
-          <ArrowUpRight size={14} />
-          <span>Buy / Long</span>
-        </button>
-        <button
-          type="button"
-          onClick={() => setSide('sell')}
-          className={`btn ${side === 'sell' ? 'btn-bear' : ''}`}
-          style={{ flex: 1, padding: '8px 0', fontSize: '13px' }}
-        >
-          <ArrowDownRight size={14} />
-          <span>Sell / Short</span>
-        </button>
-      </div>
-
-      {/* Order Type Switcher */}
-      <div style={{ display: 'flex', padding: '6px 14px', gap: '6px' }}>
-        <button
-          type="button"
-          onClick={() => setOrderType('market')}
-          style={{
-            flex: 1,
-            padding: '5px',
-            background: orderType === 'market' ? 'var(--bg-elevated)' : 'transparent',
-            border: orderType === 'market' ? '1px solid var(--border-card)' : '1px solid transparent',
-            color: orderType === 'market' ? 'var(--primary)' : 'var(--text-muted)',
-            borderRadius: 'var(--radius-sm)',
-            fontWeight: 600,
-            fontSize: '11px',
-            cursor: 'pointer',
-          }}
-        >
-          Market Order
-        </button>
-        <button
-          type="button"
-          onClick={() => {
-            setOrderType('limit');
-            if (!limitPrice && currentPrice > 0) setLimitPrice(String(currentPrice));
-          }}
-          style={{
-            flex: 1,
-            padding: '5px',
-            background: orderType === 'limit' ? 'var(--bg-elevated)' : 'transparent',
-            border: orderType === 'limit' ? '1px solid var(--border-card)' : '1px solid transparent',
-            color: orderType === 'limit' ? 'var(--primary)' : 'var(--text-muted)',
-            borderRadius: 'var(--radius-sm)',
-            fontWeight: 600,
-            fontSize: '11px',
-            cursor: 'pointer',
-          }}
-        >
-          Limit Order
-        </button>
-      </div>
-
-      {/* Inline Error Message */}
-      {errorMsg && (
-        <div className="mx-3.5 my-1.5 p-2 bg-bear/15 border border-bear/30 rounded text-xs text-bear flex items-start gap-1.5">
-          <AlertTriangle size={13} className="shrink-0 mt-0.5" />
-          <span>{errorMsg}</span>
-        </div>
-      )}
-
-      {/* Order Form */}
-      <form onSubmit={handleSubmit} style={{ padding: '8px 14px 14px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-        {orderType === 'limit' && (
-          <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', marginBottom: '4px', color: 'var(--text-muted)' }}>
-              <span>Order Price</span>
-              <span className="font-mono">USDT</span>
-            </div>
-            <input
-              type="number"
-              step="any"
-              className="form-input font-mono"
-              value={limitPrice}
-              onChange={(e) => setLimitPrice(e.target.value)}
-              placeholder="Target price"
-              required
-            />
-          </div>
-        )}
-
-        {/* Quantity Input */}
-        <div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', marginBottom: '4px', color: 'var(--text-muted)' }}>
-            <span>Order Quantity</span>
-            <span className="font-mono">{symbolInfo.baseAsset}</span>
-          </div>
-          <input
-            type="number"
-            step="any"
-            className="form-input font-mono"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            placeholder={`Min: ${symbolInfo.minQty}`}
-            required
-            disabled={isFrozen}
+      {/* OpenAlgo Execution Gateway Route */}
+      <div className="px-3 py-1.5 bg-[#161b22] border-b border-[#212a36] flex items-center justify-between text-[11px]">
+        <div className="flex items-center gap-1.5">
+          <Server size={11} className="text-[#2962ff]" />
+          <span className="text-[#787b86]">Route:</span>
+          <span className="font-semibold text-white">{activeBroker.name}</span>
+          <span
+            className={`w-1.5 h-1.5 rounded-full ${
+              activeBroker.isConnected ? 'bg-[#00c176]' : 'bg-[#f59e0b]'
+            }`}
           />
         </div>
+        {onOpenBrokerModal && (
+          <button
+            type="button"
+            onClick={onOpenBrokerModal}
+            className="text-[10px] text-[#2962ff] hover:text-[#5b8cff] font-medium transition-colors cursor-pointer"
+          >
+            Config
+          </button>
+        )}
+      </div>
 
-        {/* Percentage Chips */}
-        <div style={{ display: 'flex', gap: '4px' }}>
-          {[25, 50, 75, 100].map((pct) => (
-            <button
-              key={pct}
-              type="button"
-              className="btn btn-pill"
-              onClick={() => handleQuickPercent(pct)}
-              disabled={isFrozen}
-              style={{
-                flex: 1,
-                padding: '3px 0',
-                fontSize: '10px',
-                fontFamily: 'var(--font-mono)',
-                background: 'var(--bg-card)',
-              }}
-            >
-              {pct}%
-            </button>
-          ))}
+      {/* Order Entry Body */}
+      <div className="p-3 flex flex-col gap-2.5 overflow-y-auto flex-1">
+        {/* Buy / Sell Tabs */}
+        <div className="grid grid-cols-2 gap-1.5">
+          <button
+            type="button"
+            onClick={() => setSide('buy')}
+            className={`py-1.5 rounded-[3px] text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1 transition-colors ${
+              side === 'buy'
+                ? 'bg-[#00c176] text-black shadow-none'
+                : 'bg-[#161b22] text-[#787b86] hover:text-white border border-[#212a36]'
+            }`}
+          >
+            <ArrowUpRight size={13} />
+            <span>BUY</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setSide('sell')}
+            className={`py-1.5 rounded-[3px] text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1 transition-colors ${
+              side === 'sell'
+                ? 'bg-[#ff4d4f] text-white shadow-none'
+                : 'bg-[#161b22] text-[#787b86] hover:text-white border border-[#212a36]'
+            }`}
+          >
+            <ArrowDownRight size={13} />
+            <span>SELL</span>
+          </button>
         </div>
 
-        {/* TP / SL Target Inputs */}
-        <div className="grid grid-cols-2 gap-2 pt-1">
-          <div>
-            <div className="flex justify-between text-[10px] text-faint mb-1">
-              <span>Take Profit</span>
-              <span className="text-bull font-mono">USDT</span>
-            </div>
-            <input
-              type="number"
-              step="any"
-              className="form-input font-mono text-xs w-full py-1"
-              value={takeProfit}
-              onChange={(e) => setTakeProfit(e.target.value)}
-              placeholder="TP Price"
-              disabled={isFrozen}
-            />
-          </div>
-          <div>
-            <div className="flex justify-between text-[10px] text-faint mb-1">
-              <span>Stop Loss</span>
-              <span className="text-bear font-mono">USDT</span>
-            </div>
-            <input
-              type="number"
-              step="any"
-              className="form-input font-mono text-xs w-full py-1"
-              value={stopLoss}
-              onChange={(e) => setStopLoss(e.target.value)}
-              placeholder="SL Price"
-              disabled={isFrozen}
-            />
-          </div>
+        {/* Order Type Switcher (Market / Limit) */}
+        <div className="p-0.5 bg-[#0d1117] rounded-[3px] border border-[#212a36] grid grid-cols-2 text-[11px]">
+          <button
+            type="button"
+            onClick={() => setOrderType('market')}
+            className={`py-1 rounded-[2px] font-semibold transition-colors ${
+              orderType === 'market'
+                ? 'bg-[#1e222d] text-white'
+                : 'text-[#787b86] hover:text-white'
+            }`}
+          >
+            Market
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setOrderType('limit');
+              if (!limitPrice && currentPrice > 0) setLimitPrice(String(currentPrice));
+            }}
+            className={`py-1 rounded-[2px] font-semibold transition-colors ${
+              orderType === 'limit'
+                ? 'bg-[#1e222d] text-white'
+                : 'text-[#787b86] hover:text-white'
+            }`}
+          >
+            Limit
+          </button>
         </div>
 
-        {/* Execution Engine Notice */}
-        {orderType === 'limit' && (
-          <div className="text-[10px] text-faint bg-card/60 p-2 rounded border border-subtle flex items-start gap-1.5">
-            <Clock size={12} className="text-primary mt-0.5 shrink-0" />
-            <span>
-              Limit fills and TP/SL brackets execute at the next check interval when live price crosses target (up to 1 min delay).
-            </span>
+        {/* Inline Error Message */}
+        {errorMsg && (
+          <div className="p-2 bg-[#ff4d4f]/15 border border-[#ff4d4f]/30 rounded-[3px] text-[11px] text-[#ff4d4f] flex items-start gap-1.5">
+            <AlertTriangle size={13} className="shrink-0 mt-0.5" />
+            <span>{errorMsg}</span>
           </div>
         )}
 
-        {/* Order Cost & 0.1% Fee Live Calculation */}
-        <div
-          style={{
-            background: 'var(--bg-card)',
-            padding: '8px 10px',
-            borderRadius: 'var(--radius-sm)',
-            fontSize: '11px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '4px',
-            border: '1px solid var(--border-subtle)',
-          }}
-        >
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span style={{ color: 'var(--text-muted)' }}>Estimated Cost:</span>
-            <span className="font-mono" style={{ fontWeight: 600, color: 'var(--text-main)' }}>
-              ${formatPrice(orderTotalUSDT, 2)} USDT
-            </span>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: 'var(--text-faint)' }}>
-            <span>Est. Fee (0.1% flat):</span>
-            <span className="font-mono">${formatPrice(feeEstimate, 4)} USDT</span>
-          </div>
-        </div>
+        {/* Order Form */}
+        <form onSubmit={handleSubmit} className="flex flex-col gap-2.5">
+          {orderType === 'limit' && (
+            <div className="flex flex-col gap-1">
+              <div className="flex justify-between text-[11px] text-[#787b86]">
+                <span>Limit Price</span>
+                <span className="font-mono">USDT</span>
+              </div>
+              <input
+                type="number"
+                step="any"
+                className="w-full bg-[#0d1117] border border-[#212a36] focus:border-[#2962ff] focus:outline-none rounded-[3px] py-1 px-2.5 text-xs font-mono tabular-nums text-white placeholder-[#787b86]"
+                value={limitPrice}
+                onChange={(e) => setLimitPrice(e.target.value)}
+                placeholder="Target price"
+                required
+              />
+            </div>
+          )}
 
-        {/* Submit Button */}
-        <button
-          type="submit"
-          disabled={
-            isSubmitting ||
-            numAmount <= 0 ||
-            isFrozen ||
-            Boolean(dailyStatus?.isLocked) ||
-            Boolean(revengeStatus?.isCooldownActive)
-          }
-          className={`btn ${side === 'buy' ? 'btn-bull' : 'btn-bear'}`}
-          style={{
-            padding: '10px 0',
-            fontSize: '14px',
-            fontWeight: 700,
-            cursor:
-              numAmount <= 0 || isFrozen || dailyStatus?.isLocked || revengeStatus?.isCooldownActive
-                ? 'not-allowed'
-                : 'pointer',
-            opacity:
-              numAmount <= 0 || isFrozen || dailyStatus?.isLocked || revengeStatus?.isCooldownActive
-                ? 0.6
-                : 1,
-            boxShadow:
+          {/* Quantity Input */}
+          <div className="flex flex-col gap-1">
+            <div className="flex justify-between text-[11px] text-[#787b86]">
+              <span>Quantity</span>
+              <span className="font-mono text-white">{symbolInfo.baseAsset}</span>
+            </div>
+            <input
+              type="number"
+              step="any"
+              className="w-full bg-[#0d1117] border border-[#212a36] focus:border-[#2962ff] focus:outline-none rounded-[3px] py-1 px-2.5 text-xs font-mono tabular-nums text-white placeholder-[#787b86]"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              placeholder={`Min: ${symbolInfo.minQty}`}
+              required
+              disabled={isFrozen}
+            />
+          </div>
+
+          {/* Percentage Chips */}
+          <div className="grid grid-cols-4 gap-1">
+            {[25, 50, 75, 100].map((pct) => (
+              <button
+                key={pct}
+                type="button"
+                onClick={() => handleQuickPercent(pct)}
+                disabled={isFrozen}
+                className="py-1 text-[10px] font-mono bg-[#161b22] border border-[#212a36] hover:border-[#2962ff] text-[#787b86] hover:text-white rounded-[2px] transition-colors"
+              >
+                {pct}%
+              </button>
+            ))}
+          </div>
+
+          {/* TP / SL Target Inputs */}
+          <div className="grid grid-cols-2 gap-2 pt-0.5">
+            <div className="flex flex-col gap-1">
+              <div className="flex justify-between text-[10px] text-[#787b86]">
+                <span>Take Profit</span>
+                <span className="text-[#00c176] font-mono">USDT</span>
+              </div>
+              <input
+                type="number"
+                step="any"
+                className="w-full bg-[#0d1117] border border-[#212a36] focus:border-[#00c176] focus:outline-none rounded-[3px] py-1 px-2 text-xs font-mono tabular-nums text-white placeholder-[#787b86]"
+                value={takeProfit}
+                onChange={(e) => setTakeProfit(e.target.value)}
+                placeholder="TP Price"
+                disabled={isFrozen}
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <div className="flex justify-between text-[10px] text-[#787b86]">
+                <span>Stop Loss</span>
+                <span className="text-[#ff4d4f] font-mono">USDT</span>
+              </div>
+              <input
+                type="number"
+                step="any"
+                className="w-full bg-[#0d1117] border border-[#212a36] focus:border-[#ff4d4f] focus:outline-none rounded-[3px] py-1 px-2 text-xs font-mono tabular-nums text-white placeholder-[#787b86]"
+                value={stopLoss}
+                onChange={(e) => setStopLoss(e.target.value)}
+                placeholder="SL Price"
+                disabled={isFrozen}
+              />
+            </div>
+          </div>
+
+          {/* Execution Engine Notice */}
+          {orderType === 'limit' && (
+            <div className="text-[10px] text-[#787b86] bg-[#161b22] p-1.5 rounded-[3px] border border-[#212a36] flex items-start gap-1.5">
+              <Clock size={11} className="text-[#2962ff] mt-0.5 shrink-0" />
+              <span>
+                Limit fills and TP/SL evaluate against live market price ticks.
+              </span>
+            </div>
+          )}
+
+          {/* Order Cost & 0.1% Fee Live Calculation */}
+          <div className="bg-[#161b22] p-2 rounded-[3px] border border-[#212a36] flex flex-col gap-1 text-[11px]">
+            <div className="flex justify-between items-center">
+              <span className="text-[#787b86]">Est. Cost:</span>
+              <span className="font-mono font-semibold text-white tabular-nums">
+                ${formatPrice(orderTotalUSDT, 2)} USDT
+              </span>
+            </div>
+            <div className="flex justify-between items-center text-[10px] text-[#787b86]">
+              <span>Fee (0.1%):</span>
+              <span className="font-mono tabular-nums">${formatPrice(feeEstimate, 4)} USDT</span>
+            </div>
+          </div>
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            disabled={
+              isSubmitting ||
+              numAmount <= 0 ||
+              isFrozen ||
+              Boolean(dailyStatus?.isLocked) ||
+              Boolean(revengeStatus?.isCooldownActive)
+            }
+            className={`py-2 rounded-[3px] text-xs font-bold uppercase tracking-wider transition-colors ${
               side === 'buy'
-                ? '0 0 15px rgba(0,240,144,0.3)'
-                : '0 0 15px rgba(255,59,87,0.3)',
-          }}
-        >
-          {isFrozen
-            ? 'TRADING FROZEN'
-            : dailyStatus?.isLocked
-            ? 'DAILY LIMIT REACHED'
-            : revengeStatus?.isCooldownActive
-            ? '5-MIN BREAK ACTIVE'
-            : `${side === 'buy' ? 'BUY / LONG' : 'SELL / SHORT'} ${symbolInfo.baseAsset}`}
-        </button>
-      </form>
+                ? 'bg-[#00c176] hover:bg-[#00a866] text-black'
+                : 'bg-[#ff4d4f] hover:bg-[#e03a3d] text-white'
+            } ${
+              numAmount <= 0 || isFrozen || dailyStatus?.isLocked || revengeStatus?.isCooldownActive
+                ? 'opacity-50 cursor-not-allowed'
+                : 'cursor-pointer'
+            }`}
+          >
+            {isFrozen
+              ? 'TRADING FROZEN'
+              : dailyStatus?.isLocked
+              ? 'DAILY LIMIT REACHED'
+              : revengeStatus?.isCooldownActive
+              ? '5-MIN BREAK ACTIVE'
+              : `${side === 'buy' ? 'BUY' : 'SELL'} ${symbolInfo.baseAsset}`}
+          </button>
+        </form>
+      </div>
     </aside>
   );
 };

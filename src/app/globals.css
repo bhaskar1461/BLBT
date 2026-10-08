@@ -3,7 +3,53 @@
 @tailwind utilities;
 
 :root {
-  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  /* TradingView Pro Color Palette */
+  --bg-canvas: #131722;
+  --bg-surface: #1e222d;
+  --bg-panel: #171b26;
+  --bg-card: #1e222d;
+  --bg-elevated: #2a2e39;
+  --bg-hover: #2a2e39;
+  --bg-input: #131722;
+
+  /* TradingView Borders & Dividers */
+  --border-subtle: #2a2e39;
+  --border-card: #2a2e39;
+  --border-strong: #363a45;
+  --border-active: #2962ff;
+
+  /* TradingView Typography Colors */
+  --text-main: #d1d4dc;
+  --text-muted: #787b86;
+  --text-faint: #50535e;
+  --text-white: #ffffff;
+
+  /* TradingView Authentic Accents */
+  --bull: #089981;
+  --bull-bg: rgba(8, 153, 129, 0.12);
+  --bull-glow: rgba(8, 153, 129, 0.25);
+  --bear: #f23645;
+  --bear-bg: rgba(242, 54, 69, 0.12);
+  --bear-glow: rgba(242, 54, 69, 0.25);
+  --primary: #2962ff;
+  --primary-hover: #1e53e5;
+  --primary-glow: rgba(41, 98, 255, 0.3);
+  --gold: #f59e0b;
+  --gold-bg: rgba(245, 158, 11, 0.12);
+
+  /* Soft TradingView Radii (Never blunt or sharp 0px!) */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-full: 9999px;
+
+  /* Smooth Micro Transitions */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Trebuchet MS', 'Inter', Roboto, Ubuntu, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
 }
 
@@ -15,33 +61,34 @@
 
 html, body {
   min-height: 100%;
-  background-color: #0b0e14;
-  color: #f0f4f8;
+  background-color: #131722;
+  color: #d1d4dc;
   overflow-x: hidden;
+  font-family: var(--font-sans);
 }
 
-/* Custom Thin Scrollbars */
+/* Custom Thin Smooth Scrollbars (TradingView Style) */
 ::-webkit-scrollbar {
   width: 5px;
   height: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: #10141e;
+  background: #131722;
 }
 ::-webkit-scrollbar-thumb {
-  background: #252f45;
+  background: #2a2e39;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #64748b;
+  background: #434651;
 }
 
-/* Legacy modal backdrop animations */
+/* Modern TradingView Modal Backdrop */
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(4, 6, 10, 0.8);
-  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(6px);
   z-index: 999;
   display: flex;
   align-items: center;
@@ -50,10 +97,10 @@ html, body {
 }
 
 .modal-content {
-  background: #10141e;
-  border: 1px solid #252f45;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.7);
+  background: #1e222d;
+  border: 1px solid #2a2e39;
+  border-radius: 8px;
+  box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.8);
   display: flex;
   flex-direction: column;
   max-height: 90vh;
@@ -61,30 +108,31 @@ html, body {
 }
 
 input, select, textarea {
-  background-color: #10141e !important;
-  color: #f0f4f8 !important;
-  border-color: #1e2638;
+  background-color: #131722 !important;
+  color: #d1d4dc !important;
+  border: 1px solid #2a2e39;
+  border-radius: 4px;
 }
 input:focus, select:focus, textarea:focus {
   outline: none;
   border-color: #2962ff !important;
-  box-shadow: 0 0 0 1px rgba(41, 98, 255, 0.4);
+  box-shadow: 0 0 0 1px rgba(41, 98, 255, 0.5);
 }
 
 .form-input {
   width: 100%;
-  background: #0e121b !important;
-  border: 1px solid #1e2638;
-  border-radius: 6px;
-  padding: 8px 12px;
-  color: #f0f4f8 !important;
+  background: #131722 !important;
+  border: 1px solid #2a2e39;
+  border-radius: 4px;
+  padding: 7px 11px;
+  color: #d1d4dc !important;
   font-size: 12px;
   outline: none;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
 }
 .form-input:focus {
   border-color: #2962ff !important;
-  box-shadow: 0 0 12px rgba(41, 98, 255, 0.25);
+  box-shadow: 0 0 8px rgba(41, 98, 255, 0.3);
 }
 
 /* 3D Perspective & Glassmorphic Utilities */
@@ -101,42 +149,32 @@ input:focus, select:focus, textarea:focus {
   backface-visibility: hidden;
 }
 
-.glass-panel {
-  background: rgba(16, 20, 30, 0.75);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-.glass-panel-glow {
-  background: rgba(16, 20, 30, 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(34, 197, 94, 0.2);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.45), 0 0 15px 0 rgba(34, 197, 94, 0.1);
-}
-.glass-card-interactive {
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-color 0.2s ease;
-}
-.glass-card-interactive:hover {
-  transform: translateY(-3px) scale(1.008);
-  border-color: rgba(41, 98, 255, 0.45);
-  box-shadow: 0 16px 36px -12px rgba(0, 0, 0, 0.7), 0 0 20px rgba(41, 98, 255, 0.2);
+/* Institutional Terminal Panels & Tables (Restrained & High-Density) */
+.terminal-panel {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
 }
 
-@keyframes pulseGlow {
-  0%, 100% { opacity: 0.4; transform: scale(1); }
-  50% { opacity: 0.8; transform: scale(1.05); }
-}
-.animate-pulse-glow {
-  animation: pulseGlow 4s ease-in-out infinite;
+.terminal-header {
+  height: 32px;
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  user-select: none;
 }
 
-@keyframes float3d {
-  0%, 100% { transform: translateY(0px) rotateY(0deg); }
-  50% { transform: translateY(-8px) rotateY(180deg); }
-}
-.animate-float-3d {
-  animation: float3d 8s ease-in-out infinite;
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' on, 'lnum' on;
 }
 
 .btn {
@@ -144,32 +182,44 @@ input:focus, select:focus, textarea:focus {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 4px 10px;
-  border-radius: 4px;
+  padding: 5px 11px;
+  border-radius: var(--radius-sm);
   font-size: 11px;
   font-weight: 500;
   cursor: pointer;
-  background: #151a27;
-  color: #f0f4f8;
-  border: 1px solid #1e2638;
+  background: var(--bg-surface);
+  color: var(--text-main);
+  border: 1px solid var(--border-subtle);
+  transition: all var(--transition-fast);
 }
 .btn:hover {
-  background: #222b40;
+  background: var(--bg-hover);
+  color: var(--text-white);
+  border-color: #434651;
 }
 .btn-primary {
-  background: #2962ff;
+  background: var(--primary);
   color: #fff;
-  border-color: #2962ff;
+  border-color: var(--primary);
+}
+.btn-primary:hover {
+  background: var(--primary-hover);
 }
 .btn-bull {
-  background: #00f090;
-  color: #0b0e14;
+  background: var(--bull);
+  color: #ffffff;
   font-weight: 600;
 }
+.btn-bull:hover {
+  background: #078570;
+}
 .btn-bear {
-  background: #ff3b57;
-  color: #fff;
+  background: var(--bear);
+  color: #ffffff;
   font-weight: 600;
+}
+.btn-bear:hover {
+  background: #d92c3a;
 }
 .btn-icon {
   width: 26px;
@@ -185,24 +235,24 @@ input:focus, select:focus, textarea:focus {
   align-items: center;
   gap: 4px;
   padding: 2px 6px;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   font-size: 11px;
   font-family: var(--font-mono);
 }
 .badge-bull {
-  background: rgba(0, 240, 144, 0.12);
-  color: #00f090;
-  border: 1px solid rgba(0, 240, 144, 0.25);
+  background: var(--bull-bg);
+  color: var(--bull);
+  border: 1px solid rgba(8, 153, 129, 0.25);
 }
 .badge-bear {
-  background: rgba(255, 59, 87, 0.12);
-  color: #ff3b57;
-  border: 1px solid rgba(255, 59, 87, 0.25);
+  background: var(--bear-bg);
+  color: var(--bear);
+  border: 1px solid rgba(242, 54, 69, 0.25);
 }
 .badge-neutral {
-  background: #1b2233;
-  color: #94a3b8;
-  border: 1px solid #1e2638;
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  border: 1px solid var(--border-subtle);
 }
 
 .toast-container {
@@ -216,9 +266,9 @@ input:focus, select:focus, textarea:focus {
 }
 .toast-item {
   min-width: 280px;
-  background: #10141e;
-  border: 1px solid #252f45;
-  border-radius: 8px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
   padding: 10px 14px;
   display: flex;
   align-items: flex-start;
@@ -228,8 +278,8 @@ input:focus, select:focus, textarea:focus {
 
 .bottom-dock {
   height: 190px;
-  border-top: 1px solid #1e2638;
-  background: #10141e;
+  border-top: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
   display: flex;
   flex-direction: column;
   flex-shrink: 0;

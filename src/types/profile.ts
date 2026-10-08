@@ -76,6 +76,43 @@ export interface TraderProfile {
   updatedAt: string;
 }
 
+export interface PortfolioHoldingItem {
+  symbol: string;
+  side: 'long' | 'short';
+  quantity: number;
+  entryPrice: number;
+  markPrice: number;
+  margin: number;
+  valueUsdt: number;
+  unrealizedPnl: number;
+  unrealizedPnlPct: number;
+  allocationPct: number;
+  stopLoss?: number | null;
+  takeProfit?: number | null;
+  openedAt: string;
+}
+
+export interface PortfolioTransactionItem {
+  id: string;
+  type: string;
+  symbol?: string | null;
+  amount: number;
+  balanceAfter: number;
+  details?: Record<string, unknown>;
+  createdAt: string;
+}
+
+export interface PortfolioSummaryMetrics {
+  totalEquity: number;
+  availableCash: number;
+  allocatedMargin: number;
+  totalUnrealizedPnl: number;
+  totalUnrealizedPnlPct: number;
+  totalRealizedPnl: number;
+  netReturnPct: number;
+  cashAllocationPct: number;
+}
+
 export interface PublicVerifiedTrackRecord extends TraderProfile {
   trades: import('./trading').ClosedTradeRecord[];
   latestLedgerSnapshotHash: string;
@@ -87,4 +124,7 @@ export interface PublicVerifiedTrackRecord extends TraderProfile {
     honestVerdict: string;
     formattedComparison: string;
   };
+  positions?: PortfolioHoldingItem[];
+  transactions?: PortfolioTransactionItem[];
+  portfolioMetrics?: PortfolioSummaryMetrics;
 }

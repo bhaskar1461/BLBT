@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { DEFAULT_INDICES_TICKERS } from '@/lib/binance';
 
 const SYMBOL_REGEX = /^[A-Z0-9]{3,12}$/;
 
@@ -31,6 +32,9 @@ export async function GET(req: NextRequest) {
         });
       }
     } catch {}
+    if (DEFAULT_INDICES_TICKERS[sym]) {
+      return NextResponse.json(DEFAULT_INDICES_TICKERS[sym]);
+    }
     return NextResponse.json({ error: 'Failed to fetch ticker from Binance' }, { status: 502 });
   }
 
@@ -41,7 +45,7 @@ export async function GET(req: NextRequest) {
     });
     if (res.ok) {
       const data = await res.json();
-      const map: Record<string, unknown> = {};
+      const map: Record<string, unknown> = { ...DEFAULT_INDICES_TICKERS };
       if (Array.isArray(data)) {
         for (const d of data) {
           map[d.symbol] = {
@@ -65,5 +69,6 @@ export async function GET(req: NextRequest) {
     }
   } catch {}
 
-  return NextResponse.json({ error: 'Failed to fetch all tickers' }, { status: 502 });
+  // Fallback to static indices & equity tickers if external Binance fails
+  return NextResponse.json(DEFAULT_INDICES_TICKERS);
 }

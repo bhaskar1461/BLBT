@@ -1,13 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
-import { TopBar } from './TopBar';
 import { TradingViewTopBar } from './TradingViewTopBar';
+import { TickerTape } from './TickerTape';
+import { MarketStatusBar } from './MarketStatusBar';
 import { TradingViewDrawingToolbar } from '@/components/chart/TradingViewDrawingToolbar';
-import { TradingViewSymbolRibbon } from '@/components/chart/TradingViewSymbolRibbon';
 import { TradingViewMarketCards } from '@/components/chart/TradingViewMarketCards';
 import { TradingViewRightDock } from '@/components/tradingview/TradingViewRightDock';
-import { TradingViewRightRail } from '@/components/tradingview/TradingViewRightRail';
+import { TradingViewRightRail, type RightDockTab } from '@/components/tradingview/TradingViewRightRail';
 import { Sidebar } from './Sidebar';
 import { TimeframeBar } from '@/components/chart/TimeframeBar';
 import { Chart } from '@/components/chart/Chart';
@@ -33,6 +33,9 @@ import { BeginnerTradingSuite } from '@/components/trading/BeginnerTradingSuite'
 import { QuickWalletModal } from '@/components/wallet/QuickWalletModal';
 import type { SessionReviewSummary } from '@/lib/lossProtectionService';
 import { WeeklyRecapBanner } from '@/components/notifications/WeeklyRecapBanner';
+import { TradingViewMarketSummaryView } from '@/components/overview/TradingViewMarketSummaryView';
+import { TerminalCommandPalette } from '@/components/command/TerminalCommandPalette';
+import { BrokerManagerModal } from '@/components/broker/BrokerManagerModal';
 import { analytics } from '@/lib/analytics';
 import type { WeeklyRecap } from '@/types/trading';
 import { useChartStore } from '@/stores/useChartStore';
@@ -43,7 +46,44 @@ import { alertsEngine } from '@/services/alertsEngine';
 
 export const Shell: React.FC = () => {
   const [terminalMode, setTerminalMode] = useState<'beginner' | 'pro'>('pro');
-  const [isWatchlistOpen, setIsWatchlistOpen] = useState(true);
+  const [viewMode, setViewMode] = useState<'summary' | 'chart'>('chart');
+  const [activeDockTab, setActiveDockTab] = useState<RightDockTab>('watchlist');
+  const [isDockOpen, setIsDockOpen] = useState(true);
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+  const [isBrokerModalOpen, setIsBrokerModalOpen] = useState(false);
+
+  React.useEffect(() => {
+    const savedView = localStorage.getItem('celsius_view_mode');
+    if (savedView === 'summary' || savedView === 'chart') {
+      setViewMode(savedView);
+    }
+  }, []);
+
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && (e.key.toLowerCase() === 'k' || e.key.toLowerCase() === 'g')) {
+        e.preventDefault();
+        setIsCommandPaletteOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  const handleToggleViewMode = (mode: 'summary' | 'chart') => {
+    setViewMode(mode);
+    localStorage.setItem('celsius_view_mode', mode);
+  };
+
+  const handleSelectRightTab = (tab: RightDockTab) => {
+    if (isDockOpen && activeDockTab === tab) {
+      setIsDockOpen(false);
+    } else {
+      setActiveDockTab(tab);
+      setIsDockOpen(true);
+    }
+  };
+  const [showMarketOverview, setShowMarketOverview] = useState(false);
   const [isTradePanelOpen, setIsTradePanelOpen] = useState(false);
   const [isSymbolPickerOpen, setIsSymbolPickerOpen] = useState(false);
   const [isIndicatorsOpen, setIsIndicatorsOpen] = useState(false);
@@ -174,34 +214,36 @@ export const Shell: React.FC = () => {
 
   return (
     <div className="flex flex-col w-screen h-screen overflow-hidden bg-canvas text-main font-sans">
-      {/* 0. Weekly Performance Recap (Shown Mondays or active recap) */}
-      <WeeklyRecapBanner
-        recap={weeklyRecap}
-        onDismiss={() => setWeeklyRecap(null)}
-      />
-
-      {/* 1. Global Announcement */}
-      <AnnouncementBanner announcements={announcements} />
-
-      {/* 2. Top Header Bar: TradingView Pro Navigation */}
+      {/* 1. Top Header Bar: TradingView Pro Navigation (Pinned at y=0!) */}
       <TradingViewTopBar
-        onOpenSymbolPicker={() => setIsSymbolPickerOpen(true)}
+        onOpenSymbolPicker={() => setIsCommandPaletteOpen(true)}
         onOpenIndicators={() => setIsIndicatorsOpen(true)}
         onOpenAlerts={() => setIsAlertsOpen(true)}
         onOpenAuth={() => setIsAuthOpen(true)}
         onOpenProfile={() => setIsProfileOpen(true)}
         onOpenFeedback={() => setIsFeedbackOpen(true)}
+        onOpenBrokerModal={() => setIsBrokerModalOpen(true)}
         activeAlertsCount={activeAlertsCount}
         streakDays={streakDays}
         terminalMode={terminalMode}
         onToggleTerminalMode={handleToggleTerminalMode}
         onOpenWallet={handleOpenWallet}
+        viewMode={viewMode}
+        onToggleViewMode={handleToggleViewMode}
       />
 
-      {/* 2.5 Landing Mission Hero Banner (Prompt 10.1) */}
+      {/* 1.5 Announcements and Banners below top bar */}
+      <WeeklyRecapBanner
+        recap={weeklyRecap}
+        onDismiss={() => setWeeklyRecap(null)}
+      />
+      <AnnouncementBanner announcements={announcements} />
       <LandingHeroBanner />
 
-      {/* 3. Main Workspace: Beginner Guided Suite vs Pro TradingView Terminal */}
+      {/* Institutional Market Pulse Ticker Tape (OpenTerminal Inspired) */}
+      <TickerTape />
+
+      {/* 2. Main Workspace: Beginner Guided Suite vs Pro TradingView Terminal */}
       {terminalMode === 'beginner' ? (
         <div className="flex-1 flex overflow-hidden relative">
           <BeginnerTradingSuite
@@ -217,43 +259,69 @@ export const Shell: React.FC = () => {
           {/* 1. Left Vertical Drawing Tools Bar (TradingView Toolstrip) */}
           <TradingViewDrawingToolbar />
 
-          {/* 2. Center Workspace: Symbol Ribbon + Live Chart + Market Cards + Positions Dock */}
+          {/* 2. Center Workspace: Symbol Ribbon + Market Summary / Candlestick Chart + Positions Dock */}
           <div className="flex-1 flex flex-col min-w-0 bg-[#131722] overflow-hidden">
-            {/* Top Market Summary & Symbol Ribbon */}
-            <TradingViewSymbolRibbon
-              onOpenIndicators={() => setIsIndicatorsOpen(true)}
-              onOpenSymbolPicker={() => setIsSymbolPickerOpen(true)}
-            />
-
-            {/* Terminal Sentiment Context Strip */}
+            {/* Terminal Sentiment Context Strip (Subtle single-line strip per Phase 4 Invariant) */}
             <TerminalSentimentStrip symbol={activeSymbol} />
 
-            {/* Lightweight Charts Canvas */}
-            <div className="flex-1 min-h-0 relative bg-[#131722]">
-              <Chart />
-              {indicators.rsi.enabled && <SubChartRSI />}
-              {indicators.macd.enabled && <SubChartMACD />}
-            </div>
+            {viewMode === 'summary' ? (
+              <TradingViewMarketSummaryView
+                onSwitchToSupercharts={() => handleToggleViewMode('chart')}
+                onOpenSymbolPicker={() => setIsSymbolPickerOpen(true)}
+              />
+            ) : (
+              <>
+                {/* Lightweight Charts Canvas (Expansive full-height chart) */}
+                <div className="flex-1 min-h-0 relative bg-[#131722]">
+                  <Chart />
+                  {indicators.rsi.enabled && <SubChartRSI />}
+                  {indicators.macd.enabled && <SubChartMACD />}
+                </div>
 
-            {/* Bottom Market Cards (Major Indices BSE/NSE & Crypto Market Cap) */}
-            <TradingViewMarketCards />
+                {/* Optional Collapsible Market Overview Ticker */}
+                {showMarketOverview && (
+                  <div className="border-t border-[#2a2e39] bg-[#171b26] p-2 relative animate-in fade-in duration-150 shrink-0">
+                    <div className="flex items-center justify-between px-2 mb-1">
+                      <span className="text-[10px] font-semibold text-[#787b86] uppercase tracking-wider">
+                        Market Overview & Indices
+                      </span>
+                      <button
+                        onClick={() => setShowMarketOverview(false)}
+                        className="text-[10px] text-[#787b86] hover:text-white"
+                      >
+                        Hide
+                      </button>
+                    </div>
+                    <TradingViewMarketCards />
+                  </div>
+                )}
 
-            {/* Bottom Collapsible Dock: Positions, Orders, Ledger Audit */}
-            <PositionsAndOrders
-              positions={positions}
-              orders={orders}
-              currentPrice={currentPrice}
-            />
+                {/* Bottom Collapsible Dock: Positions, Orders, Ledger Audit */}
+                <PositionsAndOrders
+                  positions={positions}
+                  orders={orders}
+                  currentPrice={currentPrice}
+                  onToggleMarketOverview={() => setShowMarketOverview(!showMarketOverview)}
+                  isMarketOverviewOpen={showMarketOverview}
+                  onOpenBrokerModal={() => setIsBrokerModalOpen(true)}
+                />
+              </>
+            )}
           </div>
 
-          {/* 3. Right Watchlist & Selected Symbol Detail Dock (Daftar Pantau + Detail + 1-Click Buy/Sell) */}
-          {isWatchlistOpen && (
+          {/* 3. Right Multi-Tab Dock (Watchlist, Alerts, News, Data Window, Hotlists, Calendar, Ideas, Orders, Help) */}
+          {isDockOpen && (
             <TradingViewRightDock
+              activeTab={activeDockTab}
+              onSelectTab={setActiveDockTab}
+              onCloseDock={() => setIsDockOpen(false)}
               activeSymbol={activeSymbol}
               currentPrice={currentPrice}
               onSelectSymbol={setActiveSymbol}
               onOpenSymbolPicker={() => setIsSymbolPickerOpen(true)}
               onToggleTradePanel={() => setIsTradePanelOpen(!isTradePanelOpen)}
+              onOpenIndicators={() => setIsIndicatorsOpen(true)}
+              onOpenBrokerModal={() => setIsBrokerModalOpen(true)}
             />
           )}
 
@@ -264,27 +332,34 @@ export const Shell: React.FC = () => {
                 currentSymbol={activeSymbol}
                 currentPrice={currentPrice}
                 portfolio={portfolio}
+                onOpenBrokerModal={() => setIsBrokerModalOpen(true)}
               />
             </div>
           )}
 
           {/* 4. Rightmost Thin Icon Rail (TradingView Right-side Toolbar) */}
           <TradingViewRightRail
-            isWatchlistOpen={isWatchlistOpen}
-            onToggleWatchlist={() => setIsWatchlistOpen(!isWatchlistOpen)}
-            onOpenAlerts={() => setIsAlertsOpen(true)}
-            onOpenFeedback={() => setIsFeedbackOpen(true)}
-            onOpenIndicators={() => setIsIndicatorsOpen(true)}
-            onToggleTradePanel={() => setIsTradePanelOpen(!isTradePanelOpen)}
+            activeTab={activeDockTab}
+            isDockOpen={isDockOpen}
+            onSelectTab={handleSelectRightTab}
+            isWatchlistOpen={isDockOpen}
+            onToggleWatchlist={() => setIsDockOpen(!isDockOpen)}
+            onOpenAlerts={() => handleSelectRightTab('alerts')}
+            onOpenFeedback={() => handleSelectRightTab('ideas')}
+            onOpenIndicators={() => handleSelectRightTab('data')}
+            onToggleTradePanel={() => handleSelectRightTab('orders')}
           />
         </div>
       )}
 
+      {/* Institutional Market Status Bar (OpenTerminal Noir Inspired) */}
+      <MarketStatusBar />
+
       {/* 4. Mobile Bottom Navigation Bar with Trading Tab */}
       <MobileTabBar
-        onToggleWatchlist={() => setIsWatchlistOpen(!isWatchlistOpen)}
+        onToggleWatchlist={() => setIsDockOpen(!isDockOpen)}
         onToggleTradePanel={() => setIsTradePanelOpen(!isTradePanelOpen)}
-        isWatchlistOpen={isWatchlistOpen}
+        isWatchlistOpen={isDockOpen}
         isTradePanelOpen={isTradePanelOpen}
       />
 
@@ -336,8 +411,14 @@ export const Shell: React.FC = () => {
       {/* 5b. Honest Onboarding & Discipline Setup (<60s) */}
       <HonestOnboardingModal
         isOpen={isOnboardingOpen}
-        onClose={() => setIsOnboardingOpen(false)}
-        onComplete={() => setIsOnboardingOpen(false)}
+        onClose={() => {
+          setIsOnboardingOpen(false);
+          try { localStorage.setItem('celsius_onboarding_completed', 'true'); } catch {}
+        }}
+        onComplete={() => {
+          setIsOnboardingOpen(false);
+          try { localStorage.setItem('celsius_onboarding_completed', 'true'); } catch {}
+        }}
       />
 
       {/* 5c. Post-Session Review (Prompt 3.3) */}
@@ -354,6 +435,22 @@ export const Shell: React.FC = () => {
         isOpen={isWalletOpen}
         onClose={() => setIsWalletOpen(false)}
         initialTab={walletInitialTab}
+      />
+
+      {/* 5e. OpenTerminalUI Bloomberg Command Palette & OpenAlgo Broker Gateway */}
+      <TerminalCommandPalette
+        isOpen={isCommandPaletteOpen}
+        onClose={() => setIsCommandPaletteOpen(false)}
+        onSelectViewMode={handleToggleViewMode}
+        onOpenBrokerModal={() => setIsBrokerModalOpen(true)}
+        onOpenRightTab={(tab) => {
+          handleSelectRightTab(tab as RightDockTab);
+        }}
+      />
+
+      <BrokerManagerModal
+        isOpen={isBrokerModalOpen}
+        onClose={() => setIsBrokerModalOpen(false)}
       />
 
       {/* 6. Toasts */}

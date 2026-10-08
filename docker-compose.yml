@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+  # 1. Bhaskar Terminal — Next.js 15 Web Application
+  terminal-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bhaskar-terminal-web
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - REDIS_URL=redis://redis:6379
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - OPENALGO_URL=http://openalgo:5000
+    depends_on:
+      - redis
+    networks:
+      - terminal-net
+
+  # 2. Redis — Real-time Quotes, WebSocket State, and Option Chain Cache
+  redis:
+    image: redis:7-alpine
+    container_name: bhaskar-terminal-redis
+    restart: unless-stopped
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+    networks:
+      - terminal-net
+
+  # 3. OpenAlgo — Normalized Indian Broker Gateway (Zerodha, Upstox, Dhan, Sandbox)
+  openalgo:
+    image: python:3.11-slim
+    container_name: bhaskar-terminal-openalgo
+    restart: unless-stopped
+    ports:
+      - '5000:5000'
+    environment:
+      - PORT=5000
+      - BROKER_MODE=SANDBOX
+      - REDIS_URL=redis://redis:6379
+    networks:
+      - terminal-net
+    command: >
+      sh -c "pip install --no-cache-dir flask requests &&
+             python -c 'from flask import Flask, jsonify; app = Flask(__name__); @app.route(\"/api/v1/health\")\ndef health(): return jsonify({\"status\": \"ok\", \"gateway\": \"OpenAlgo\", \"mode\": \"SANDBOX\"}); app.run(host=\"0.0.0.0\", port=5000)'"
+
+  # 4. Ollama — Local LLM Research Assistant (Configured for NVIDIA RTX 3060)
+  ollama:
+    image: ollama/ollama:latest
+    container_name: bhaskar-terminal-ollama
+    restart: unless-stopped
+    ports:
+      - '11434:11434'
+    volumes:
+      - ollama_models:/root/.ollama
+    # Enable NVIDIA GPU access on Windows / WSL2 Docker Desktop
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    networks:
+      - terminal-net
+
+volumes:
+  redis_data:
+  ollama_models:
+
+networks:
+  terminal-net:
+    driver: bridge

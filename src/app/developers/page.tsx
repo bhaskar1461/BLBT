@@ -106,7 +106,7 @@ export default function DevelopersPage() {
         <div className="space-y-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-subtle text-xs text-muted font-mono">
             <Code2 size={13} className="text-primary" />
-            <span>The Business • Prompt 9.2</span>
+            <span>COMMERCIAL ARCHITECTURE // DEVELOPER PORTAL</span>
           </div>
 
           <div className="space-y-2">
@@ -127,7 +127,7 @@ export default function DevelopersPage() {
               <h2 className="text-base font-bold text-white">API Tier Comparison</h2>
               <p className="text-xs text-muted">Fair access for individuals; sustainable revenue from professionals.</p>
             </div>
-            <span className="text-xs font-mono text-faint">Prompt 9.2 Invariant</span>
+            <span className="text-xs font-mono text-faint">VERIFIED SPECIFICATION</span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-subtle">

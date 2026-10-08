@@ -111,7 +111,7 @@ export default function TournamentsPage() {
         <div className="space-y-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-subtle text-xs text-muted font-mono">
             <Trophy size={13} className="text-amber-400" />
-            <span>Community Without Casino Vibes • Prompt 8.1</span>
+            <span>DISCIPLINED COMPETITION // ZERO CASINO VIBES</span>
           </div>
 
           <div className="space-y-2">

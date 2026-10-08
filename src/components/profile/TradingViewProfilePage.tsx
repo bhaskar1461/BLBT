@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 import { TradingViewTopBar } from '@/components/layout/TradingViewTopBar';
 import { TradingViewRightDock } from '@/components/tradingview/TradingViewRightDock';
-import { TradingViewRightRail } from '@/components/tradingview/TradingViewRightRail';
+import { TradingViewRightRail, type RightDockTab } from '@/components/tradingview/TradingViewRightRail';
 import { SymbolPickerModal } from '@/components/topbar/SymbolPickerModal';
 import { AlertsDrawer } from '@/components/alerts/AlertsDrawer';
 import { IndicatorSettingsModal } from '@/components/chart/IndicatorSettingsModal';
@@ -42,7 +42,17 @@ export const TradingViewProfilePage: React.FC<TradingViewProfilePageProps> = ({
   usernameParam = 'Bhaskar1461',
 }) => {
   const [activeTab, setActiveTab] = useState<'ideas' | 'minds' | 'scripts' | 'verified'>('ideas');
-  const [isWatchlistOpen, setIsWatchlistOpen] = useState(true);
+  const [activeDockTab, setActiveDockTab] = useState<RightDockTab>('watchlist');
+  const [isDockOpen, setIsDockOpen] = useState(true);
+
+  const handleSelectRightTab = (tab: RightDockTab) => {
+    if (isDockOpen && activeDockTab === tab) {
+      setIsDockOpen(false);
+    } else {
+      setActiveDockTab(tab);
+      setIsDockOpen(true);
+    }
+  };
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
   const [isSymbolPickerOpen, setIsSymbolPickerOpen] = useState(false);
@@ -397,22 +407,30 @@ export const TradingViewProfilePage: React.FC<TradingViewProfilePageProps> = ({
         </div>
 
         {/* 3. Right Watchlist & Selected Symbol Detail Dock */}
-        {isWatchlistOpen && (
+        {isDockOpen && (
           <TradingViewRightDock
+            activeTab={activeDockTab}
+            onSelectTab={setActiveDockTab}
+            onCloseDock={() => setIsDockOpen(false)}
             activeSymbol={activeSymbol}
             currentPrice={currentPrice}
             onSelectSymbol={setActiveSymbol}
             onOpenSymbolPicker={() => setIsSymbolPickerOpen(true)}
+            onOpenIndicators={() => setIsIndicatorsOpen(true)}
           />
         )}
 
         {/* 4. Rightmost Thin Vertical Rail */}
         <TradingViewRightRail
-          isWatchlistOpen={isWatchlistOpen}
-          onToggleWatchlist={() => setIsWatchlistOpen(!isWatchlistOpen)}
-          onOpenAlerts={() => setIsAlertsOpen(true)}
-          onOpenFeedback={() => setIsFeedbackOpen(true)}
-          onOpenIndicators={() => setIsIndicatorsOpen(true)}
+          activeTab={activeDockTab}
+          isDockOpen={isDockOpen}
+          onSelectTab={handleSelectRightTab}
+          isWatchlistOpen={isDockOpen}
+          onToggleWatchlist={() => setIsDockOpen(!isDockOpen)}
+          onOpenAlerts={() => handleSelectRightTab('alerts')}
+          onOpenFeedback={() => handleSelectRightTab('ideas')}
+          onOpenIndicators={() => handleSelectRightTab('data')}
+          onToggleTradePanel={() => handleSelectRightTab('orders')}
         />
       </div>
 

@@ -251,9 +251,14 @@ class ServerPaperTradingStore {
     ];
 
     this.closedTrades.set('usr_bhaskar_sharma', bhaskarTrades);
+    this.closedTrades.set('usr_bhaskar1461', bhaskarTrades.map((t) => ({
+      ...t,
+      userId: 'usr_bhaskar1461',
+      userDisplayName: 'Bhaskar1461',
+    })));
     this.closedTrades.set('usr_celsius_demo', demoTrades);
 
-    // Initial 7-day visit streak for Bhaskar Rustam Sharma
+    // Initial 7-day visit streak for Bhaskar Rustam Sharma & Bhaskar1461
     const streakData = {
       currentStreak: 7,
       longestStreak: 18,
@@ -261,6 +266,7 @@ class ServerPaperTradingStore {
       todayVisited: true,
     };
     this.userStreaks.set('usr_bhaskar_sharma', streakData);
+    this.userStreaks.set('usr_bhaskar1461', streakData);
     this.userStreaks.set('usr_celsius_demo', streakData);
   }
 
@@ -283,7 +289,10 @@ class ServerPaperTradingStore {
       isNew = true;
       const accountId = `acc_${cleanUserId}`;
       const now = new Date().toISOString();
-      const isBhaskar = cleanUserId === 'usr_bhaskar_sharma' || cleanUserId === 'usr_celsius_demo';
+      const isBhaskar =
+        cleanUserId === 'usr_bhaskar_sharma' ||
+        cleanUserId === 'usr_bhaskar1461' ||
+        cleanUserId === 'usr_celsius_demo';
 
       // 4.8 Crore INR = 48,000,000 INR = 576,000.00 USDT
       // Available liquid cash: 58,380 USDT (5,838,000,000,000 base units)
@@ -386,8 +395,9 @@ class ServerPaperTradingStore {
         this.positions.set(cleanUserId, bhaskarPositions);
         this.orders.set(cleanUserId, []);
 
+        const nowMs = Date.now();
         const initialTx: PaperTransactionRecord = {
-          id: `tx_${Date.now()}_vip_init`,
+          id: `tx_${nowMs - 700000}_vip_init`,
           user_id: cleanUserId,
           account_id: accountId,
           order_id: null,
@@ -396,9 +406,110 @@ class ServerPaperTradingStore {
           balance_after_units: initialBalUnits.toString(),
           symbol: null,
           details: { description: 'Institutional High Net Worth Allocation of 4.80 Cr INR ($576,000 USDT)' },
-          created_at: now,
+          created_at: new Date(nowMs - 86400000 * 7).toISOString(),
         };
-        this.transactions.set(cleanUserId, [initialTx]);
+
+        const txBtcBuy: PaperTransactionRecord = {
+          id: `tx_${nowMs - 600000}_btc_fill`,
+          user_id: cleanUserId,
+          account_id: accountId,
+          order_id: 'ord_btc_01',
+          type: 'order_fill',
+          amount_units: '26690000000000',
+          balance_after_units: '30910000000000',
+          symbol: 'BTCUSDT',
+          details: { side: 'buy', quantity: 4.25, price: 62800, type: 'market' },
+          created_at: new Date(nowMs - 86400000 * 3).toISOString(),
+        };
+
+        const txBtcFee: PaperTransactionRecord = {
+          id: `tx_${nowMs - 599000}_btc_fee`,
+          user_id: cleanUserId,
+          account_id: accountId,
+          order_id: 'ord_btc_01',
+          type: 'fee',
+          amount_units: '26690000000',
+          balance_after_units: '30883310000000',
+          symbol: 'BTCUSDT',
+          details: { rate: '0.10%', fee_usdt: 266.9 },
+          created_at: new Date(nowMs - 86400000 * 3).toISOString(),
+        };
+
+        const txEthBuy: PaperTransactionRecord = {
+          id: `tx_${nowMs - 500000}_eth_fill`,
+          user_id: cleanUserId,
+          account_id: accountId,
+          order_id: 'ord_eth_01',
+          type: 'order_fill',
+          amount_units: '13524000000000',
+          balance_after_units: '17359310000000',
+          symbol: 'ETHUSDT',
+          details: { side: 'buy', quantity: 42.0, price: 3220, type: 'market' },
+          created_at: new Date(nowMs - 86400000 * 5).toISOString(),
+        };
+
+        const txSolBuy: PaperTransactionRecord = {
+          id: `tx_${nowMs - 400000}_sol_fill`,
+          user_id: cleanUserId,
+          account_id: accountId,
+          order_id: 'ord_sol_01',
+          type: 'order_fill',
+          amount_units: '6300000000000',
+          balance_after_units: '11059310000000',
+          symbol: 'SOLUSDT',
+          details: { side: 'buy', quantity: 450.0, price: 140, type: 'market' },
+          created_at: new Date(nowMs - 86400000 * 2).toISOString(),
+        };
+
+        const txRealizedBtc: PaperTransactionRecord = {
+          id: `tx_${nowMs - 300000}_realized_btc`,
+          user_id: cleanUserId,
+          account_id: accountId,
+          order_id: 'ord_btc_close',
+          type: 'realized_pnl',
+          amount_units: '1488000000000',
+          balance_after_units: '25939310000000',
+          symbol: 'BTCUSDT',
+          details: { exitPrice: 65850, realizedPnlUsdt: 14880, roiPct: 7.6 },
+          created_at: new Date(nowMs - 86400000 * 3 + 21600000).toISOString(),
+        };
+
+        const txRealizedSol: PaperTransactionRecord = {
+          id: `tx_${nowMs - 200000}_realized_sol`,
+          user_id: cleanUserId,
+          account_id: accountId,
+          order_id: 'ord_sol_close',
+          type: 'realized_pnl',
+          amount_units: '976500000000',
+          balance_after_units: '35704310000000',
+          symbol: 'SOLUSDT',
+          details: { exitPrice: 156.4, realizedPnlUsdt: 9765, roiPct: 21.71 },
+          created_at: new Date(nowMs - 86400000 * 2 + 36000000).toISOString(),
+        };
+
+        const txRealizedEth: PaperTransactionRecord = {
+          id: `tx_${nowMs - 100000}_realized_eth`,
+          user_id: cleanUserId,
+          account_id: accountId,
+          order_id: 'ord_eth_close',
+          type: 'realized_pnl',
+          amount_units: '700000000000',
+          balance_after_units: '42704310000000',
+          symbol: 'ETHUSDT',
+          details: { exitPrice: 3380, realizedPnlUsdt: 7000, roiPct: 9.03 },
+          created_at: new Date(nowMs - 86400000 + 14400000).toISOString(),
+        };
+
+        this.transactions.set(cleanUserId, [
+          txRealizedEth,
+          txRealizedSol,
+          txRealizedBtc,
+          txSolBuy,
+          txEthBuy,
+          txBtcFee,
+          txBtcBuy,
+          initialTx,
+        ]);
       } else {
         this.positions.set(cleanUserId, []);
         this.orders.set(cleanUserId, []);
