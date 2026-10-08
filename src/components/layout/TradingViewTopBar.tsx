@@ -512,6 +512,20 @@ export const TradingViewTopBar: React.FC<TradingViewTopBarProps> = ({
           </span>
         </Link>
 
+        {/* Bloomberg Anywhere Mobile View Button */}
+        <button
+          onClick={() => {
+            if (typeof window !== 'undefined') {
+              localStorage.setItem('bloomberg_mobile_view', 'true');
+              window.location.reload();
+            }
+          }}
+          className="flex md:hidden items-center gap-1 px-1.5 py-0.5 rounded bg-[#ff8800]/20 text-[#ff8800] border border-[#ff8800]/40 text-[10px] font-bold"
+          title="Return to Bloomberg Anywhere Home"
+        >
+          <span>ANYWHERE</span>
+        </button>
+
         {/* Account Funds & Wallet Pill */}
         {onOpenWallet && (
           <button

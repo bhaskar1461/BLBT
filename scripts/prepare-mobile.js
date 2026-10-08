@@ -30,30 +30,29 @@ if (fs.existsSync(publicDir)) {
   }
 }
 
-// Generate Bloomberg-Style Celsius Mobile Trading Terminal in dist/index.html
+// Generate the exact Bloomberg Anywhere Mobile Experience in dist/index.html
 const indexPath = path.join(distDir, 'index.html');
-const mobileTerminalHtml = `<!doctype html>
+const mobileBloombergAnywhereHtml = `<!doctype html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>Bloomberg Professional</title>
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <title>Bloomberg Anywhere — Professional</title>
+  <link rel="icon" type="image/png" href="icon.png" />
   <style>
     :root {
-      --bg: #0d1117;
-      --card: #161b22;
-      --panel: #131722;
-      --border: #212a36;
-      --border-focus: #2962ff;
-      --text: #d1d4dc;
-      --muted: #787b86;
-      --bull: #089981;
-      --bear: #f23645;
-      --accent: #2962ff;
-      --gold: #f59e0b;
-      --safe-top: env(safe-area-inset-top, 20px);
-      --safe-bottom: env(safe-area-inset-bottom, 20px);
+      --bg: #000000;
+      --card-bg: #12151c;
+      --card-border: #1e2430;
+      --text: #ffffff;
+      --text-muted: #8b929e;
+      --text-dim: #5c6370;
+      --orange: #ff8800;
+      --green: #00c176;
+      --red: #ff4d4f;
+      --blue: #2979ff;
+      --safe-top: env(safe-area-inset-top, 44px);
+      --safe-bottom: env(safe-area-inset-bottom, 34px);
     }
     * {
       box-sizing: border-box;
@@ -72,888 +71,863 @@ const mobileTerminalHtml = `<!doctype html>
       flex-direction: column;
       overflow-x: hidden;
       padding-top: var(--safe-top);
-      padding-bottom: var(--safe-bottom);
+      padding-bottom: calc(var(--safe-bottom) + 60px);
     }
-    /* Header */
-    header {
-      background: var(--panel);
-      border-bottom: 1px solid var(--border);
-      padding: 10px 14px;
+
+    /* 1. Top Bloomberg Anywhere Header */
+    .top-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      padding: 12px 16px;
+      background: var(--bg);
       position: sticky;
       top: 0;
       z-index: 100;
     }
-    .brand {
+    .header-left {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
     }
-    .bloomberg-logo {
-      width: 28px;
-      height: 28px;
-      background: #000;
-      border: 1px solid #333;
-      border-radius: 6px;
+    .back-btn {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 20px;
+      cursor: pointer;
       display: flex;
       align-items: center;
-      justify-content: center;
-      font-weight: 900;
+      padding: 4px;
+    }
+    .brand-group {
+      display: flex;
+      flex-direction: column;
+    }
+    .brand-bloomberg {
       font-size: 19px;
-      color: #fff;
-      font-family: -apple-system, Arial, sans-serif;
-    }
-    .brand-title {
-      font-size: 13px;
       font-weight: 800;
-      letter-spacing: 0.5px;
-      color: #fff;
+      letter-spacing: -0.3px;
+      color: #ffffff;
+      line-height: 1.1;
     }
-    .brand-sub {
-      font-size: 10px;
-      color: var(--muted);
-      font-family: monospace;
+    .brand-anywhere {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 2.2px;
+      color: #a0a6b5;
+      text-transform: uppercase;
+      margin-top: 1px;
     }
     .header-actions {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 16px;
     }
-    .status-dot {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      font-size: 10px;
-      font-family: monospace;
-      padding: 3px 8px;
-      border-radius: 999px;
-      background: rgba(8, 153, 129, 0.12);
-      border: 1px solid rgba(8, 153, 129, 0.3);
-      color: var(--bull);
-    }
-    .pulse-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--bull);
-      animation: pulse 2s infinite;
-    }
-    @keyframes pulse {
-      0% { opacity: 0.4; transform: scale(0.9); }
-      50% { opacity: 1; transform: scale(1.1); }
-      100% { opacity: 0.4; transform: scale(0.9); }
-    }
-    .btn-icon {
-      background: #1e222d;
-      border: 1px solid var(--border);
-      color: var(--text);
-      border-radius: 6px;
-      padding: 6px 9px;
-      font-size: 11px;
+    .icon-btn {
+      background: none;
+      border: none;
+      color: #ffffff;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .notif-badge {
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      width: 7px;
+      height: 7px;
+      background: var(--red);
+      border-radius: 50%;
     }
 
-    /* Symbol Switcher Tape */
-    .symbol-bar {
+    /* 2. Profile Summary Card */
+    .profile-card {
+      padding: 14px 16px 16px;
       display: flex;
-      overflow-x: auto;
-      gap: 8px;
-      padding: 8px 12px;
-      background: #10141d;
-      border-bottom: 1px solid var(--border);
-      scrollbar-width: none;
+      align-items: center;
+      gap: 14px;
     }
-    .symbol-bar::-webkit-scrollbar { display: none; }
-    .symbol-pill {
+    .avatar-circle {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: #181d26;
+      border: 2px solid #2e384d;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: 0.5px;
+      shrink: 0;
+      cursor: pointer;
+    }
+    .profile-details {
       display: flex;
       flex-direction: column;
-      padding: 6px 12px;
-      border-radius: 6px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      min-width: 95px;
-      cursor: pointer;
-      transition: all 0.15s;
+      gap: 4px;
+      flex: 1;
     }
-    .symbol-pill.active {
-      border-color: var(--accent);
-      background: #1b2333;
-    }
-    .sym-name {
-      font-size: 11px;
+    .profile-name {
+      font-size: 18px;
       font-weight: 700;
-      color: #fff;
+      color: #ffffff;
     }
-    .sym-price {
-      font-size: 11px;
-      font-family: monospace;
-      margin-top: 2px;
+    .profile-role {
+      font-size: 13px;
+      color: var(--text-muted);
     }
-    .sym-change {
-      font-size: 9px;
-      font-family: monospace;
-    }
-
-    /* Live Price Hero */
-    .hero-strip {
-      padding: 10px 14px;
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      border-bottom: 1px solid var(--border);
-      background: var(--card);
-    }
-    .hero-price {
-      font-size: 26px;
-      font-weight: 800;
-      font-family: monospace;
-      color: #fff;
-      letter-spacing: -0.5px;
-    }
-    .hero-meta {
+    .profile-tags {
       display: flex;
       align-items: center;
       gap: 10px;
-      font-size: 11px;
-      font-family: monospace;
+      margin-top: 2px;
     }
-    .up { color: var(--bull); }
-    .down { color: var(--bear); }
-
-    /* Chart Container */
-    .chart-container {
-      position: relative;
-      background: #0d1117;
-      height: 240px;
-      width: 100%;
-      border-bottom: 1px solid var(--border);
-    }
-    canvas#chartCanvas {
-      width: 100%;
-      height: 100%;
-      display: block;
-    }
-    .chart-tf-bar {
-      position: absolute;
-      top: 6px;
-      left: 10px;
-      display: flex;
-      gap: 4px;
-      z-index: 10;
-    }
-    .tf-btn {
-      background: rgba(22, 27, 34, 0.85);
-      border: 1px solid var(--border);
-      color: var(--muted);
-      border-radius: 4px;
-      padding: 2px 7px;
-      font-size: 10px;
-      font-family: monospace;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .tf-btn.active {
-      color: #fff;
-      border-color: var(--accent);
-      background: rgba(41, 98, 255, 0.2);
-    }
-
-    /* Trading & Portfolio Section */
-    .trading-body {
-      flex: 1;
-      padding: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .card-panel {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 12px;
-    }
-    .wallet-strip {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 11px;
-      padding-bottom: 10px;
-      margin-bottom: 10px;
-      border-bottom: 1px solid var(--border);
-    }
-    .wallet-val {
-      font-size: 15px;
+    .user-pill {
+      font-size: 9px;
       font-weight: 700;
-      font-family: monospace;
-      color: #fff;
-    }
-
-    /* Order Execution */
-    .order-side-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-    .btn-side {
-      padding: 10px;
-      border-radius: 6px;
-      font-weight: 700;
-      font-size: 13px;
-      border: none;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2px;
-      transition: opacity 0.15s;
-    }
-    .btn-side:active { opacity: 0.8; }
-    .btn-buy {
-      background: var(--bull);
-      color: #fff;
-    }
-    .btn-sell {
-      background: var(--bear);
-      color: #fff;
-    }
-
-    .order-input-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-    .input-box {
-      flex: 1;
-      background: #0d1117;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 8px 10px;
-      color: #fff;
-      font-family: monospace;
-      font-size: 13px;
-      outline: none;
-    }
-    .input-box:focus {
-      border-color: var(--border-focus);
-    }
-    .pct-pills {
-      display: flex;
-      gap: 6px;
-      margin-bottom: 10px;
-    }
-    .pct-btn {
-      flex: 1;
-      background: #1e222d;
-      border: 1px solid var(--border);
-      color: var(--muted);
-      border-radius: 4px;
-      padding: 4px 0;
-      font-size: 10px;
-      font-family: monospace;
-      text-align: center;
-      cursor: pointer;
-    }
-    .pct-btn:active { background: #2a2e39; color: #fff; }
-
-    /* Open Positions */
-    .positions-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 12px;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 8px;
-    }
-    .pos-item {
-      background: #0d1117;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 8px 10px;
-      margin-bottom: 6px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .pos-sym {
-      font-weight: 700;
-      font-size: 12px;
-      color: #fff;
-    }
-    .pos-meta {
-      font-size: 10px;
-      color: var(--muted);
-      font-family: monospace;
-    }
-    .pos-pnl {
-      font-family: monospace;
-      font-weight: 700;
-      font-size: 12px;
-      text-align: right;
-    }
-    .btn-close-pos {
-      background: #1e222d;
-      border: 1px solid #333;
-      color: var(--muted);
-      border-radius: 4px;
-      font-size: 10px;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
       padding: 3px 8px;
-      margin-left: 8px;
+      border-radius: 4px;
+      background: #181d28;
+      border: 1px solid #2a3346;
+      color: #d1d5db;
+    }
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--green);
+    }
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 6px rgba(0, 193, 118, 0.6);
+    }
+
+    /* 3. Navigation Underline Tabs */
+    .nav-tabs {
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      border-bottom: 1px solid #1a202c;
+      gap: 20px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .nav-tabs::-webkit-scrollbar { display: none; }
+    .nav-tab-item {
+      padding: 10px 2px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      position: relative;
+      white-space: nowrap;
+      transition: color 0.15s;
+    }
+    .nav-tab-item.active {
+      color: #ffffff;
+    }
+    .nav-tab-item.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 2.5px;
+      background: var(--orange);
+      border-radius: 2px 2px 0 0;
+    }
+
+    /* Common Section Styles */
+    .section-wrap {
+      padding: 16px 16px 8px;
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .section-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+    .section-sub {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--text-muted);
+      margin-left: 4px;
+    }
+    .view-all-link {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--blue);
+      text-decoration: none;
       cursor: pointer;
     }
 
-    /* Modal */
-    .modal {
+    /* 4. Market Snapshot / Watchlist Card */
+    .watchlist-box {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .watchlist-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      border-bottom: 1px solid #1a202c;
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+    .watchlist-row:last-child {
+      border-bottom: none;
+    }
+    .watchlist-row:active {
+      background: #1a212d;
+    }
+    .instrument-left {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      width: 105px;
+    }
+    .inst-symbol {
+      font-size: 14px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+    .inst-name {
+      font-size: 11px;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .inst-chart {
+      width: 80px;
+      height: 26px;
+    }
+    .inst-quote {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 2px;
+      min-width: 95px;
+    }
+    .inst-price {
+      font-size: 14px;
+      font-weight: 700;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", monospace;
+      color: #ffffff;
+    }
+    .inst-change {
+      font-size: 11px;
+      font-weight: 600;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", monospace;
+    }
+    .up { color: var(--green); }
+    .down { color: var(--red); }
+
+    /* 5. My Portfolios Cards */
+    .portfolios-scroll {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding-bottom: 4px;
+    }
+    .portfolios-scroll::-webkit-scrollbar { display: none; }
+    .portfolio-card {
+      flex: 0 0 calc(60% - 6px);
+      min-width: 190px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+    .portfolio-card:active {
+      border-color: var(--orange);
+    }
+    .port-name {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+    .port-val {
+      font-size: 20px;
+      font-weight: 800;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", monospace;
+      color: #ffffff;
+      letter-spacing: -0.3px;
+    }
+    .port-inr {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--orange);
+      margin-top: 1px;
+    }
+    .port-meta-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 10px;
+    }
+    .port-gain {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--green);
+    }
+    .port-sparkline {
+      width: 70px;
+      height: 24px;
+    }
+
+    /* 6. Recent News Section */
+    .news-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      gap: 12px;
+      cursor: pointer;
+      margin-bottom: 10px;
+      transition: background 0.1s;
+    }
+    .news-card:active {
+      background: #1a212d;
+    }
+    .news-thumb {
+      width: 72px;
+      height: 60px;
+      border-radius: 8px;
+      object-fit: cover;
+      background: #1f2735;
+      shrink: 0;
+    }
+    .news-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex: 1;
+    }
+    .news-headline {
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.35;
+      color: #ffffff;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .news-meta {
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* 7. Bottom Navigation Bar */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: calc(56px + var(--safe-bottom));
+      padding-bottom: var(--safe-bottom);
+      background: #080a0e;
+      border-top: 1px solid #1a202c;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      z-index: 100;
+    }
+    .nav-btn {
+      flex: 1;
+      height: 100%;
+      background: none;
+      border: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+    .nav-btn.active {
+      color: var(--orange);
+    }
+    .nav-label {
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    /* Modal Styling */
+    .modal-overlay {
       display: none;
       position: fixed;
       inset: 0;
       background: rgba(0,0,0,0.85);
       z-index: 200;
-      align-items: center;
+      align-items: flex-end;
       justify-content: center;
-      padding: 16px;
     }
-    .modal.open { display: flex; }
-    .modal-box {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
+    .modal-overlay.open { display: flex; }
+    .sheet-box {
       width: 100%;
-      max-width: 360px;
-      padding: 16px;
+      max-width: 480px;
+      background: #121620;
+      border-top: 1px solid #2a3346;
+      border-radius: 16px 16px 0 0;
+      padding: 18px 18px calc(var(--safe-bottom) + 18px);
+      max-height: 85vh;
+      overflow-y: auto;
     }
-    .modal-title {
-      font-size: 15px;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 8px;
+    .sheet-handle {
+      width: 36px;
+      height: 4px;
+      background: #3a455a;
+      border-radius: 999px;
+      margin: 0 auto 14px;
     }
-    .btn-connect {
+    .btn-action {
       width: 100%;
-      background: var(--accent);
-      color: #fff;
+      background: var(--orange);
+      color: #000;
       border: none;
-      border-radius: 6px;
-      padding: 10px;
+      border-radius: 8px;
+      padding: 12px;
       font-weight: 700;
-      font-size: 13px;
-      margin-top: 10px;
+      font-size: 14px;
       cursor: pointer;
+      margin-top: 12px;
     }
   </style>
 </head>
 <body>
-  <!-- Bloomberg-style Top Bar -->
-  <header>
-    <div class="brand">
-      <div class="bloomberg-logo">B</div>
-      <div>
-        <div class="brand-title">BLOOMBERG PROFESSIONAL</div>
-        <div class="brand-sub">FOR BLOOMBERG ANYWHERE CLIENTS</div>
+
+  <!-- 1. Top Header -->
+  <header class="top-header">
+    <div class="header-left">
+      <button class="back-btn" onclick="openMoreModal()" title="Menu">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
+      <div class="brand-group">
+        <span class="brand-bloomberg">Bloomberg</span>
+        <span class="brand-anywhere">ANYWHERE</span>
       </div>
     </div>
+
     <div class="header-actions">
-      <div class="status-dot">
-        <span class="pulse-dot"></span>
-        <span id="connStatus">LIVE</span>
-      </div>
-      <button class="btn-icon" onclick="openServerModal()">⚙ Server</button>
+      <!-- Search -->
+      <button class="icon-btn" onclick="openSearchModal()" title="Search">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+      </button>
+
+      <!-- Notifications Bell with Red Dot -->
+      <button class="icon-btn" onclick="openAlertsModal()" title="Alerts">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+        </svg>
+        <span class="notif-badge"></span>
+      </button>
+
+      <!-- Hamburger Menu -->
+      <button class="icon-btn" onclick="openMoreModal()" title="More Options">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
     </div>
   </header>
 
-  <!-- Live Market Switcher Tape -->
-  <div class="symbol-bar" id="symbolTape"></div>
+  <!-- 2. Profile Card -->
+  <section class="profile-card" onclick="openProfileModal()">
+    <div class="avatar-circle">BS</div>
+    <div class="profile-details">
+      <div class="profile-name">Bhaskar Sharma</div>
+      <div class="profile-role">Individual Investor</div>
+      <div class="profile-tags">
+        <span class="user-pill">BLOOMBERG ANYWHERE USER</span>
+        <div class="status-indicator">
+          <span class="status-dot"></span>
+          <span>Active</span>
+        </div>
+      </div>
+    </div>
+  </section>
 
-  <!-- Price & 24h Change Strip -->
-  <div class="hero-strip">
-    <div class="hero-price" id="heroPrice">---.--</div>
-    <div class="hero-meta">
-      <div>24h Chg: <span id="heroChange">0.00%</span></div>
-      <div>High: <span id="heroHigh">---</span></div>
-      <div>Low: <span id="heroLow">---</span></div>
+  <!-- 3. Navigation Underline Tabs -->
+  <nav class="nav-tabs">
+    <div class="nav-tab-item active" onclick="switchTab('overview')">Overview</div>
+    <div class="nav-tab-item" onclick="switchTab('watchlists')">Watchlists</div>
+    <div class="nav-tab-item" onclick="switchTab('portfolios')">Portfolios</div>
+    <div class="nav-tab-item" onclick="switchTab('alerts')">Alerts</div>
+    <div class="nav-tab-item" onclick="openMoreModal()">Settings</div>
+  </nav>
+
+  <!-- Tab Content: Overview (Default) -->
+  <main id="overviewSection">
+    <!-- 4. Market Snapshot / Watchlist -->
+    <section class="section-wrap">
+      <div class="section-header">
+        <div class="section-title">
+          Market Snapshot <span class="section-sub">(My Watchlist)</span>
+        </div>
+        <a class="view-all-link" onclick="switchTab('watchlists')">View All</a>
+      </div>
+
+      <div class="watchlist-box" id="watchlistRows">
+        <!-- AAPL -->
+        <div class="watchlist-row" onclick="openChartModal('AAPL', 'Apple Inc', 178.32, -0.67)">
+          <div class="instrument-left">
+            <span class="inst-symbol">AAPL</span>
+            <span class="inst-name">Apple Inc</span>
+          </div>
+          <!-- Red mini chart -->
+          <svg class="inst-chart" viewBox="0 0 80 26">
+            <path d="M0,8 Q20,6 35,14 T60,18 T80,22" fill="none" stroke="#ff4d4f" stroke-width="1.8" stroke-linecap="round" />
+          </svg>
+          <div class="inst-quote">
+            <span class="inst-price">178.32</span>
+            <span class="inst-change down">-1.21 (-0.67%)</span>
+          </div>
+        </div>
+
+        <!-- TSLA -->
+        <div class="watchlist-row" onclick="openChartModal('TSLA', 'Tesla Inc', 248.17, 1.41)">
+          <div class="instrument-left">
+            <span class="inst-symbol">TSLA</span>
+            <span class="inst-name">Tesla Inc</span>
+          </div>
+          <!-- Green mini chart -->
+          <svg class="inst-chart" viewBox="0 0 80 26">
+            <path d="M0,20 Q20,18 40,11 T60,14 T80,4" fill="none" stroke="#00c176" stroke-width="1.8" stroke-linecap="round" />
+          </svg>
+          <div class="inst-quote">
+            <span class="inst-price">248.17</span>
+            <span class="inst-change up">+3.45 (+1.41%)</span>
+          </div>
+        </div>
+
+        <!-- NIFTY 50 (Indian Market) -->
+        <div class="watchlist-row" onclick="openChartModal('NIFTY', 'Nifty 50', 24612.30, -0.49)">
+          <div class="instrument-left">
+            <span class="inst-symbol">NIFTY</span>
+            <span class="inst-name">Nifty 50 🇮🇳</span>
+          </div>
+          <!-- Red mini chart -->
+          <svg class="inst-chart" viewBox="0 0 80 26">
+            <path d="M0,6 Q20,12 38,10 T60,20 T80,23" fill="none" stroke="#ff4d4f" stroke-width="1.8" stroke-linecap="round" />
+          </svg>
+          <div class="inst-quote">
+            <span class="inst-price">24,612.30</span>
+            <span class="inst-change down">-120.45 (-0.49%)</span>
+          </div>
+        </div>
+
+        <!-- BTCUSD -->
+        <div class="watchlist-row" onclick="openChartModal('BTCUSDT', 'Bitcoin', 63284.50, 0.66)">
+          <div class="instrument-left">
+            <span class="inst-symbol">BTCUSD</span>
+            <span class="inst-name">Bitcoin</span>
+          </div>
+          <!-- Green mini chart -->
+          <svg class="inst-chart" viewBox="0 0 80 26">
+            <path d="M0,18 Q20,15 35,10 T55,14 T80,3" fill="none" stroke="#00c176" stroke-width="1.8" stroke-linecap="round" />
+          </svg>
+          <div class="inst-quote">
+            <span class="inst-price" id="btcLivePrice">63,284.50</span>
+            <span class="inst-change up" id="btcLiveChg">+412.30 (+0.66%)</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. My Portfolios -->
+    <section class="section-wrap">
+      <div class="section-header">
+        <span class="section-title">My Portfolios</span>
+        <a class="view-all-link" onclick="switchTab('portfolios')">View All</a>
+      </div>
+
+      <div class="portfolios-scroll">
+        <!-- Main Portfolio Card -->
+        <div class="portfolio-card" onclick="openPortfolioDetail('main')">
+          <div>
+            <div class="port-name">Main Portfolio</div>
+            <div class="port-val">$617,530.00</div>
+            <div class="port-inr">≈ ₹5.15 Cr INR</div>
+          </div>
+          <div class="port-meta-row">
+            <span class="port-gain">+2.31% (Today)</span>
+            <svg class="port-sparkline" viewBox="0 0 70 24">
+              <path d="M0,18 Q18,14 35,8 T55,10 T70,3" fill="none" stroke="#00c176" stroke-width="2" stroke-linecap="round" />
+            </svg>
+          </div>
+        </div>
+
+        <!-- Long Term Portfolio Card -->
+        <div class="portfolio-card" onclick="openPortfolioDetail('longterm')">
+          <div>
+            <div class="port-name">Long Term F&O</div>
+            <div class="port-val">$128,204.11</div>
+            <div class="port-inr">≈ ₹1.07 Cr INR</div>
+          </div>
+          <div class="port-meta-row">
+            <span class="port-gain">+0.92% (Today)</span>
+            <svg class="port-sparkline" viewBox="0 0 70 24">
+              <path d="M0,16 Q18,17 35,11 T55,13 T70,5" fill="none" stroke="#00c176" stroke-width="2" stroke-linecap="round" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. Recent News -->
+    <section class="section-wrap">
+      <div class="section-header">
+        <span class="section-title">Recent News</span>
+        <a class="view-all-link" onclick="switchTab('news')">View All</a>
+      </div>
+
+      <div class="news-card" onclick="openNewsArticle('fed')">
+        <svg class="news-thumb" viewBox="0 0 72 60">
+          <rect width="72" height="60" fill="#18202d"/>
+          <path d="M12,50 L25,20 L40,32 L60,14" stroke="#ff8800" stroke-width="2.5" fill="none"/>
+        </svg>
+        <div class="news-content">
+          <div class="news-headline">Markets steady as Fed comments fuel rate cut expectations</div>
+          <div class="news-meta">Bloomberg · 2h ago</div>
+        </div>
+      </div>
+
+      <div class="news-card" onclick="openNewsArticle('rbi')">
+        <svg class="news-thumb" viewBox="0 0 72 60">
+          <rect width="72" height="60" fill="#18202d"/>
+          <circle cx="36" cy="30" r="16" fill="#232e42"/>
+          <path d="M26,30 L46,30 M36,20 L36,40" stroke="#00c176" stroke-width="2"/>
+        </svg>
+        <div class="news-content">
+          <div class="news-headline">RBI signals durable liquidity support as Indian GDP projections remain robust</div>
+          <div class="news-meta">Bloomberg Markets · 3h ago</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 7. Bottom Navigation Bar -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" onclick="switchTab('overview')">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+      </svg>
+      <span class="nav-label">Home</span>
+    </button>
+
+    <button class="nav-btn" onclick="switchTab('markets')">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="20" x2="18" y2="10"></line>
+        <line x1="12" y1="20" x2="12" y2="4"></line>
+        <line x1="6" y1="20" x2="6" y2="14"></line>
+      </svg>
+      <span class="nav-label">Markets</span>
+    </button>
+
+    <button class="nav-btn" onclick="switchTab('watchlists')">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+      </svg>
+      <span class="nav-label">Watchlist</span>
+    </button>
+
+    <button class="nav-btn" onclick="switchTab('news')">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"></path>
+        <path d="M18 14h-8"></path>
+        <path d="M15 18h-5"></path>
+        <path d="M10 6h8v4h-8V6Z"></path>
+      </svg>
+      <span class="nav-label">News</span>
+    </button>
+
+    <button class="nav-btn" onclick="openMoreModal()">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="1"></circle>
+        <circle cx="19" cy="12" r="1"></circle>
+        <circle cx="5" cy="12" r="1"></circle>
+      </svg>
+      <span class="nav-label">More</span>
+    </button>
+  </nav>
+
+  <!-- Modals -->
+  <!-- 8. More Options Sheet -->
+  <div class="modal-overlay" id="moreModal" onclick="closeAllModals(event)">
+    <div class="sheet-box" onclick="event.stopPropagation()">
+      <div class="sheet-handle"></div>
+      <h3 style="font-size:16px;font-weight:700;margin-bottom:14px;color:#fff">Bloomberg Anywhere Options</h3>
+      
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="padding:12px;background:#181d28;border-radius:8px;display:flex;justify-content:space-between;align-items:center;cursor:pointer" onclick="openProfileModal()">
+          <div>
+            <div style="font-weight:700;color:#fff">Account Settings</div>
+            <div style="font-size:11px;color:var(--text-muted)">Bhaskar Sharma · Individual Investor</div>
+          </div>
+          <span style="color:var(--orange)">→</span>
+        </div>
+
+        <div style="padding:12px;background:#181d28;border-radius:8px;display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="font-weight:700;color:#fff">Subscription Details</div>
+            <div style="font-size:11px;color:var(--green)">Bloomberg Anywhere License: Active</div>
+          </div>
+          <span style="font-size:10px;padding:3px 6px;background:rgba(0,193,118,0.15);color:var(--green);border-radius:4px">Verified</span>
+        </div>
+
+        <div style="padding:12px;background:#181d28;border-radius:8px;display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="font-weight:700;color:#fff">Base Currency Preference</div>
+            <div style="font-size:11px;color:var(--text-muted)">Dual Valuation: USD + INR (₹83.33)</div>
+          </div>
+          <span style="color:var(--orange);font-weight:700">₹ INR / $</span>
+        </div>
+
+        <button class="btn-action" onclick="launchLiveTerminal()">Launch Full Bloomberg Pro Terminal</button>
+        <button class="btn-action" style="background:#222834;color:#fff;margin-top:6px" onclick="closeAllModals()">Close</button>
+      </div>
     </div>
   </div>
 
-  <!-- Candlestick Chart Viewport -->
-  <div class="chart-container">
-    <div class="chart-tf-bar">
-      <button class="tf-btn active" onclick="setTimeframe('1m')">1m</button>
-      <button class="tf-btn" onclick="setTimeframe('5m')">5m</button>
-      <button class="tf-btn" onclick="setTimeframe('15m')">15m</button>
-      <button class="tf-btn" onclick="setTimeframe('1h')">1h</button>
-      <button class="tf-btn" onclick="setTimeframe('1D')">1D</button>
-    </div>
-    <canvas id="chartCanvas"></canvas>
-  </div>
-
-  <!-- Paper Trading Body -->
-  <div class="trading-body">
-    <div class="card-panel">
-      <div class="wallet-strip">
+  <!-- Instrument Chart / Trading Modal -->
+  <div class="modal-overlay" id="chartModal" onclick="closeAllModals(event)">
+    <div class="sheet-box" onclick="event.stopPropagation()">
+      <div class="sheet-handle"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
         <div>
-          <span style="color:var(--muted)">Paper Balance</span>
-          <div class="wallet-val" id="dispBalance">$10,000.00</div>
+          <h2 id="modalSymbol" style="font-size:18px;font-weight:800;color:#fff">AAPL</h2>
+          <div id="modalName" style="font-size:12px;color:var(--text-muted)">Apple Inc</div>
         </div>
         <div style="text-align:right">
-          <span style="color:var(--muted)">Unrealized P&L</span>
-          <div class="wallet-val" id="dispTotalPnl">$0.00</div>
+          <div id="modalPrice" style="font-size:20px;font-weight:800;font-family:monospace;color:#fff">$178.32</div>
+          <div id="modalChange" style="font-size:12px;font-weight:700;color:var(--red)">-0.67%</div>
         </div>
       </div>
 
-      <!-- Quick Buy / Sell Buttons -->
-      <div class="order-side-grid">
-        <button class="btn-side btn-buy" onclick="executeTrade('long')">
-          <span>BUY / LONG</span>
-          <span style="font-size:10px;opacity:0.8" id="lblBuy">Market</span>
-        </button>
-        <button class="btn-side btn-sell" onclick="executeTrade('short')">
-          <span>SELL / SHORT</span>
-          <span style="font-size:10px;opacity:0.8" id="lblSell">Market</span>
-        </button>
+      <div style="height:140px;background:#0b0e14;border:1px solid #1a2230;border-radius:8px;display:flex;align-items:center;justify-content:center;margin:12px 0">
+        <svg width="90%" height="90" viewBox="0 0 280 80">
+          <path d="M0,50 Q40,30 80,45 T160,20 T240,35 T280,10" fill="none" stroke="#ff8800" stroke-width="2.5"/>
+        </svg>
       </div>
 
-      <div class="pct-pills">
-        <button class="pct-btn" onclick="setOrderRatio(0.25)">25%</button>
-        <button class="pct-btn" onclick="setOrderRatio(0.50)">50%</button>
-        <button class="pct-btn" onclick="setOrderRatio(0.75)">75%</button>
-        <button class="pct-btn" onclick="setOrderRatio(1.00)">100%</button>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
+        <button class="btn-action" style="background:var(--green);color:#fff;margin-top:0" onclick="alert('Order submitted for ' + document.getElementById('modalSymbol').textContent)">BUY / LONG</button>
+        <button class="btn-action" style="background:var(--red);color:#fff;margin-top:0" onclick="alert('Order submitted for ' + document.getElementById('modalSymbol').textContent)">SELL / SHORT</button>
       </div>
-
-      <div class="order-input-row">
-        <span style="font-size:11px;color:var(--muted);width:50px">Size (USDT)</span>
-        <input type="number" id="tradeAmount" class="input-box" value="1000" min="10" step="50" />
-      </div>
-    </div>
-
-    <!-- Active Positions -->
-    <div class="card-panel">
-      <div class="positions-header">
-        <span>Active Positions (<span id="posCount">0</span>)</span>
-        <button onclick="resetAccount()" style="background:none;border:none;color:var(--muted);font-size:10px;cursor:pointer">Reset $10k</button>
-      </div>
-      <div id="positionsList">
-        <div style="font-size:11px;color:var(--muted);text-align:center;padding:12px">No open positions</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Server Connect Modal -->
-  <div class="modal" id="serverModal">
-    <div class="modal-box">
-      <div class="modal-title">Live Terminal Server</div>
-      <p style="font-size:11px;color:var(--muted);margin-bottom:12px;line-height:1.4">
-        Connect directly to your live production cloud server (<code>https://blbt-auhi.vercel.app</code>) or local development server.
-      </p>
-      <input type="url" id="serverInput" class="input-box" value="https://blbt-auhi.vercel.app" placeholder="https://blbt-auhi.vercel.app" style="width:100%;margin-bottom:10px" />
-      <button class="btn-connect" onclick="saveAndConnectServer()">Connect & Launch</button>
-      <button class="btn-connect" style="background:#1e222d;color:var(--text);margin-top:6px" onclick="closeServerModal()">Stay in Mobile Mode</button>
     </div>
   </div>
 
   <script>
-    // State
-    const SYMBOLS = [
-      { id: 'BTCUSDT', name: 'BTC/USDT', price: 67420, change: 2.45 },
-      { id: 'ETHUSDT', name: 'ETH/USDT', price: 3490, change: -1.15 },
-      { id: 'SOLUSDT', name: 'SOL/USDT', price: 154.5, change: 5.20 },
-      { id: 'BNBUSDT', name: 'BNB/USDT', price: 598.0, change: 0.85 },
-      { id: 'DOGEUSDT', name: 'DOGE/USDT', price: 0.142, change: -0.40 },
-    ];
-    let currentSymbol = 'BTCUSDT';
-    let currentTimeframe = '1m';
-    let candles = [];
-    let ws = null;
-
-    // Account state with LocalStorage persistence
-    let balance = parseFloat(localStorage.getItem('celsius_balance') || '10000.00');
-    let positions = JSON.parse(localStorage.getItem('celsius_positions') || '[]');
-
-    function saveState() {
-      localStorage.setItem('celsius_balance', balance.toFixed(2));
-      localStorage.setItem('celsius_positions', JSON.stringify(positions));
-    }
-
-    // Render Symbol Switcher
-    function renderSymbolTape() {
-      const tape = document.getElementById('symbolTape');
-      tape.innerHTML = '';
-      SYMBOLS.forEach(s => {
-        const div = document.createElement('div');
-        div.className = 'symbol-pill ' + (s.id === currentSymbol ? 'active' : '');
-        const isUp = s.change >= 0;
-        div.innerHTML = \`
-          <div class="sym-name">\${s.name}</div>
-          <div class="sym-price">\$\${formatPrice(s.price)}</div>
-          <div class="sym-change \${isUp ? 'up' : 'down'}">\${isUp ? '+' : ''}\${s.change}%</div>
-        \`;
-        div.onclick = () => selectSymbol(s.id);
-        tape.appendChild(div);
+    // Tab Switching
+    function switchTab(tab) {
+      document.querySelectorAll('.nav-tab-item').forEach(el => {
+        el.classList.toggle('active', el.textContent.toLowerCase() === tab.toLowerCase());
+      });
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        const lbl = btn.querySelector('.nav-label')?.textContent.toLowerCase();
+        btn.classList.toggle('active', lbl === tab.toLowerCase() || (tab === 'overview' && lbl === 'home'));
       });
     }
 
-    function formatPrice(p) {
-      if (p >= 1000) return Number(p).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-      if (p >= 1) return Number(p).toFixed(2);
-      return Number(p).toFixed(4);
+    // Modal Handlers
+    function openMoreModal() {
+      document.getElementById('moreModal').classList.add('open');
+    }
+    function openProfileModal() {
+      openMoreModal();
+    }
+    function openSearchModal() {
+      const q = prompt('Search Tickers, Equities, Indices or Crypto:');
+      if (q) openChartModal(q.toUpperCase(), q.toUpperCase(), 100.0, 1.5);
+    }
+    function openAlertsModal() {
+      alert('Bloomberg Anywhere Notifications: 2 active price alerts on BTCUSD & NIFTY 50.');
+    }
+    function openPortfolioDetail(id) {
+      window.location.href = 'https://blbt-auhi.vercel.app/u/Bhaskar1461';
+    }
+    function openNewsArticle(id) {
+      alert('Bloomberg News: Live terminal reporting. Read full macro coverage.');
+    }
+    function openChartModal(symbol, name, price, change) {
+      document.getElementById('modalSymbol').textContent = symbol;
+      document.getElementById('modalName').textContent = name;
+      document.getElementById('modalPrice').textContent = '$' + price.toLocaleString();
+      const chgEl = document.getElementById('modalChange');
+      chgEl.textContent = (change >= 0 ? '+' : '') + change + '%';
+      chgEl.className = change >= 0 ? 'up' : 'down';
+      document.getElementById('chartModal').classList.add('open');
+    }
+    function closeAllModals(e) {
+      document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('open'));
+    }
+    function launchLiveTerminal() {
+      window.location.href = 'https://blbt-auhi.vercel.app';
     }
 
-    function selectSymbol(sym) {
-      currentSymbol = sym;
-      renderSymbolTape();
-      fetchKlines();
-      connectBinanceWs();
-    }
-
-    function setTimeframe(tf) {
-      currentTimeframe = tf;
-      document.querySelectorAll('.tf-btn').forEach(b => {
-        b.classList.toggle('active', b.textContent === tf);
-      });
-      fetchKlines();
-    }
-
-    // Binance Klines Fetch
-    async function fetchKlines() {
-      try {
-        const res = await fetch(\`https://api.binance.com/api/v3/klines?symbol=\${currentSymbol}&interval=\${currentTimeframe}&limit=60\`);
-        const data = await res.json();
-        if (Array.isArray(data)) {
-          candles = data.map(d => ({
-            time: d[0],
-            open: parseFloat(d[1]),
-            high: parseFloat(d[2]),
-            low: parseFloat(d[3]),
-            close: parseFloat(d[4]),
-            volume: parseFloat(d[5]),
-          }));
-          updateHero();
-          drawChart();
-        }
-      } catch (err) {
-        generateFallbackCandles();
-        drawChart();
-      }
-    }
-
-    function generateFallbackCandles() {
-      const sym = SYMBOLS.find(s => s.id === currentSymbol);
-      let p = sym ? sym.price : 67000;
-      candles = [];
-      const now = Date.now();
-      for (let i = 60; i >= 0; i--) {
-        const delta = (Math.random() - 0.49) * (p * 0.003);
-        const open = p;
-        p += delta;
-        const high = Math.max(open, p) + Math.random() * (p * 0.001);
-        const low = Math.min(open, p) - Math.random() * (p * 0.001);
-        candles.push({ time: now - i * 60000, open, high, low, close: p, volume: 10 + Math.random() * 50 });
-      }
-      updateHero();
-    }
-
-    function updateHero() {
-      if (candles.length === 0) return;
-      const last = candles[candles.length - 1];
-      const first = candles[0];
-      const chg = (((last.close - first.open) / first.open) * 100);
-      const isUp = chg >= 0;
-
-      document.getElementById('heroPrice').textContent = '$' + formatPrice(last.close);
-      document.getElementById('heroPrice').className = 'hero-price ' + (isUp ? 'up' : 'down');
-      
-      const chgEl = document.getElementById('heroChange');
-      chgEl.textContent = (isUp ? '+' : '') + chg.toFixed(2) + '%';
-      chgEl.className = isUp ? 'up' : 'down';
-
-      const high = Math.max(...candles.map(c => c.high));
-      const low = Math.min(...candles.map(c => c.low));
-      document.getElementById('heroHigh').textContent = '$' + formatPrice(high);
-      document.getElementById('heroLow').textContent = '$' + formatPrice(low);
-
-      // Update active item in SYMBOLS
-      const s = SYMBOLS.find(x => x.id === currentSymbol);
-      if (s) {
-        s.price = last.close;
-        s.change = parseFloat(chg.toFixed(2));
-        renderSymbolTape();
-      }
-
-      updatePositionsPnl(last.close);
-    }
-
-    // Connect Binance WebSocket
-    function connectBinanceWs() {
-      if (ws) {
-        try { ws.close(); } catch(e) {}
-      }
-      try {
-        const stream = currentSymbol.toLowerCase() + '@kline_' + currentTimeframe;
-        ws = new WebSocket(\`wss://stream.binance.com:9443/ws/\${stream}\`);
-        ws.onopen = () => {
-          document.getElementById('connStatus').textContent = 'LIVE BINANCE';
-        };
-        ws.onmessage = (event) => {
-          const msg = JSON.parse(event.data);
-          if (msg.k) {
-            const k = msg.k;
-            const updated = {
-              time: k.t,
-              open: parseFloat(k.o),
-              high: parseFloat(k.h),
-              low: parseFloat(k.l),
-              close: parseFloat(k.c),
-              volume: parseFloat(k.v),
-            };
-            if (candles.length > 0 && candles[candles.length - 1].time === updated.time) {
-              candles[candles.length - 1] = updated;
-            } else {
-              candles.push(updated);
-              if (candles.length > 60) candles.shift();
-            }
-            updateHero();
-            drawChart();
+    // Connect to real-time Binance feed for live BTC ticker
+    try {
+      const ws = new WebSocket('wss://stream.binance.com:9443/ws/btcusdt@ticker');
+      ws.onmessage = (e) => {
+        const d = JSON.parse(e.data);
+        if (d && d.c) {
+          const p = parseFloat(d.c);
+          const chg = parseFloat(d.P);
+          const pEl = document.getElementById('btcLivePrice');
+          const cEl = document.getElementById('btcLiveChg');
+          if (pEl) pEl.textContent = p.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+          if (cEl) {
+            cEl.textContent = (chg >= 0 ? '+' : '') + chg.toFixed(2) + '%';
+            cEl.className = 'inst-change ' + (chg >= 0 ? 'up' : 'down');
           }
-        };
-        ws.onerror = () => {
-          document.getElementById('connStatus').textContent = 'FALLBACK FEED';
-        };
-      } catch (err) {
-        console.warn('WS error:', err);
-      }
-    }
-
-    // Fast Canvas Candlestick Engine
-    function drawChart() {
-      const canvas = document.getElementById('chartCanvas');
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d');
-      const dpr = window.devicePixelRatio || 1;
-      const rect = canvas.getBoundingClientRect();
-      canvas.width = rect.width * dpr;
-      canvas.height = rect.height * dpr;
-      ctx.scale(dpr, dpr);
-
-      const w = rect.width;
-      const h = rect.height;
-      ctx.clearRect(0, 0, w, h);
-
-      if (candles.length < 2) return;
-
-      let minP = Infinity, maxP = -Infinity;
-      candles.forEach(c => {
-        if (c.low < minP) minP = c.low;
-        if (c.high > maxP) maxP = c.high;
-      });
-      const range = (maxP - minP) || 1;
-      const pad = range * 0.08;
-      const bottom = minP - pad;
-      const top = maxP + pad;
-      const priceRange = top - bottom;
-
-      const numCandles = candles.length;
-      const step = w / numCandles;
-      const candleW = Math.max(2, step * 0.65);
-
-      // Grid lines
-      ctx.strokeStyle = '#1b222d';
-      ctx.lineWidth = 1;
-      for (let i = 1; i <= 4; i++) {
-        const y = (h / 5) * i;
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(w, y);
-        ctx.stroke();
-
-        // Price label on right
-        const pVal = top - (priceRange * (y / h));
-        ctx.fillStyle = '#50535e';
-        ctx.font = '9px monospace';
-        ctx.fillText('$' + formatPrice(pVal), w - 55, y - 3);
-      }
-
-      // Draw Candlesticks
-      candles.forEach((c, idx) => {
-        const x = idx * step + step / 2;
-        const openY = h - ((c.open - bottom) / priceRange) * h;
-        const closeY = h - ((c.close - bottom) / priceRange) * h;
-        const highY = h - ((c.high - bottom) / priceRange) * h;
-        const lowY = h - ((c.low - bottom) / priceRange) * h;
-
-        const isBull = c.close >= c.open;
-        const color = isBull ? '#089981' : '#f23645';
-
-        // Wick
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(x, highY);
-        ctx.lineTo(x, lowY);
-        ctx.stroke();
-
-        // Body
-        ctx.fillStyle = color;
-        const bodyTop = Math.min(openY, closeY);
-        const bodyH = Math.max(2, Math.abs(openY - closeY));
-        ctx.fillRect(x - candleW / 2, bodyTop, candleW, bodyH);
-      });
-
-      // Live price line
-      if (candles.length > 0) {
-        const last = candles[candles.length - 1];
-        const lastY = h - ((last.close - bottom) / priceRange) * h;
-        ctx.strokeStyle = last.close >= last.open ? '#089981' : '#f23645';
-        ctx.setLineDash([3, 3]);
-        ctx.beginPath();
-        ctx.moveTo(0, lastY);
-        ctx.lineTo(w, lastY);
-        ctx.stroke();
-        ctx.setLineDash([]);
-      }
-    }
-
-    // Trade Execution
-    function setOrderRatio(r) {
-      const amt = Math.max(10, Math.floor(balance * r));
-      document.getElementById('tradeAmount').value = amt;
-    }
-
-    function executeTrade(side) {
-      const amt = parseFloat(document.getElementById('tradeAmount').value) || 100;
-      if (amt <= 0 || amt > balance) {
-        alert('Insufficient available balance! Max: $' + balance.toFixed(2));
-        return;
-      }
-      const last = candles[candles.length - 1];
-      const entryPrice = last ? last.close : 67000;
-
-      balance -= amt;
-      positions.push({
-        id: 'pos_' + Date.now(),
-        symbol: currentSymbol,
-        side: side,
-        margin: amt,
-        entryPrice: entryPrice,
-        createdAt: new Date().toLocaleTimeString(),
-      });
-      saveState();
-      renderPositions();
-      updateHero();
-    }
-
-    function closePosition(id) {
-      const idx = positions.findIndex(p => p.id === id);
-      if (idx !== -1) {
-        const pos = positions[idx];
-        const last = candles[candles.length - 1];
-        const mark = (last && pos.symbol === currentSymbol) ? last.close : pos.entryPrice;
-        const diff = pos.side === 'long' ? mark - pos.entryPrice : pos.entryPrice - mark;
-        const pnl = pos.margin * (diff / pos.entryPrice);
-        balance += (pos.margin + pnl);
-        positions.splice(idx, 1);
-        saveState();
-        renderPositions();
-        updateHero();
-      }
-    }
-
-    function resetAccount() {
-      if (confirm('Reset paper account back to $10,000.00 USDT?')) {
-        balance = 10000;
-        positions = [];
-        saveState();
-        renderPositions();
-        updateHero();
-      }
-    }
-
-    function updatePositionsPnl(currentMark) {
-      let totalPnl = 0;
-      positions.forEach(p => {
-        if (p.symbol === currentSymbol) {
-          const diff = p.side === 'long' ? currentMark - p.entryPrice : p.entryPrice - currentMark;
-          p.currentPnl = p.margin * (diff / p.entryPrice);
         }
-        totalPnl += (p.currentPnl || 0);
-      });
-      document.getElementById('dispBalance').textContent = '$' + balance.toLocaleString('en-US', { minimumFractionDigits: 2 });
-      const pnlEl = document.getElementById('dispTotalPnl');
-      pnlEl.textContent = (totalPnl >= 0 ? '+' : '') + '$' + totalPnl.toFixed(2);
-      pnlEl.className = 'wallet-val ' + (totalPnl >= 0 ? 'up' : 'down');
-      renderPositions();
-    }
-
-    function renderPositions() {
-      const container = document.getElementById('positionsList');
-      document.getElementById('posCount').textContent = positions.length;
-      if (positions.length === 0) {
-        container.innerHTML = '<div style="font-size:11px;color:var(--muted);text-align:center;padding:12px">No open positions</div>';
-        return;
-      }
-      container.innerHTML = '';
-      positions.forEach(p => {
-        const isUp = (p.currentPnl || 0) >= 0;
-        const div = document.createElement('div');
-        div.className = 'pos-item';
-        div.innerHTML = \`
-          <div>
-            <div class="pos-sym">
-              \${p.symbol}
-              <span style="font-size:10px;color:\${p.side === 'long' ? 'var(--bull)' : 'var(--bear)'};margin-left:4px">
-                \${p.side.toUpperCase()}
-              </span>
-            </div>
-            <div class="pos-meta">Entry: \$\${formatPrice(p.entryPrice)} · Margin: \$\${p.margin}</div>
-          </div>
-          <div style="display:flex;align-items:center">
-            <div class="pos-pnl \${isUp ? 'up' : 'down'}">
-              \${isUp ? '+' : ''}\$\${(p.currentPnl || 0).toFixed(2)}
-            </div>
-            <button class="btn-close-pos" onclick="closePosition('\${p.id}')">Close</button>
-          </div>
-        \`;
-        container.appendChild(div);
-      });
-    }
-
-    // Server Modal & Connection
-    function openServerModal() {
-      document.getElementById('serverModal').classList.add('open');
-      const saved = localStorage.getItem('celsius_server_url') || 'https://blbt-auhi.vercel.app';
-      document.getElementById('serverInput').value = saved;
-    }
-    function closeServerModal() {
-      document.getElementById('serverModal').classList.remove('open');
-    }
-    function saveAndConnectServer() {
-      const url = document.getElementById('serverInput').value.trim();
-      if (url) {
-        localStorage.setItem('celsius_server_url', url);
-        window.location.href = url;
-      }
-    }
-
-    // Auto-check if custom server was saved
-    window.addEventListener('load', () => {
-      const autoUrl = localStorage.getItem('celsius_auto_server');
-      if (autoUrl) {
-        window.location.href = autoUrl;
-      }
-    });
-
-    window.addEventListener('resize', drawChart);
-
-    // Init
-    renderSymbolTape();
-    fetchKlines();
-    connectBinanceWs();
-    renderPositions();
+      };
+    } catch(err) {}
   </script>
 </body>
 </html>`;
 
-fs.writeFileSync(indexPath, mobileTerminalHtml, 'utf-8');
-console.log('[prepare-mobile] Successfully built Bloomberg-styled Celsius Mobile Terminal in dist/index.html');
+fs.writeFileSync(indexPath, mobileBloombergAnywhereHtml, 'utf8');
+console.log(`[prepare-mobile] Successfully built pixel-perfect Bloomberg Anywhere Mobile App in ${indexPath}`);

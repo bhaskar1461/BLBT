@@ -28,6 +28,7 @@ import { ProfileModal } from '@/components/profile/ProfileModal';
 import { HonestOnboardingModal } from '@/components/onboarding/HonestOnboardingModal';
 import { PostSessionReviewModal } from '@/components/trading/PostSessionReviewModal';
 import { LandingHeroBanner } from './LandingHeroBanner';
+import { BloombergAnywhereMobileView } from '@/components/mobile/BloombergAnywhereMobileView';
 import { TerminalSentimentStrip } from '@/components/sentiment/TerminalSentimentStrip';
 import { BeginnerTradingSuite } from '@/components/trading/BeginnerTradingSuite';
 import { QuickWalletModal } from '@/components/wallet/QuickWalletModal';
@@ -51,6 +52,22 @@ export const Shell: React.FC = () => {
   const [isDockOpen, setIsDockOpen] = useState(false);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [isBrokerModalOpen, setIsBrokerModalOpen] = useState(false);
+
+  const [isMobileDevice, setIsMobileDevice] = useState(false);
+  const [showBloombergMobile, setShowBloombergMobile] = useState(false);
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const isMobile = window.innerWidth < 768;
+      setIsMobileDevice(isMobile);
+      const saved = localStorage.getItem('bloomberg_mobile_view');
+      if (saved !== null) {
+        setShowBloombergMobile(saved === 'true');
+      } else {
+        setShowBloombergMobile(isMobile);
+      }
+    }
+  }, []);
 
   React.useEffect(() => {
     if (typeof window !== 'undefined' && window.innerWidth >= 1200) {
@@ -217,6 +234,17 @@ export const Shell: React.FC = () => {
   }, [user.id]);
 
   const activeAlertsCount = alerts.filter((a) => a.active).length;
+
+  if (isMobileDevice && showBloombergMobile) {
+    return (
+      <BloombergAnywhereMobileView
+        onSwitchToProTerminal={() => {
+          setShowBloombergMobile(false);
+          localStorage.setItem('bloomberg_mobile_view', 'false');
+        }}
+      />
+    );
+  }
 
   return (
     <div className="flex flex-col w-screen h-screen overflow-hidden bg-canvas text-main font-sans">
