@@ -495,16 +495,30 @@ export const TradingViewTopBar: React.FC<TradingViewTopBarProps> = ({
           </button>
         )}
 
+        {/* Bloomberg PORT Net Worth Pill */}
+        <Link
+          href="/u/Bhaskar1461"
+          className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-[#161B22] hover:bg-[#1c2128] border border-[#f59e0b]/50 text-[11px] font-mono text-[#d1d4dc] transition-all hover:border-[#f59e0b]"
+          title="Bloomberg Portfolio (PORT) - View Total Net Worth"
+        >
+          <span className="px-1 py-0.2 rounded-[2px] bg-[#f59e0b] text-black font-black text-[9px] tracking-wider">
+            PORT
+          </span>
+          <span className="font-bold text-white tabular-nums">
+            ${account?.equity ? account.equity.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : '617,530'}
+          </span>
+        </Link>
+
         {/* Account Funds & Wallet Pill */}
         {onOpenWallet && (
           <button
             onClick={() => onOpenWallet('buy')}
-            className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-[#161B22] hover:bg-[#1c2128] border border-[#212A36] text-[11px] font-mono text-[#d1d4dc] transition-colors cursor-pointer"
+            className="hidden sm:flex items-center gap-1.5 px-2 py-0.5 rounded bg-[#161B22] hover:bg-[#1c2128] border border-[#212A36] text-[11px] font-mono text-[#d1d4dc] transition-colors cursor-pointer"
             title="Account Capital & Funds"
           >
-            <span className="text-[#787b86] text-[10px]">USDT</span>
-            <span className="font-bold text-white tabular-nums">
-              ${account ? account.balance.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : '10,000'}
+            <span className="text-[#787b86] text-[10px]">CASH</span>
+            <span className="font-bold text-[#00c176] tabular-nums">
+              ${account ? account.balance.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : '58,380'}
             </span>
           </button>
         )}

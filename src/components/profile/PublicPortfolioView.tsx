@@ -32,6 +32,7 @@ import {
 import type { PublicVerifiedTrackRecord } from '@/types/profile';
 import { CopyHashButton } from '@/components/transparency/CopyHashButton';
 import { formatPrice } from '@/lib/utils';
+import { BloombergNetWorthBar } from './BloombergNetWorthBar';
 
 interface PublicPortfolioViewProps {
   profile: PublicVerifiedTrackRecord;
@@ -172,80 +173,13 @@ export const PublicPortfolioView: React.FC<PublicPortfolioViewProps> = ({ profil
         </div>
       </section>
 
-      {/* 2. Compact Financial Command Deck Header (Replaces Giant Cards with Dense Strip) */}
-      <section className="bg-[#131722] border border-[#212a36] rounded-[4px] p-2.5 text-xs">
-        <div className="flex flex-wrap items-center justify-between gap-y-2 pb-2 border-b border-[#212a36]">
-          <div className="flex items-center divide-x divide-[#212a36] text-[11px] overflow-x-auto">
-            <div className="pr-3 flex items-center gap-1.5">
-              <span className="text-[#787b86] uppercase font-semibold">Equity:</span>
-              <span className="font-mono font-bold text-white tabular-nums">${formatPrice(metrics.totalEquity, 2)}</span>
-            </div>
-            <div className="px-3 flex items-center gap-1.5">
-              <span className="text-[#787b86] uppercase font-semibold">Cash:</span>
-              <span className="font-mono font-semibold text-[#00c176] tabular-nums">${formatPrice(metrics.availableCash, 2)}</span>
-            </div>
-            <div className="px-3 flex items-center gap-1.5">
-              <span className="text-[#787b86] uppercase font-semibold">Margin:</span>
-              <span className="font-mono text-white tabular-nums">${formatPrice(metrics.allocatedMargin, 2)}</span>
-            </div>
-            <div className="px-3 flex items-center gap-1.5">
-              <span className="text-[#787b86] uppercase font-semibold">Unrealized:</span>
-              <span className={`font-mono font-semibold tabular-nums ${metrics.totalUnrealizedPnl >= 0 ? 'text-[#00c176]' : 'text-[#ff4d4f]'}`}>
-                {metrics.totalUnrealizedPnl >= 0 ? '+' : ''}${formatPrice(metrics.totalUnrealizedPnl, 2)} ({metrics.totalUnrealizedPnl >= 0 ? '+' : ''}{metrics.totalUnrealizedPnlPct}%)
-              </span>
-            </div>
-            <div className="px-3 flex items-center gap-1.5">
-              <span className="text-[#787b86] uppercase font-semibold">Realized:</span>
-              <span className={`font-mono font-semibold tabular-nums ${metrics.totalRealizedPnl >= 0 ? 'text-[#00c176]' : 'text-[#ff4d4f]'}`}>
-                {metrics.totalRealizedPnl >= 0 ? '+' : ''}${formatPrice(metrics.totalRealizedPnl, 2)} (+{metrics.netReturnPct}%)
-              </span>
-            </div>
-            <div className="pl-3 flex items-center gap-1.5">
-              <span className="text-[#787b86] uppercase font-semibold">Day P&L:</span>
-              <span className="font-mono text-[#00c176] font-semibold tabular-nums">+$4,280.00 (+0.78%)</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Integrated BTC Benchmark Context Strip (Required by Phase 5 tests) */}
-        {profile.benchmark && (() => {
-          const comp = profile.benchmark.formattedComparison;
-          const verdict = profile.benchmark.honestVerdict;
-          const cleanVerdict = verdict.startsWith(comp)
-            ? verdict.slice(comp.length).trim()
-            : verdict;
-
-          return (
-            <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[11px]">
-              <div className="flex items-center gap-1.5">
-                <Scale size={13} className="text-[#2962ff] shrink-0" />
-                <div className="flex flex-wrap items-center">
-                  <span className="font-semibold text-white mr-1">Context Check: </span>
-                  <span className="text-[#d1d4dc]">{comp}</span>
-                  {cleanVerdict && (
-                    <span className="text-[#787b86] ml-1.5 text-[10px]">
-                      {cleanVerdict.startsWith('(') ? cleanVerdict : `(${cleanVerdict})`}
-                    </span>
-                  )}
-                </div>
-              </div>
-              <div className="flex items-center gap-2.5 shrink-0 font-mono text-[11px]">
-                <div>
-                  <span className="text-[#787b86] text-[10px] uppercase font-semibold mr-1">You:</span>
-                  <strong className={`tabular-nums ${profile.stats.realizedPnlPct >= 0 ? 'text-[#00c176]' : 'text-[#ff4d4f]'}`}>
-                    +{profile.stats.realizedPnlPct}%
-                  </strong>
-                </div>
-                <div className="h-3 w-px bg-[#212a36]" />
-                <div>
-                  <span className="text-[#787b86] text-[10px] uppercase font-semibold mr-1">BTC Hold:</span>
-                  <strong className="text-[#f7931a] tabular-nums">+{profile.benchmark.btcPnlPct}%</strong>
-                </div>
-              </div>
-            </div>
-          );
-        })()}
-      </section>
+      {/* 2. Bloomberg PORT Net Worth & Risk Monitor Bar */}
+      <BloombergNetWorthBar
+        metrics={metrics}
+        benchmark={profile.benchmark}
+        positions={holdings}
+        username={profile.username}
+      />
 
       {/* 3. Compact Navigation Tabs */}
       <div className="flex items-center justify-between bg-[#161b22] px-2 py-1 rounded-[3px] border border-[#212a36] overflow-x-auto text-xs">
