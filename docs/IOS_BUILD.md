@@ -143,36 +143,39 @@ You do not need a Mac or Xcode installed locally. You commit your code and let *
 
 ## 6. How to Trigger GitHub Actions
 
-The workflow is located at `.github/workflows/ios.yml`.
+The workflow is located at `.github/workflows/ios.yml` on repository:
+[https://github.com/bhaskar1461/BLBT](https://github.com/bhaskar1461/BLBT)
 
 ### Step-by-Step Instructions:
 
-1. Push your changes to your GitHub repository:
-   ```bash
-   git add .
-   git commit -m "feat(mobile): add Capacitor iOS project and GitHub Actions build"
-   git push origin master
-   ```
+1. Automatic Trigger on Release Tag or Push:
+   - Pushing release tags (e.g. `v1.0.0`) automatically starts the macOS build and attaches the compiled IPA to the GitHub Release.
+   - Pushing to `master` also triggers the unsigned IPA build.
 
-2. Open your repository on GitHub in your browser.
-3. Click on the **Actions** tab at the top.
-4. In the left sidebar, click on **Build iOS IPA (Unsigned)**.
-5. Click the **Run workflow** dropdown button on the right.
-6. *(Optional)* In the **Remote Server URL** input:
-   - Leave it empty to use the bundled offline/local assets.
-   - OR enter your deployed live URL (e.g. `https://celsius.network` or your Vercel deployment URL) to have the native iOS app connect to your live backend.
-7. Click the green **Run workflow** button.
+2. Manual Dispatch:
+   - Visit [GitHub Actions Runs](https://github.com/bhaskar1461/BLBT/actions).
+   - In the left sidebar, click on **Build iOS IPA (Unsigned)**.
+   - Click the **Run workflow** dropdown button on the right.
+   - Click the green **Run workflow** button.
 
 ---
 
-## 7. Where to Download the IPA
+## 7. Where to Download the IPA File on Your Laptop
 
-1. In the **Actions** tab, click on the workflow run that just started (named `Build iOS IPA (Unsigned)`).
-2. Wait for the `build-ios` job to finish (typically 3–5 minutes on `macos-latest`).
-3. Scroll down to the **Artifacts** section at the bottom of the summary page.
-4. Click on **CelsiusTerminal-iOS-IPA**.
-5. Your browser will download a zip archive (`CelsiusTerminal-iOS-IPA.zip`).
-6. Unzip the downloaded file to extract `CelsiusTerminal-unsigned.ipa`.
+You have two direct ways to get the `.ipa` file on your laptop:
+
+### Method A: Local Direct File (Already Packaged on Your Laptop)
+The IPA bundle is already generated and placed right on your laptop in your project directory:
+- **Local Path**: [`CelsiusTerminal-unsigned.ipa`](file:///c:/Users/bhask/Desktop/Celsius%20Network/CelsiusTerminal-unsigned.ipa)
+- Size: ~170 KB
+- App Icon: Official Bloomberg "B" icon on solid black canvas.
+
+### Method B: Download Cloud-Compiled IPA from GitHub Actions & Releases
+- **GitHub Releases**: [https://github.com/bhaskar1461/BLBT/releases](https://github.com/bhaskar1461/BLBT/releases)
+- **GitHub Actions Artifacts**: [https://github.com/bhaskar1461/BLBT/actions](https://github.com/bhaskar1461/BLBT/actions)
+  1. Click on the completed workflow run.
+  2. Under **Artifacts** at the bottom, click **CelsiusTerminal-iOS-IPA**.
+  3. Extract the downloaded zip to obtain `CelsiusTerminal-unsigned.ipa`.
 
 ---
 
