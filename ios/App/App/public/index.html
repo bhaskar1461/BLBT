@@ -1,20 +1,922 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23131722'/><path d='M30 65 L45 35 L60 50 L75 25' stroke='%2300f090' stroke-width='8' stroke-linecap='round' stroke-linejoin='round' fill='none'/><circle cx='75' cy='25' r='5' fill='%2300f090'/></svg>" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Celsius Terminal | High-Frequency Crypto Charting & Trading</title>
-    <meta name="description" content="Ultra-fast, dark-mode crypto charting terminal with live Binance WebSocket feeds, multi-timeframe candlesticks, technical indicators, client alerts, and paper trading." />
-    
-    <!-- Google Fonts: Inter & JetBrains Mono -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <script type="module" crossorigin src="/assets/index-BnJ_7rcb.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-BJ1qdXp7.css">
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Celsius Terminal — Mobile</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <style>
+    :root {
+      --bg: #0d1117;
+      --card: #161b22;
+      --panel: #131722;
+      --border: #212a36;
+      --border-focus: #2962ff;
+      --text: #d1d4dc;
+      --muted: #787b86;
+      --bull: #089981;
+      --bear: #f23645;
+      --accent: #2962ff;
+      --gold: #f59e0b;
+      --safe-top: env(safe-area-inset-top, 20px);
+      --safe-bottom: env(safe-area-inset-bottom, 20px);
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      padding-top: var(--safe-top);
+      padding-bottom: var(--safe-bottom);
+    }
+    /* Header */
+    header {
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .bloomberg-logo {
+      width: 28px;
+      height: 28px;
+      background: #000;
+      border: 1px solid #333;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 19px;
+      color: #fff;
+      font-family: -apple-system, Arial, sans-serif;
+    }
+    .brand-title {
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      color: #fff;
+    }
+    .brand-sub {
+      font-size: 10px;
+      color: var(--muted);
+      font-family: monospace;
+    }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .status-dot {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      font-family: monospace;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(8, 153, 129, 0.12);
+      border: 1px solid rgba(8, 153, 129, 0.3);
+      color: var(--bull);
+    }
+    .pulse-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--bull);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { opacity: 0.4; transform: scale(0.9); }
+      50% { opacity: 1; transform: scale(1.1); }
+      100% { opacity: 0.4; transform: scale(0.9); }
+    }
+    .btn-icon {
+      background: #1e222d;
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 6px;
+      padding: 6px 9px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    /* Symbol Switcher Tape */
+    .symbol-bar {
+      display: flex;
+      overflow-x: auto;
+      gap: 8px;
+      padding: 8px 12px;
+      background: #10141d;
+      border-bottom: 1px solid var(--border);
+      scrollbar-width: none;
+    }
+    .symbol-bar::-webkit-scrollbar { display: none; }
+    .symbol-pill {
+      display: flex;
+      flex-direction: column;
+      padding: 6px 12px;
+      border-radius: 6px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      min-width: 95px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .symbol-pill.active {
+      border-color: var(--accent);
+      background: #1b2333;
+    }
+    .sym-name {
+      font-size: 11px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .sym-price {
+      font-size: 11px;
+      font-family: monospace;
+      margin-top: 2px;
+    }
+    .sym-change {
+      font-size: 9px;
+      font-family: monospace;
+    }
+
+    /* Live Price Hero */
+    .hero-strip {
+      padding: 10px 14px;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      background: var(--card);
+    }
+    .hero-price {
+      font-size: 26px;
+      font-weight: 800;
+      font-family: monospace;
+      color: #fff;
+      letter-spacing: -0.5px;
+    }
+    .hero-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 11px;
+      font-family: monospace;
+    }
+    .up { color: var(--bull); }
+    .down { color: var(--bear); }
+
+    /* Chart Container */
+    .chart-container {
+      position: relative;
+      background: #0d1117;
+      height: 240px;
+      width: 100%;
+      border-bottom: 1px solid var(--border);
+    }
+    canvas#chartCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .chart-tf-bar {
+      position: absolute;
+      top: 6px;
+      left: 10px;
+      display: flex;
+      gap: 4px;
+      z-index: 10;
+    }
+    .tf-btn {
+      background: rgba(22, 27, 34, 0.85);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      border-radius: 4px;
+      padding: 2px 7px;
+      font-size: 10px;
+      font-family: monospace;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .tf-btn.active {
+      color: #fff;
+      border-color: var(--accent);
+      background: rgba(41, 98, 255, 0.2);
+    }
+
+    /* Trading & Portfolio Section */
+    .trading-body {
+      flex: 1;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .card-panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+    }
+    .wallet-strip {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      padding-bottom: 10px;
+      margin-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .wallet-val {
+      font-size: 15px;
+      font-weight: 700;
+      font-family: monospace;
+      color: #fff;
+    }
+
+    /* Order Execution */
+    .order-side-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .btn-side {
+      padding: 10px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 13px;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      transition: opacity 0.15s;
+    }
+    .btn-side:active { opacity: 0.8; }
+    .btn-buy {
+      background: var(--bull);
+      color: #fff;
+    }
+    .btn-sell {
+      background: var(--bear);
+      color: #fff;
+    }
+
+    .order-input-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .input-box {
+      flex: 1;
+      background: #0d1117;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 10px;
+      color: #fff;
+      font-family: monospace;
+      font-size: 13px;
+      outline: none;
+    }
+    .input-box:focus {
+      border-color: var(--border-focus);
+    }
+    .pct-pills {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    .pct-btn {
+      flex: 1;
+      background: #1e222d;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      border-radius: 4px;
+      padding: 4px 0;
+      font-size: 10px;
+      font-family: monospace;
+      text-align: center;
+      cursor: pointer;
+    }
+    .pct-btn:active { background: #2a2e39; color: #fff; }
+
+    /* Open Positions */
+    .positions-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+    .pos-item {
+      background: #0d1117;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 10px;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .pos-sym {
+      font-weight: 700;
+      font-size: 12px;
+      color: #fff;
+    }
+    .pos-meta {
+      font-size: 10px;
+      color: var(--muted);
+      font-family: monospace;
+    }
+    .pos-pnl {
+      font-family: monospace;
+      font-weight: 700;
+      font-size: 12px;
+      text-align: right;
+    }
+    .btn-close-pos {
+      background: #1e222d;
+      border: 1px solid #333;
+      color: var(--muted);
+      border-radius: 4px;
+      font-size: 10px;
+      padding: 3px 8px;
+      margin-left: 8px;
+      cursor: pointer;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal.open { display: flex; }
+    .modal-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      width: 100%;
+      max-width: 360px;
+      padding: 16px;
+    }
+    .modal-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+    .btn-connect {
+      width: 100%;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 10px;
+      font-weight: 700;
+      font-size: 13px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <!-- Bloomberg-style Top Bar -->
+  <header>
+    <div class="brand">
+      <div class="bloomberg-logo">B</div>
+      <div>
+        <div class="brand-title">CELSIUS TERMINAL</div>
+        <div class="brand-sub">BINANCE HIGH-FREQUENCY ENGINE</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <div class="status-dot">
+        <span class="pulse-dot"></span>
+        <span id="connStatus">LIVE</span>
+      </div>
+      <button class="btn-icon" onclick="openServerModal()">⚙ Server</button>
+    </div>
+  </header>
+
+  <!-- Live Market Switcher Tape -->
+  <div class="symbol-bar" id="symbolTape"></div>
+
+  <!-- Price & 24h Change Strip -->
+  <div class="hero-strip">
+    <div class="hero-price" id="heroPrice">---.--</div>
+    <div class="hero-meta">
+      <div>24h Chg: <span id="heroChange">0.00%</span></div>
+      <div>High: <span id="heroHigh">---</span></div>
+      <div>Low: <span id="heroLow">---</span></div>
+    </div>
+  </div>
+
+  <!-- Candlestick Chart Viewport -->
+  <div class="chart-container">
+    <div class="chart-tf-bar">
+      <button class="tf-btn active" onclick="setTimeframe('1m')">1m</button>
+      <button class="tf-btn" onclick="setTimeframe('5m')">5m</button>
+      <button class="tf-btn" onclick="setTimeframe('15m')">15m</button>
+      <button class="tf-btn" onclick="setTimeframe('1h')">1h</button>
+      <button class="tf-btn" onclick="setTimeframe('1D')">1D</button>
+    </div>
+    <canvas id="chartCanvas"></canvas>
+  </div>
+
+  <!-- Paper Trading Body -->
+  <div class="trading-body">
+    <div class="card-panel">
+      <div class="wallet-strip">
+        <div>
+          <span style="color:var(--muted)">Paper Balance</span>
+          <div class="wallet-val" id="dispBalance">$10,000.00</div>
+        </div>
+        <div style="text-align:right">
+          <span style="color:var(--muted)">Unrealized P&L</span>
+          <div class="wallet-val" id="dispTotalPnl">$0.00</div>
+        </div>
+      </div>
+
+      <!-- Quick Buy / Sell Buttons -->
+      <div class="order-side-grid">
+        <button class="btn-side btn-buy" onclick="executeTrade('long')">
+          <span>BUY / LONG</span>
+          <span style="font-size:10px;opacity:0.8" id="lblBuy">Market</span>
+        </button>
+        <button class="btn-side btn-sell" onclick="executeTrade('short')">
+          <span>SELL / SHORT</span>
+          <span style="font-size:10px;opacity:0.8" id="lblSell">Market</span>
+        </button>
+      </div>
+
+      <div class="pct-pills">
+        <button class="pct-btn" onclick="setOrderRatio(0.25)">25%</button>
+        <button class="pct-btn" onclick="setOrderRatio(0.50)">50%</button>
+        <button class="pct-btn" onclick="setOrderRatio(0.75)">75%</button>
+        <button class="pct-btn" onclick="setOrderRatio(1.00)">100%</button>
+      </div>
+
+      <div class="order-input-row">
+        <span style="font-size:11px;color:var(--muted);width:50px">Size (USDT)</span>
+        <input type="number" id="tradeAmount" class="input-box" value="1000" min="10" step="50" />
+      </div>
+    </div>
+
+    <!-- Active Positions -->
+    <div class="card-panel">
+      <div class="positions-header">
+        <span>Active Positions (<span id="posCount">0</span>)</span>
+        <button onclick="resetAccount()" style="background:none;border:none;color:var(--muted);font-size:10px;cursor:pointer">Reset $10k</button>
+      </div>
+      <div id="positionsList">
+        <div style="font-size:11px;color:var(--muted);text-align:center;padding:12px">No open positions</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Server Connect Modal -->
+  <div class="modal" id="serverModal">
+    <div class="modal-box">
+      <div class="modal-title">Live Terminal Server</div>
+      <p style="font-size:11px;color:var(--muted);margin-bottom:12px;line-height:1.4">
+        To load the full desktop trading interface from your laptop, enter your local Wi-Fi address (e.g. <code>http://192.168.0.5:3000</code>) or production URL.
+      </p>
+      <input type="url" id="serverInput" class="input-box" placeholder="http://192.168.0.5:3000" style="width:100%;margin-bottom:10px" />
+      <button class="btn-connect" onclick="saveAndConnectServer()">Connect & Launch</button>
+      <button class="btn-connect" style="background:#1e222d;color:var(--text);margin-top:6px" onclick="closeServerModal()">Stay in Mobile Mode</button>
+    </div>
+  </div>
+
+  <script>
+    // State
+    const SYMBOLS = [
+      { id: 'BTCUSDT', name: 'BTC/USDT', price: 67420, change: 2.45 },
+      { id: 'ETHUSDT', name: 'ETH/USDT', price: 3490, change: -1.15 },
+      { id: 'SOLUSDT', name: 'SOL/USDT', price: 154.5, change: 5.20 },
+      { id: 'BNBUSDT', name: 'BNB/USDT', price: 598.0, change: 0.85 },
+      { id: 'DOGEUSDT', name: 'DOGE/USDT', price: 0.142, change: -0.40 },
+    ];
+    let currentSymbol = 'BTCUSDT';
+    let currentTimeframe = '1m';
+    let candles = [];
+    let ws = null;
+
+    // Account state with LocalStorage persistence
+    let balance = parseFloat(localStorage.getItem('celsius_balance') || '10000.00');
+    let positions = JSON.parse(localStorage.getItem('celsius_positions') || '[]');
+
+    function saveState() {
+      localStorage.setItem('celsius_balance', balance.toFixed(2));
+      localStorage.setItem('celsius_positions', JSON.stringify(positions));
+    }
+
+    // Render Symbol Switcher
+    function renderSymbolTape() {
+      const tape = document.getElementById('symbolTape');
+      tape.innerHTML = '';
+      SYMBOLS.forEach(s => {
+        const div = document.createElement('div');
+        div.className = 'symbol-pill ' + (s.id === currentSymbol ? 'active' : '');
+        const isUp = s.change >= 0;
+        div.innerHTML = `
+          <div class="sym-name">${s.name}</div>
+          <div class="sym-price">$${formatPrice(s.price)}</div>
+          <div class="sym-change ${isUp ? 'up' : 'down'}">${isUp ? '+' : ''}${s.change}%</div>
+        `;
+        div.onclick = () => selectSymbol(s.id);
+        tape.appendChild(div);
+      });
+    }
+
+    function formatPrice(p) {
+      if (p >= 1000) return Number(p).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      if (p >= 1) return Number(p).toFixed(2);
+      return Number(p).toFixed(4);
+    }
+
+    function selectSymbol(sym) {
+      currentSymbol = sym;
+      renderSymbolTape();
+      fetchKlines();
+      connectBinanceWs();
+    }
+
+    function setTimeframe(tf) {
+      currentTimeframe = tf;
+      document.querySelectorAll('.tf-btn').forEach(b => {
+        b.classList.toggle('active', b.textContent === tf);
+      });
+      fetchKlines();
+    }
+
+    // Binance Klines Fetch
+    async function fetchKlines() {
+      try {
+        const res = await fetch(`https://api.binance.com/api/v3/klines?symbol=${currentSymbol}&interval=${currentTimeframe}&limit=60`);
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          candles = data.map(d => ({
+            time: d[0],
+            open: parseFloat(d[1]),
+            high: parseFloat(d[2]),
+            low: parseFloat(d[3]),
+            close: parseFloat(d[4]),
+            volume: parseFloat(d[5]),
+          }));
+          updateHero();
+          drawChart();
+        }
+      } catch (err) {
+        generateFallbackCandles();
+        drawChart();
+      }
+    }
+
+    function generateFallbackCandles() {
+      const sym = SYMBOLS.find(s => s.id === currentSymbol);
+      let p = sym ? sym.price : 67000;
+      candles = [];
+      const now = Date.now();
+      for (let i = 60; i >= 0; i--) {
+        const delta = (Math.random() - 0.49) * (p * 0.003);
+        const open = p;
+        p += delta;
+        const high = Math.max(open, p) + Math.random() * (p * 0.001);
+        const low = Math.min(open, p) - Math.random() * (p * 0.001);
+        candles.push({ time: now - i * 60000, open, high, low, close: p, volume: 10 + Math.random() * 50 });
+      }
+      updateHero();
+    }
+
+    function updateHero() {
+      if (candles.length === 0) return;
+      const last = candles[candles.length - 1];
+      const first = candles[0];
+      const chg = (((last.close - first.open) / first.open) * 100);
+      const isUp = chg >= 0;
+
+      document.getElementById('heroPrice').textContent = '$' + formatPrice(last.close);
+      document.getElementById('heroPrice').className = 'hero-price ' + (isUp ? 'up' : 'down');
+      
+      const chgEl = document.getElementById('heroChange');
+      chgEl.textContent = (isUp ? '+' : '') + chg.toFixed(2) + '%';
+      chgEl.className = isUp ? 'up' : 'down';
+
+      const high = Math.max(...candles.map(c => c.high));
+      const low = Math.min(...candles.map(c => c.low));
+      document.getElementById('heroHigh').textContent = '$' + formatPrice(high);
+      document.getElementById('heroLow').textContent = '$' + formatPrice(low);
+
+      // Update active item in SYMBOLS
+      const s = SYMBOLS.find(x => x.id === currentSymbol);
+      if (s) {
+        s.price = last.close;
+        s.change = parseFloat(chg.toFixed(2));
+        renderSymbolTape();
+      }
+
+      updatePositionsPnl(last.close);
+    }
+
+    // Connect Binance WebSocket
+    function connectBinanceWs() {
+      if (ws) {
+        try { ws.close(); } catch(e) {}
+      }
+      try {
+        const stream = currentSymbol.toLowerCase() + '@kline_' + currentTimeframe;
+        ws = new WebSocket(`wss://stream.binance.com:9443/ws/${stream}`);
+        ws.onopen = () => {
+          document.getElementById('connStatus').textContent = 'LIVE BINANCE';
+        };
+        ws.onmessage = (event) => {
+          const msg = JSON.parse(event.data);
+          if (msg.k) {
+            const k = msg.k;
+            const updated = {
+              time: k.t,
+              open: parseFloat(k.o),
+              high: parseFloat(k.h),
+              low: parseFloat(k.l),
+              close: parseFloat(k.c),
+              volume: parseFloat(k.v),
+            };
+            if (candles.length > 0 && candles[candles.length - 1].time === updated.time) {
+              candles[candles.length - 1] = updated;
+            } else {
+              candles.push(updated);
+              if (candles.length > 60) candles.shift();
+            }
+            updateHero();
+            drawChart();
+          }
+        };
+        ws.onerror = () => {
+          document.getElementById('connStatus').textContent = 'FALLBACK FEED';
+        };
+      } catch (err) {
+        console.warn('WS error:', err);
+      }
+    }
+
+    // Fast Canvas Candlestick Engine
+    function drawChart() {
+      const canvas = document.getElementById('chartCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
+
+      const w = rect.width;
+      const h = rect.height;
+      ctx.clearRect(0, 0, w, h);
+
+      if (candles.length < 2) return;
+
+      let minP = Infinity, maxP = -Infinity;
+      candles.forEach(c => {
+        if (c.low < minP) minP = c.low;
+        if (c.high > maxP) maxP = c.high;
+      });
+      const range = (maxP - minP) || 1;
+      const pad = range * 0.08;
+      const bottom = minP - pad;
+      const top = maxP + pad;
+      const priceRange = top - bottom;
+
+      const numCandles = candles.length;
+      const step = w / numCandles;
+      const candleW = Math.max(2, step * 0.65);
+
+      // Grid lines
+      ctx.strokeStyle = '#1b222d';
+      ctx.lineWidth = 1;
+      for (let i = 1; i <= 4; i++) {
+        const y = (h / 5) * i;
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(w, y);
+        ctx.stroke();
+
+        // Price label on right
+        const pVal = top - (priceRange * (y / h));
+        ctx.fillStyle = '#50535e';
+        ctx.font = '9px monospace';
+        ctx.fillText('$' + formatPrice(pVal), w - 55, y - 3);
+      }
+
+      // Draw Candlesticks
+      candles.forEach((c, idx) => {
+        const x = idx * step + step / 2;
+        const openY = h - ((c.open - bottom) / priceRange) * h;
+        const closeY = h - ((c.close - bottom) / priceRange) * h;
+        const highY = h - ((c.high - bottom) / priceRange) * h;
+        const lowY = h - ((c.low - bottom) / priceRange) * h;
+
+        const isBull = c.close >= c.open;
+        const color = isBull ? '#089981' : '#f23645';
+
+        // Wick
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(x, highY);
+        ctx.lineTo(x, lowY);
+        ctx.stroke();
+
+        // Body
+        ctx.fillStyle = color;
+        const bodyTop = Math.min(openY, closeY);
+        const bodyH = Math.max(2, Math.abs(openY - closeY));
+        ctx.fillRect(x - candleW / 2, bodyTop, candleW, bodyH);
+      });
+
+      // Live price line
+      if (candles.length > 0) {
+        const last = candles[candles.length - 1];
+        const lastY = h - ((last.close - bottom) / priceRange) * h;
+        ctx.strokeStyle = last.close >= last.open ? '#089981' : '#f23645';
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath();
+        ctx.moveTo(0, lastY);
+        ctx.lineTo(w, lastY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+    }
+
+    // Trade Execution
+    function setOrderRatio(r) {
+      const amt = Math.max(10, Math.floor(balance * r));
+      document.getElementById('tradeAmount').value = amt;
+    }
+
+    function executeTrade(side) {
+      const amt = parseFloat(document.getElementById('tradeAmount').value) || 100;
+      if (amt <= 0 || amt > balance) {
+        alert('Insufficient available balance! Max: $' + balance.toFixed(2));
+        return;
+      }
+      const last = candles[candles.length - 1];
+      const entryPrice = last ? last.close : 67000;
+
+      balance -= amt;
+      positions.push({
+        id: 'pos_' + Date.now(),
+        symbol: currentSymbol,
+        side: side,
+        margin: amt,
+        entryPrice: entryPrice,
+        createdAt: new Date().toLocaleTimeString(),
+      });
+      saveState();
+      renderPositions();
+      updateHero();
+    }
+
+    function closePosition(id) {
+      const idx = positions.findIndex(p => p.id === id);
+      if (idx !== -1) {
+        const pos = positions[idx];
+        const last = candles[candles.length - 1];
+        const mark = (last && pos.symbol === currentSymbol) ? last.close : pos.entryPrice;
+        const diff = pos.side === 'long' ? mark - pos.entryPrice : pos.entryPrice - mark;
+        const pnl = pos.margin * (diff / pos.entryPrice);
+        balance += (pos.margin + pnl);
+        positions.splice(idx, 1);
+        saveState();
+        renderPositions();
+        updateHero();
+      }
+    }
+
+    function resetAccount() {
+      if (confirm('Reset paper account back to $10,000.00 USDT?')) {
+        balance = 10000;
+        positions = [];
+        saveState();
+        renderPositions();
+        updateHero();
+      }
+    }
+
+    function updatePositionsPnl(currentMark) {
+      let totalPnl = 0;
+      positions.forEach(p => {
+        if (p.symbol === currentSymbol) {
+          const diff = p.side === 'long' ? currentMark - p.entryPrice : p.entryPrice - currentMark;
+          p.currentPnl = p.margin * (diff / p.entryPrice);
+        }
+        totalPnl += (p.currentPnl || 0);
+      });
+      document.getElementById('dispBalance').textContent = '$' + balance.toLocaleString('en-US', { minimumFractionDigits: 2 });
+      const pnlEl = document.getElementById('dispTotalPnl');
+      pnlEl.textContent = (totalPnl >= 0 ? '+' : '') + '$' + totalPnl.toFixed(2);
+      pnlEl.className = 'wallet-val ' + (totalPnl >= 0 ? 'up' : 'down');
+      renderPositions();
+    }
+
+    function renderPositions() {
+      const container = document.getElementById('positionsList');
+      document.getElementById('posCount').textContent = positions.length;
+      if (positions.length === 0) {
+        container.innerHTML = '<div style="font-size:11px;color:var(--muted);text-align:center;padding:12px">No open positions</div>';
+        return;
+      }
+      container.innerHTML = '';
+      positions.forEach(p => {
+        const isUp = (p.currentPnl || 0) >= 0;
+        const div = document.createElement('div');
+        div.className = 'pos-item';
+        div.innerHTML = `
+          <div>
+            <div class="pos-sym">
+              ${p.symbol}
+              <span style="font-size:10px;color:${p.side === 'long' ? 'var(--bull)' : 'var(--bear)'};margin-left:4px">
+                ${p.side.toUpperCase()}
+              </span>
+            </div>
+            <div class="pos-meta">Entry: $${formatPrice(p.entryPrice)} · Margin: $${p.margin}</div>
+          </div>
+          <div style="display:flex;align-items:center">
+            <div class="pos-pnl ${isUp ? 'up' : 'down'}">
+              ${isUp ? '+' : ''}$${(p.currentPnl || 0).toFixed(2)}
+            </div>
+            <button class="btn-close-pos" onclick="closePosition('${p.id}')">Close</button>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    // Server Modal & Connection
+    function openServerModal() {
+      document.getElementById('serverModal').classList.add('open');
+      const saved = localStorage.getItem('celsius_server_url') || 'http://192.168.0.5:3000';
+      document.getElementById('serverInput').value = saved;
+    }
+    function closeServerModal() {
+      document.getElementById('serverModal').classList.remove('open');
+    }
+    function saveAndConnectServer() {
+      const url = document.getElementById('serverInput').value.trim();
+      if (url) {
+        localStorage.setItem('celsius_server_url', url);
+        window.location.href = url;
+      }
+    }
+
+    // Auto-check if custom server was saved
+    window.addEventListener('load', () => {
+      const autoUrl = localStorage.getItem('celsius_auto_server');
+      if (autoUrl) {
+        window.location.href = autoUrl;
+      }
+    });
+
+    window.addEventListener('resize', drawChart);
+
+    // Init
+    renderSymbolTape();
+    fetchKlines();
+    connectBinanceWs();
+    renderPositions();
+  </script>
+</body>
 </html>
