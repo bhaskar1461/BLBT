@@ -23,7 +23,7 @@ interface BloombergFunctionItem {
 }
 
 const TERMINAL_FUNCTIONS: BloombergFunctionItem[] = [
-  { code: 'IB', name: 'Instant Bloomberg Desk', desc: 'Institutional broker & desk chat with AI Assistant', category: 'Chat' },
+  { code: 'DESK', name: 'Terminal Desk AI', desc: 'Quantitative desk chat & market analysis assistant', category: 'Chat' },
   { code: 'TOP', name: 'Top News Wire', desc: 'Real-time terminal headlines & analytical stories', category: 'News' },
   { code: 'WEI', name: 'World Equity Indices', desc: 'Global market benchmarks & asset classes', category: 'Markets' },
   { code: 'PORT', name: 'Portfolio & Risk Blotter', desc: 'Holdings, NAV valuation & asset allocation', category: 'Risk' },
@@ -123,7 +123,7 @@ export const BloombergSearchModal: React.FC<BloombergSearchModalProps> = ({
                 terminalAudio.playTick();
                 setQuery(e.target.value);
               }}
-              placeholder="Search ticker, mnemonic, or function (e.g. BTC, IB, WEI)..."
+              placeholder="Search ticker, mnemonic, or function (e.g. BTC, DESK, WEI)..."
               className="w-full bg-transparent text-white font-mono font-bold text-xs placeholder-[#5c6880] outline-none uppercase"
             />
             {query && (

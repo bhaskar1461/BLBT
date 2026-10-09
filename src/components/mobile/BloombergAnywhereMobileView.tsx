@@ -629,7 +629,7 @@ export const BloombergAnywhereMobileView: React.FC<BloombergAnywhereMobileViewPr
               }}
               className="w-full py-2 bg-[#ff8800] text-black font-black text-xs tracking-wider cursor-pointer border border-[#ff8800]"
             >
-              &lt;EXECUTE INSTRUMENTS IN EMSX &lt;GO&gt;&gt;
+              &lt;TRADE INSTRUMENTS IN MARKETS &lt;GO&gt;&gt;
             </button>
           </div>
         </div>
