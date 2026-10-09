@@ -289,7 +289,7 @@ export const Shell: React.FC = () => {
         }}
         className="lg:hidden w-full py-2.5 bg-[#ff8800] hover:bg-[#e07700] text-black font-extrabold text-xs flex items-center justify-center gap-1.5 shadow-md cursor-pointer z-50 sticky top-0"
       >
-        <span>← RETURN TO BLOOMBERG MOBILE TERMINAL</span>
+        <span>← RETURN TO MOBILE TRADING TERMINAL</span>
       </button>
 
       {/* 1. Top Header Bar: TradingView Pro Navigation (Pinned at y=0!) */}

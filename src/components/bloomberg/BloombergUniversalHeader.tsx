@@ -68,9 +68,9 @@ export const BloombergUniversalHeader: React.FC<BloombergUniversalHeaderProps> =
             className="flex items-center gap-1.5 font-bold tracking-wider text-[#ff8800] hover:opacity-90 transition-opacity"
           >
             <span className="w-2 h-2 rounded-full bg-[#ff8800] shadow-[0_0_8px_#ff8800] animate-pulse" />
-            <span className="text-white font-black tracking-normal">BLOOMBERG</span>
+            <span className="text-white font-black tracking-normal">CELSIUS</span>
             <span className="text-[10px] text-[#ff8800] px-1 py-0.2 bg-[#ff8800]/20 rounded border border-[#ff8800]/40">
-              PROFESSIONAL
+              TERMINAL
             </span>
           </Link>
 
@@ -132,10 +132,10 @@ export const BloombergUniversalHeader: React.FC<BloombergUniversalHeaderProps> =
             href="/"
             onClick={() => terminalAudio.playTick()}
             className="px-2 py-1 rounded text-[11px] font-bold tracking-tight transition-colors text-[#ff8800] bg-[#101520] border border-[#ff8800]/40 flex items-center gap-1"
-            title="Instant Bloomberg Messaging Desk <IB>"
+            title="Terminal Desk AI <DESK>"
           >
             <span className="w-1.5 h-1.5 rounded-full bg-[#00ff66] animate-pulse" />
-            <span>&lt;IB&gt; DESK</span>
+            <span>&lt;DESK&gt; AI</span>
           </Link>
 
           <Link

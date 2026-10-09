@@ -18,7 +18,7 @@ export const BloombergStatusRibbon: React.FC<BloombergStatusRibbonProps> = ({
       {/* Ticker Tape Scrolling Row */}
       <div className="flex items-center overflow-x-hidden whitespace-nowrap bg-[#000000] border-b border-[#121824] py-1 px-2">
         <span className="text-[#ff8800] font-black mr-3 px-1.5 py-0.2 bg-[#ff8800]/20 rounded border border-[#ff8800]/40 text-[10px] shrink-0">
-          BLOOMBERG TAPE &lt;BT&gt;
+          CELSIUS TAPE &lt;CT&gt;
         </span>
 
         <div className="flex items-center gap-6 animate-marquee">

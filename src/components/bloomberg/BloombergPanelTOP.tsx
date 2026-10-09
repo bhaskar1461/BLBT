@@ -53,7 +53,7 @@ export const BloombergPanelTOP: React.FC<BloombergPanelTOPProps> = ({
             TOP
           </span>
           <span className="font-bold text-white tracking-wider text-[11px] uppercase">
-            BLOOMBERG REAL-TIME WIRE DISPATCH
+            FINANCIAL REAL-TIME WIRE DISPATCH
           </span>
         </div>
 

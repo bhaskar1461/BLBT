@@ -153,9 +153,9 @@ export const InstantBloombergView: React.FC<InstantBloombergViewProps> = ({
     if (q.includes('BTC') || q.includes('BITCOIN')) {
       return {
         id: 'bot-' + Date.now(),
-        sender: 'BLOOMBERG DESK',
+        sender: 'CELSIUS DESK',
         senderType: 'bot',
-        affiliation: 'BLOOMBERG L.P.',
+        affiliation: 'CELSIUS NETWORK',
         timestamp: nowStr(),
         text: `Authoritative Binance Spot quote for BTC/USDT. 24h trend: ${btcChg >= 0 ? '+' : ''}${btcChg}%. Tap card below to open <GP> Chart.`,
         quoteCard: {
@@ -171,9 +171,9 @@ export const InstantBloombergView: React.FC<InstantBloombergViewProps> = ({
     if (q.includes('ETH') || q.includes('ETHEREUM')) {
       return {
         id: 'bot-' + Date.now(),
-        sender: 'BLOOMBERG DESK',
+        sender: 'CELSIUS DESK',
         senderType: 'bot',
-        affiliation: 'BLOOMBERG L.P.',
+        affiliation: 'CELSIUS NETWORK',
         timestamp: nowStr(),
         text: `Authoritative Binance Spot quote for ETH/USDT. Volume heavy in European hours.`,
         quoteCard: {
@@ -189,9 +189,9 @@ export const InstantBloombergView: React.FC<InstantBloombergViewProps> = ({
     if (q.includes('TSLA') || q.includes('TESLA')) {
       return {
         id: 'bot-' + Date.now(),
-        sender: 'BLOOMBERG DESK',
+        sender: 'CELSIUS DESK',
         senderType: 'bot',
-        affiliation: 'BLOOMBERG L.P.',
+        affiliation: 'CELSIUS NETWORK',
         timestamp: nowStr(),
         text: `Equity quote for TSLA (NASDAQ). Session active.`,
         quoteCard: {
@@ -207,9 +207,9 @@ export const InstantBloombergView: React.FC<InstantBloombergViewProps> = ({
     if (q.includes('NIFTY') || q.includes('INDIA')) {
       return {
         id: 'bot-' + Date.now(),
-        sender: 'BLOOMBERG DESK',
+        sender: 'CELSIUS DESK',
         senderType: 'bot',
-        affiliation: 'BLOOMBERG L.P.',
+        affiliation: 'CELSIUS NETWORK',
         timestamp: nowStr(),
         text: `National Stock Exchange of India (NSE) Nifty 50 benchmark index.`,
         quoteCard: {
@@ -226,7 +226,7 @@ export const InstantBloombergView: React.FC<InstantBloombergViewProps> = ({
       const balanceUsd = account?.balance ? (account.balance / 100000000).toFixed(2) : '36,000.00';
       return {
         id: 'bot-' + Date.now(),
-        sender: 'BLOOMBERG DESK',
+        sender: 'CELSIUS DESK',
         senderType: 'bot',
         affiliation: 'CLEARING & SETTLEMENT',
         timestamp: nowStr(),
@@ -237,7 +237,7 @@ export const InstantBloombergView: React.FC<InstantBloombergViewProps> = ({
     if (q.includes('HELP') || q.includes('CMD') || q.includes('CODE') || q.includes('FUNCTION')) {
       return {
         id: 'bot-' + Date.now(),
-        sender: 'BLOOMBERG DESK',
+        sender: 'CELSIUS DESK',
         senderType: 'bot',
         affiliation: 'TERMINAL HELP',
         timestamp: nowStr(),
@@ -247,9 +247,9 @@ export const InstantBloombergView: React.FC<InstantBloombergViewProps> = ({
 
     return {
       id: 'bot-' + Date.now(),
-      sender: 'BLOOMBERG DESK',
+      sender: 'CELSIUS DESK',
       senderType: 'bot',
-      affiliation: 'BLOOMBERG L.P.',
+      affiliation: 'CELSIUS NETWORK',
       timestamp: nowStr(),
       text: `Acknowledged: "${query}". Desk has logged this inquiry. Query any ticker (BTC, ETH, TSLA, NIFTY), request <PORT> balance status, or type <HELP> for mnemonic shortcuts.`,
     };
@@ -264,7 +264,7 @@ export const InstantBloombergView: React.FC<InstantBloombergViewProps> = ({
       id: 'usr-' + Date.now(),
       sender: 'B.SHARMA',
       senderType: 'user',
-      affiliation: 'BLOOMBERG ANYWHERE',
+      affiliation: 'CELSIUS ANYWHERE',
       timestamp: nowStr(),
       text: inputText.trim(),
     };
@@ -298,10 +298,10 @@ export const InstantBloombergView: React.FC<InstantBloombergViewProps> = ({
       <header className="px-3 py-2 bg-[#080b11] border-b border-[#182030] flex items-center justify-between shrink-0">
         <div className="flex items-center gap-2">
           <span className="px-1.5 py-0.2 bg-[#ff8800] text-black font-black text-[10px]">
-            &lt;IB &lt;GO&gt;&gt;
+            &lt;DESK &lt;GO&gt;&gt;
           </span>
           <span className="text-white font-bold text-xs tracking-tight">
-            INSTANT BLOOMBERG
+            TERMINAL DESK AI
           </span>
         </div>
         <div className="flex items-center gap-1.5 text-[10px] text-[#00c176] font-bold">

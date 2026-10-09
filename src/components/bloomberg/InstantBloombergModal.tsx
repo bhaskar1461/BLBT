@@ -79,15 +79,15 @@ export const InstantBloombergModal: React.FC<InstantBloombergModalProps> = ({
         sender: 'SYSTEM',
         senderType: 'system',
         timestamp: '13:00:00 UTC',
-        text: 'SESSION OPENED. Connected to Bloomberg Help Desk <HELP <GO>> & Terminal Analytics Service.',
+        text: 'SESSION OPENED. Connected to Celsius Terminal Desk AI <HELP <GO>> & Quantitative Analytics Service.',
       },
       {
         id: 'h2',
-        sender: 'BLOOMBERG ANALYTICS',
+        sender: 'CELSIUS ANALYTICS',
         senderType: 'bot',
-        affiliation: 'BLOOMBERG L.P.',
+        affiliation: 'CELSIUS NETWORK',
         timestamp: '13:00:02 UTC',
-        text: 'Welcome to Instant Bloomberg (IB). I am your terminal market specialist bot. Ask me for live quotes (e.g. "BTC", "ETH", "TSLA"), portfolio margin status, function cheat codes (<WEI>, <GP>, <EMSX>), or market math.',
+        text: 'Welcome to Celsius Terminal Desk AI. I am your quantitative market specialist bot. Ask me for live quotes (e.g. "BTC", "ETH", "TSLA"), portfolio margin status, function cheat codes (<WEI>, <GP>, <EMSX>), or market math.',
       },
     ],
     liquidity: [
@@ -162,9 +162,9 @@ export const InstantBloombergModal: React.FC<InstantBloombergModalProps> = ({
     if (q.includes('BTC') || q.includes('BITCOIN')) {
       return {
         id: 'bot-' + Date.now(),
-        sender: 'BLOOMBERG DESK',
+        sender: 'CELSIUS DESK',
         senderType: 'bot',
-        affiliation: 'BLOOMBERG L.P.',
+        affiliation: 'CELSIUS NETWORK',
         timestamp: nowStr(),
         text: `Authoritative Binance Spot quote for BTC/USDT. 24h trend: ${btcChg >= 0 ? '+' : ''}${btcChg}%. Tap below to inspect on <GP> Chart.`,
         quoteCard: {
@@ -180,9 +180,9 @@ export const InstantBloombergModal: React.FC<InstantBloombergModalProps> = ({
     if (q.includes('ETH') || q.includes('ETHEREUM')) {
       return {
         id: 'bot-' + Date.now(),
-        sender: 'BLOOMBERG DESK',
+        sender: 'CELSIUS DESK',
         senderType: 'bot',
-        affiliation: 'BLOOMBERG L.P.',
+        affiliation: 'CELSIUS NETWORK',
         timestamp: nowStr(),
         text: `Authoritative Binance Spot quote for ETH/USDT. Volume heavy in European hours.`,
         quoteCard: {
@@ -198,9 +198,9 @@ export const InstantBloombergModal: React.FC<InstantBloombergModalProps> = ({
     if (q.includes('TSLA') || q.includes('TESLA')) {
       return {
         id: 'bot-' + Date.now(),
-        sender: 'BLOOMBERG DESK',
+        sender: 'CELSIUS DESK',
         senderType: 'bot',
-        affiliation: 'BLOOMBERG L.P.',
+        affiliation: 'CELSIUS NETWORK',
         timestamp: nowStr(),
         text: `Equity quote for TSLA (NASDAQ). Session active.`,
         quoteCard: {
@@ -216,9 +216,9 @@ export const InstantBloombergModal: React.FC<InstantBloombergModalProps> = ({
     if (q.includes('NIFTY') || q.includes('INDIA')) {
       return {
         id: 'bot-' + Date.now(),
-        sender: 'BLOOMBERG DESK',
+        sender: 'CELSIUS DESK',
         senderType: 'bot',
-        affiliation: 'BLOOMBERG L.P.',
+        affiliation: 'CELSIUS NETWORK',
         timestamp: nowStr(),
         text: `National Stock Exchange of India (NSE) Nifty 50 benchmark index.`,
         quoteCard: {
@@ -236,7 +236,7 @@ export const InstantBloombergModal: React.FC<InstantBloombergModalProps> = ({
       const balanceUsd = account?.balance ? (account.balance / 100000000).toFixed(2) : '36,000.00';
       return {
         id: 'bot-' + Date.now(),
-        sender: 'BLOOMBERG DESK',
+        sender: 'CELSIUS DESK',
         senderType: 'bot',
         affiliation: 'CLEARING & SETTLEMENT',
         timestamp: nowStr(),
@@ -248,7 +248,7 @@ export const InstantBloombergModal: React.FC<InstantBloombergModalProps> = ({
     if (q.includes('HELP') || q.includes('CMD') || q.includes('CODE') || q.includes('FUNCTION')) {
       return {
         id: 'bot-' + Date.now(),
-        sender: 'BLOOMBERG DESK',
+        sender: 'CELSIUS DESK',
         senderType: 'bot',
         affiliation: 'TERMINAL HELP',
         timestamp: nowStr(),
@@ -260,7 +260,7 @@ export const InstantBloombergModal: React.FC<InstantBloombergModalProps> = ({
     if (q.includes('SENTIMENT') || q.includes('HERD') || q.includes('REALITY')) {
       return {
         id: 'bot-' + Date.now(),
-        sender: 'BLOOMBERG DESK',
+        sender: 'CELSIUS DESK',
         senderType: 'bot',
         affiliation: 'QUANT RESEARCH',
         timestamp: nowStr(),
@@ -271,9 +271,9 @@ export const InstantBloombergModal: React.FC<InstantBloombergModalProps> = ({
     // Default institutional reply
     return {
       id: 'bot-' + Date.now(),
-      sender: 'BLOOMBERG DESK',
+      sender: 'CELSIUS DESK',
       senderType: 'bot',
-      affiliation: 'BLOOMBERG L.P.',
+      affiliation: 'CELSIUS NETWORK',
       timestamp: nowStr(),
       text: `Acknowledged: "${query}". Desk has logged this inquiry. You can query any ticker (BTC, ETH, TSLA, NIFTY), request <PORT> balance status, or type <HELP> for mnemonic shortcuts.`,
     };
@@ -288,7 +288,7 @@ export const InstantBloombergModal: React.FC<InstantBloombergModalProps> = ({
       id: 'usr-' + Date.now(),
       sender: 'B.SHARMA',
       senderType: 'user',
-      affiliation: 'BLOOMBERG ANYWHERE',
+      affiliation: 'CELSIUS ANYWHERE',
       timestamp: nowStr(),
       text: inputText.trim(),
     };
@@ -324,7 +324,7 @@ export const InstantBloombergModal: React.FC<InstantBloombergModalProps> = ({
         <div className="flex items-center justify-between px-3 py-2 bg-[#ff8800] text-black font-black text-xs shrink-0">
           <div className="flex items-center gap-2">
             <MessageSquare size={14} className="stroke-[2.5]" />
-            <span>BLOOMBERG PROFESSIONAL // INSTANT BLOOMBERG &lt;IB &lt;GO&gt;&gt;</span>
+            <span>CELSIUS TERMINAL // TERMINAL DESK AI &lt;DESK &lt;GO&gt;&gt;</span>
             <span className="hidden sm:inline px-1 bg-black text-[#ff8800] text-[10px] rounded-[2px]">
               AUTHENTICATED
             </span>
@@ -346,7 +346,7 @@ export const InstantBloombergModal: React.FC<InstantBloombergModalProps> = ({
           <div className="flex items-center gap-3">
             <span className="flex items-center gap-1.5 text-[#00c176] font-bold">
               <span className="w-1.5 h-1.5 rounded-full bg-[#00c176] animate-pulse" />
-              <span>IB NETWORK: ONLINE</span>
+              <span>DESK NETWORK: ONLINE</span>
             </span>
             <span className="text-[#2a364d]">|</span>
             <span className="text-[#ff8800]">LATENCY: 8ms</span>
@@ -354,7 +354,7 @@ export const InstantBloombergModal: React.FC<InstantBloombergModalProps> = ({
             <span>END-TO-END ENCRYPTED</span>
           </div>
           <div className="text-[#64748b] hidden sm:inline">
-            USER: B.SHARMA &lt;BLOOMBERG ANYWHERE&gt;
+            USER: B.SHARMA &lt;CELSIUS ANYWHERE&gt;
           </div>
         </div>
 

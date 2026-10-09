@@ -27,7 +27,7 @@ export const BloombergHelpModal: React.FC<BloombergHelpModalProps> = ({
     { code: 'PORT', name: 'Portfolio & Risk', desc: 'NAV valuation, realized P&L, drawdown and Buy-and-Hold benchmark comparison' },
     { code: 'MAX GP', name: 'Maximize Chart Panel', desc: 'Expand price chart into full-screen workspace' },
     { code: 'MAX EMSX', name: 'Maximize Execution Blotter', desc: 'Expand order execution blotter into full workspace' },
-    { code: 'RESTORE', name: 'Restore 4-Panel Launchpad', desc: 'Reset all tiles back to standard 4-panel Bloomberg Launchpad layout' },
+    { code: 'RESTORE', name: 'Restore 4-Panel Launchpad', desc: 'Reset all tiles back to standard 4-panel Celsius Launchpad layout' },
     { code: 'TV', name: 'TradingView Layout', desc: 'Switch layout to TradingView Supercharts workspace' },
     { code: 'SECF', name: 'Security Finder', desc: 'Universal cross-asset search for equities, crypto pairs, and commodities' },
     { code: 'HELP', name: 'Help & Reference', desc: 'Terminal command cheat sheet and core platform invariants' },
@@ -47,7 +47,7 @@ export const BloombergHelpModal: React.FC<BloombergHelpModalProps> = ({
           <div className="flex items-center gap-2.5">
             <span className="w-2.5 h-2.5 rounded-full bg-[#ff8800] shadow-[0_0_8px_#ff8800] animate-pulse" />
             <span className="font-mono font-black text-sm text-[#ff8800] tracking-widest uppercase">
-              BLOOMBERG HELP DESK &lt;HELP&gt; · OPERATOR REFERENCE
+              CELSIUS TERMINAL HELP DESK &lt;HELP&gt; · OPERATOR REFERENCE
             </span>
           </div>
 

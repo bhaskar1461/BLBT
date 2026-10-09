@@ -101,7 +101,7 @@ export const NewsArticleModal: React.FC<NewsArticleModalProps> = ({
         </h1>
 
         <div className="text-[10px] text-[#6b768e] mt-1 border-b border-[#141b28] pb-2">
-          BLOOMBERG NEWS WIRE DISPATCH &bull; MONITORED INSTITUTIONAL FEED
+          CELSIUS FINANCIAL WIRE DISPATCH &bull; MONITORED INSTITUTIONAL FEED
         </div>
 
         {/* Signature Bloomberg Bullet Points Box */}

@@ -519,9 +519,9 @@ export const TradingViewTopBar: React.FC<TradingViewTopBarProps> = ({
           <button
             onClick={onToggleDesktopLayout}
             className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#ff8800] hover:bg-[#ff991a] text-black font-black text-[11px] font-mono tracking-wider transition-all shadow-md active:scale-95"
-            title="Launch Bloomberg Professional Terminal 4-Panel Workspace"
+            title="Launch Professional Terminal 4-Panel Workspace"
           >
-            <span>BLOOMBERG &lt;GO&gt;</span>
+            <span>TERMINAL &lt;GO&gt;</span>
           </button>
         )}
 

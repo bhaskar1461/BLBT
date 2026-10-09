@@ -22,7 +22,7 @@ interface BloombergFunctionItem {
   category: string;
 }
 
-const BLOOMBERG_FUNCTIONS: BloombergFunctionItem[] = [
+const TERMINAL_FUNCTIONS: BloombergFunctionItem[] = [
   { code: 'IB', name: 'Instant Bloomberg Desk', desc: 'Institutional broker & desk chat with AI Assistant', category: 'Chat' },
   { code: 'TOP', name: 'Top News Wire', desc: 'Real-time terminal headlines & analytical stories', category: 'News' },
   { code: 'WEI', name: 'World Equity Indices', desc: 'Global market benchmarks & asset classes', category: 'Markets' },
@@ -58,9 +58,9 @@ export const BloombergSearchModal: React.FC<BloombergSearchModalProps> = ({
 
   const filteredFunctions = useMemo(() => {
     if (selectedFilter === 'quotes') return [];
-    if (!query.trim()) return BLOOMBERG_FUNCTIONS;
+    if (!query.trim()) return TERMINAL_FUNCTIONS;
     const q = query.toLowerCase().trim();
-    return BLOOMBERG_FUNCTIONS.filter(
+    return TERMINAL_FUNCTIONS.filter(
       (f) =>
         f.code.toLowerCase().includes(q) ||
         f.name.toLowerCase().includes(q) ||
@@ -175,7 +175,7 @@ export const BloombergSearchModal: React.FC<BloombergSearchModalProps> = ({
           {filteredFunctions.length > 0 && (
             <div className="flex flex-col gap-1.5 pt-1">
               <div className="flex items-center justify-between text-[10px] font-bold text-[#8e95a5] uppercase">
-                <span className="text-[#ff8800]">BLOOMBERG MNEMONIC ROUTING ({filteredFunctions.length})</span>
+                <span className="text-[#ff8800]">TERMINAL MNEMONIC ROUTING ({filteredFunctions.length})</span>
                 <span>PRESS &lt;GO&gt;</span>
               </div>
 
@@ -270,7 +270,7 @@ export const BloombergSearchModal: React.FC<BloombergSearchModalProps> = ({
 
           {filteredFunctions.length === 0 && filteredQuotes.length === 0 && (
             <div className="py-8 text-center text-[#8e95a5] text-xs">
-              NO ACTIVE BLOOMBERG INSTRUMENT OR FUNCTION FOR &quot;{query.toUpperCase()}&quot;
+              NO ACTIVE INSTRUMENT OR FUNCTION FOR &quot;{query.toUpperCase()}&quot;
             </div>
           )}
         </div>

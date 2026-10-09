@@ -208,9 +208,9 @@ export const BloombergTopCommandBar: React.FC<BloombergTopCommandBarProps> = ({
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1.5 font-bold tracking-wider text-[#ff8800]">
             <span className="w-2 h-2 rounded-full bg-[#ff8800] shadow-[0_0_8px_#ff8800] animate-pulse" />
-            <span className="text-white font-black tracking-normal">BLOOMBERG</span>
+            <span className="text-white font-black tracking-normal">CELSIUS</span>
             <span className="text-[10px] text-[#ff8800] px-1 py-0.2 bg-[#ff8800]/20 rounded border border-[#ff8800]/40">
-              PROFESSIONAL
+              TERMINAL
             </span>
           </div>
 
@@ -333,7 +333,7 @@ export const BloombergTopCommandBar: React.FC<BloombergTopCommandBarProps> = ({
               className="absolute left-0 right-16 top-full mt-1.5 z-50 bg-[#070a10] border-2 border-[#ff8800] rounded shadow-[0_8px_30px_rgba(0,0,0,0.9)] overflow-hidden font-mono"
             >
               <div className="px-2.5 py-1 bg-[#101726] border-b border-[#1f2d45] flex items-center justify-between text-[10px] text-[#8e95a5]">
-                <span className="font-bold text-[#ff8800]">BLOOMBERG MNEMONIC &amp; SECURITY SUGGESTIONS</span>
+                <span className="font-bold text-[#ff8800]">TERMINAL MNEMONIC &amp; SECURITY SUGGESTIONS</span>
                 <span>Use &uarr;&darr; to navigate, &lt;GO&gt; to execute</span>
               </div>
               <div className="py-1 max-h-64 overflow-y-auto">
