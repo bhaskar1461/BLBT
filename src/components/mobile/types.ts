@@ -40,5 +40,5 @@ export interface PortfolioSummary {
   sparkline?: number[];
 }
 
-export type MobileTab = 'home' | 'markets' | 'watchlist' | 'news' | 'more';
+export type MobileTab = 'monitors' | 'emsx' | 'news' | 'ib' | 'cmd' | 'home' | 'markets' | 'watchlist' | 'more';
 export type Timeframe = '1D' | '1W' | '1M' | '3M' | '1Y' | '5Y';

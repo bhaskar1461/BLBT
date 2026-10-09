@@ -3,7 +3,7 @@
 
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import type { Quote } from './types';
-import { Search, X, ArrowUpRight, Command, Terminal, Sparkles } from 'lucide-react';
+import { Search, X, ArrowUpRight, Terminal } from 'lucide-react';
 import { terminalAudio } from '@/lib/terminalAudio';
 import { formatPrice } from '@/lib/utils';
 
@@ -23,13 +23,15 @@ interface BloombergFunctionItem {
 }
 
 const BLOOMBERG_FUNCTIONS: BloombergFunctionItem[] = [
+  { code: 'IB', name: 'Instant Bloomberg Desk', desc: 'Institutional broker & desk chat with AI Assistant', category: 'Chat' },
   { code: 'TOP', name: 'Top News Wire', desc: 'Real-time terminal headlines & analytical stories', category: 'News' },
   { code: 'WEI', name: 'World Equity Indices', desc: 'Global market benchmarks & asset classes', category: 'Markets' },
-  { code: 'PORT', name: 'Portfolio & Risk', desc: 'Holdings, NAV valuation & asset allocation', category: 'Portfolio' },
+  { code: 'PORT', name: 'Portfolio & Risk Blotter', desc: 'Holdings, NAV valuation & asset allocation', category: 'Risk' },
   { code: 'WL', name: 'Watchlists & Desks', desc: 'Curated monitor for Equities, Crypto & FX', category: 'Monitor' },
   { code: 'GP', name: 'Graph Price', desc: 'Candlestick & line technical chart inspector', category: 'Analytics' },
   { code: 'DES', name: 'Description & Financials', desc: 'Security key data, range & volume', category: 'Company' },
-  { code: 'SECF', name: 'Security Finder', desc: 'Multi-asset search universe & cross-rates', category: 'Search' },
+  { code: 'SECF', name: 'Security Finder Master', desc: 'Multi-asset search universe & cross-rates', category: 'Search' },
+  { code: 'EMSX', name: 'Execution Management System', desc: 'Order blotter & paper trading routing', category: 'Trade' },
 ];
 
 export const BloombergSearchModal: React.FC<BloombergSearchModalProps> = ({
@@ -83,18 +85,18 @@ export const BloombergSearchModal: React.FC<BloombergSearchModalProps> = ({
   return (
     <div
       onClick={onClose}
-      className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex flex-col justify-start animate-in fade-in duration-200 select-none"
+      className="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex flex-col justify-start p-2 font-mono select-none"
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-xl mx-auto bg-[#0a0d13] border-b border-[#212b3d] flex flex-col max-h-[90vh] shadow-2xl pt-[env(safe-area-inset-top,20px)]"
+        className="w-full max-w-xl mx-auto bg-[#070a10] border-2 border-[#ff8800] flex flex-col max-h-[88vh] shadow-[0_0_30px_rgba(0,0,0,0.95)]"
       >
         {/* Top Header */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-[#181f2c]">
+        <div className="flex items-center justify-between px-3 py-2 bg-[#101520] border-b border-[#182030]">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#ff8800] shadow-[0_0_8px_#ff8800] animate-pulse" />
-            <span className="text-[13px] font-extrabold tracking-widest text-[#ff8800] font-mono">
-              SECURITY FINDER &lt;SECF&gt;
+            <span className="w-2 h-2 rounded-full bg-[#ff8800] animate-pulse" />
+            <span className="text-xs font-black tracking-widest text-[#ff8800]">
+              SECURITY FINDER &lt;SECF &lt;GO&gt;&gt;
             </span>
           </div>
 
@@ -103,16 +105,16 @@ export const BloombergSearchModal: React.FC<BloombergSearchModalProps> = ({
               terminalAudio.playTick();
               onClose();
             }}
-            className="w-7 h-7 rounded-full bg-[#141924] border border-[#263145] flex items-center justify-center text-[#8e95a5] hover:text-white cursor-pointer"
+            className="text-[#8e95a5] hover:text-white text-xs px-2 py-0.5 border border-[#1e2a40] bg-[#0c1018]"
           >
-            <X size={15} />
+            &lt;ESC&gt;
           </button>
         </div>
 
         {/* Input Bar */}
-        <div className="p-3.5 border-b border-[#181f2c] bg-[#0d111a]">
-          <div className="relative flex items-center">
-            <Search size={18} className="absolute left-3.5 text-[#ff8800] pointer-events-none" />
+        <div className="p-3 border-b border-[#182030] bg-[#0b0f17]">
+          <div className="flex items-center bg-[#070a10] border border-[#ff8800] px-3 py-2">
+            <span className="text-[#ff8800] font-black text-xs mr-2">SECF &gt;</span>
             <input
               ref={inputRef}
               type="text"
@@ -121,8 +123,8 @@ export const BloombergSearchModal: React.FC<BloombergSearchModalProps> = ({
                 terminalAudio.playTick();
                 setQuery(e.target.value);
               }}
-              placeholder="Search ticker, company or function (e.g. BTC, NIFTY, TOP)..."
-              className="w-full bg-[#141924] border border-[#2b3548] focus:border-[#ff8800] rounded-xl pl-11 pr-10 py-3 text-[14px] text-white placeholder-[#5c6475] font-medium outline-none transition-all shadow-inner"
+              placeholder="Search ticker, mnemonic, or function (e.g. BTC, IB, WEI)..."
+              className="w-full bg-transparent text-white font-mono font-bold text-xs placeholder-[#5c6880] outline-none uppercase"
             />
             {query && (
               <button
@@ -131,21 +133,21 @@ export const BloombergSearchModal: React.FC<BloombergSearchModalProps> = ({
                   setQuery('');
                   inputRef.current?.focus();
                 }}
-                className="absolute right-3 text-[#8e95a5] hover:text-white p-1"
+                className="text-[#8e95a5] hover:text-white text-xs px-1"
               >
-                <X size={16} />
+                ✕
               </button>
             )}
           </div>
 
-          {/* Filter Pills */}
-          <div className="flex items-center gap-2 mt-3 overflow-x-auto no-scrollbar">
+          {/* Filter Keys */}
+          <div className="flex items-center gap-1.5 mt-2.5">
             {(['all', 'functions', 'quotes'] as const).map((filter) => {
               const isActive = selectedFilter === filter;
               const labels = {
-                all: 'All Results',
-                functions: 'Functions <GO>',
-                quotes: 'Securities & Tickers',
+                all: '<ALL RESULTS>',
+                functions: '<FUNCTIONS GO>',
+                quotes: '<SECURITIES>',
               };
               return (
                 <button
@@ -154,10 +156,10 @@ export const BloombergSearchModal: React.FC<BloombergSearchModalProps> = ({
                     terminalAudio.playTick();
                     setSelectedFilter(filter);
                   }}
-                  className={`px-3 py-1 rounded-full text-[11px] font-bold font-mono transition-all cursor-pointer ${
+                  className={`px-2 py-0.5 text-[10px] font-bold border transition-colors cursor-pointer ${
                     isActive
-                      ? 'bg-[#ff8800] text-black shadow-[0_0_8px_rgba(255,136,0,0.35)]'
-                      : 'bg-[#141924] text-[#8e95a5] hover:text-white border border-[#232b3d]'
+                      ? 'bg-[#ff8800] text-black border-[#ff8800]'
+                      : 'bg-[#0c1018] text-[#8e95a5] border-[#1c2436] hover:text-white'
                   }`}
                 >
                   {labels[filter]}
@@ -168,16 +170,16 @@ export const BloombergSearchModal: React.FC<BloombergSearchModalProps> = ({
         </div>
 
         {/* Scrollable Results Area */}
-        <div className="flex-1 overflow-y-auto px-4 py-3 flex flex-col gap-4 divide-y divide-[#181f2c]/60">
+        <div className="flex-1 overflow-y-auto p-3 flex flex-col gap-3 divide-y divide-[#182030]">
           {/* Section: Bloomberg Mnemonic Functions */}
           {filteredFunctions.length > 0 && (
-            <div className="flex flex-col gap-2 pt-1">
-              <div className="flex items-center justify-between text-[10px] font-mono font-bold text-[#8e95a5] uppercase tracking-wider">
-                <span>BLOOMBERG FUNCTIONS ({filteredFunctions.length})</span>
-                <span className="text-[#ff8800]">&lt;MNEMONIC GO&gt;</span>
+            <div className="flex flex-col gap-1.5 pt-1">
+              <div className="flex items-center justify-between text-[10px] font-bold text-[#8e95a5] uppercase">
+                <span className="text-[#ff8800]">BLOOMBERG MNEMONIC ROUTING ({filteredFunctions.length})</span>
+                <span>PRESS &lt;GO&gt;</span>
               </div>
 
-              <div className="grid grid-cols-1 gap-1.5">
+              <div className="flex flex-col gap-1">
                 {filteredFunctions.map((fn) => (
                   <div
                     key={fn.code}
@@ -186,23 +188,23 @@ export const BloombergSearchModal: React.FC<BloombergSearchModalProps> = ({
                       onSelectFunction(fn.code);
                       onClose();
                     }}
-                    className="p-2.5 bg-[#0e121b] border border-[#1b2230] hover:border-[#ff8800]/50 rounded-xl flex items-center justify-between cursor-pointer active:scale-[0.99] transition-all"
+                    className="p-2 bg-[#0c1018] border border-[#182030] hover:border-[#ff8800] flex items-center justify-between cursor-pointer transition-colors"
                   >
-                    <div className="flex items-center gap-2.5">
-                      <span className="px-2 py-1 rounded bg-[#ff8800]/15 text-[#ff8800] border border-[#ff8800]/30 font-mono font-black text-[12px]">
+                    <div className="flex items-center gap-2">
+                      <span className="px-1.5 py-0.5 bg-[#ff8800]/20 text-[#ff8800] border border-[#ff8800]/40 font-black text-[11px]">
                         &lt;{fn.code}&gt;
                       </span>
                       <div>
-                        <div className="text-[13px] font-bold text-white leading-tight">
+                        <div className="text-xs font-bold text-white">
                           {fn.name}
                         </div>
-                        <div className="text-[11px] text-[#8e95a5] leading-tight mt-0.5">
+                        <div className="text-[10px] text-[#8e95a5]">
                           {fn.desc}
                         </div>
                       </div>
                     </div>
 
-                    <span className="text-[10px] font-mono font-bold text-[#5c6475] uppercase px-1.5 py-0.5 rounded bg-[#141822]">
+                    <span className="text-[9px] font-bold text-[#00e5ff] px-1 py-0.2 bg-[#121824] border border-[#1e2a40]">
                       {fn.category}
                     </span>
                   </div>
@@ -213,13 +215,13 @@ export const BloombergSearchModal: React.FC<BloombergSearchModalProps> = ({
 
           {/* Section: Securities / Tickers */}
           {filteredQuotes.length > 0 && (
-            <div className="flex flex-col gap-2 pt-3">
-              <div className="flex items-center justify-between text-[10px] font-mono font-bold text-[#8e95a5] uppercase tracking-wider">
-                <span>SECURITIES &amp; COMMODITIES ({filteredQuotes.length})</span>
-                <span className="text-[#00c176]">● STREAMING</span>
+            <div className="flex flex-col gap-1.5 pt-2">
+              <div className="flex items-center justify-between text-[10px] font-bold text-[#8e95a5] uppercase">
+                <span className="text-[#00e5ff]">SECURITIES &amp; INSTRUMENTS ({filteredQuotes.length})</span>
+                <span className="text-[#00ff66]">● STREAMING FEED</span>
               </div>
 
-              <div className="flex flex-col gap-1.5">
+              <div className="flex flex-col gap-1">
                 {filteredQuotes.map((q) => {
                   const sign = q.positive ? '+' : '';
                   const currSym = q.currency === 'INR' ? '₹' : '$';
@@ -231,29 +233,29 @@ export const BloombergSearchModal: React.FC<BloombergSearchModalProps> = ({
                         onSelectQuote(q);
                         onClose();
                       }}
-                      className="p-3 bg-[#0e121b] border border-[#1b2230] hover:border-[#2f3b52] rounded-xl flex items-center justify-between cursor-pointer active:scale-[0.99] transition-all"
+                      className="p-2 bg-[#0c1018] border border-[#182030] hover:border-[#00e5ff] flex items-center justify-between cursor-pointer transition-colors"
                     >
                       <div>
-                        <div className="flex items-center gap-2">
-                          <span className="font-extrabold text-[15px] font-mono text-white">
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-black text-xs text-white">
                             {q.symbol}
                           </span>
-                          <span className="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-[#161c28] text-[#8e95a5]">
-                            {q.category}
+                          <span className="text-[9px] text-[#6b768e]">
+                            &lt;{q.category}&gt;
                           </span>
                         </div>
-                        <div className="text-[11px] text-[#8e95a5] mt-0.5">
+                        <div className="text-[10px] text-[#8e95a5]">
                           {q.name}
                         </div>
                       </div>
 
                       <div className="text-right">
-                        <div className="font-mono font-bold text-[15px] text-white">
+                        <div className="font-bold text-xs text-white tabular-nums">
                           {currSym}{formatPrice(q.price, 2)}
                         </div>
                         <div
-                          className={`text-[11px] font-mono font-bold mt-0.5 ${
-                            q.positive ? 'text-[#00c176]' : 'text-[#ff4d4f]'
+                          className={`text-[10px] font-bold tabular-nums ${
+                            q.positive ? 'text-[#00ff66]' : 'text-[#ff3b30]'
                           }`}
                         >
                           {sign}{q.change.toFixed(2)} ({sign}{q.percent.toFixed(2)}%)
@@ -267,8 +269,8 @@ export const BloombergSearchModal: React.FC<BloombergSearchModalProps> = ({
           )}
 
           {filteredFunctions.length === 0 && filteredQuotes.length === 0 && (
-            <div className="py-12 text-center text-[#8e95a5] text-xs font-mono">
-              No matching Bloomberg securities or functions found for &quot;{query}&quot;
+            <div className="py-8 text-center text-[#8e95a5] text-xs">
+              NO ACTIVE BLOOMBERG INSTRUMENT OR FUNCTION FOR &quot;{query.toUpperCase()}&quot;
             </div>
           )}
         </div>

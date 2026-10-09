@@ -77,6 +77,8 @@ export const BloombergTopCommandBar: React.FC<BloombergTopCommandBarProps> = ({
     if (!q) return [];
     const list: Array<{ code: string; type: 'MNEMONIC' | 'SECURITY' | 'VIEW'; desc: string; tag: string }> = [
       // Functions
+      { code: 'IB', type: 'MNEMONIC', desc: 'Instant Bloomberg Institutional Messaging Desk', tag: '<MSG>' },
+      { code: 'MSG', type: 'MNEMONIC', desc: 'Instant Bloomberg Institutional Messaging Desk', tag: '<IB>' },
       { code: 'WEI', type: 'MNEMONIC', desc: 'World Equity Indices & Macro Monitor', tag: '<GOVT>' },
       { code: 'GP', type: 'MNEMONIC', desc: 'Graph Price Technical Candlestick Chart', tag: '<TECH>' },
       { code: 'TOP', type: 'MNEMONIC', desc: 'Top Bloomberg Real-Time News Wire', tag: '<NEWS>' },
@@ -184,6 +186,8 @@ export const BloombergTopCommandBar: React.FC<BloombergTopCommandBarProps> = ({
       onOpenHelp();
     } else if (keyName === 'SEARCH') {
       onOpenSearch();
+    } else if (keyName === 'IB') {
+      onExecuteCommand('IB');
     } else if (keyName === 'CANCEL') {
       setCommandInput('');
       setShowSuggestions(false);
@@ -380,6 +384,16 @@ export const BloombergTopCommandBar: React.FC<BloombergTopCommandBarProps> = ({
 
         {/* Bloomberg Special Function Keys */}
         <div className="hidden sm:flex items-center gap-1.5">
+          <button
+            type="button"
+            onClick={() => handleSpecialKey('IB')}
+            className="px-2.5 py-1.5 bg-[#ff8800]/15 hover:bg-[#ff8800]/25 border border-[#ff8800] text-[#ff8800] font-bold text-[11px] rounded transition-all cursor-pointer flex items-center gap-1.5 shadow-[0_0_8px_rgba(255,136,0,0.25)]"
+            title="Instant Bloomberg Messaging Desk <IB>"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-[#00ff66] animate-pulse" />
+            <span>&lt;IB &lt;GO&gt;&gt;</span>
+          </button>
+
           <button
             type="button"
             onClick={() => handleSpecialKey('HELP')}

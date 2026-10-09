@@ -21,29 +21,29 @@ export const WatchlistView: React.FC<WatchlistViewProps> = ({
   onSearchClick,
   onAlertsClick,
 }) => {
-  const categories = ['My Watchlist', 'India 🇮🇳', 'Tech 🇺🇸', 'Crypto 🌐'] as const;
-  const [selectedCategory, setSelectedCategory] = useState<string>('My Watchlist');
+  const categories = ['<MY WATCHLIST>', '<INDIA 🇮🇳>', '<TECH 🇺🇸>', '<CRYPTO 🌐>'] as const;
+  const [selectedCategory, setSelectedCategory] = useState<string>('<MY WATCHLIST>');
 
   const filteredQuotes = useMemo(() => {
-    if (selectedCategory === 'My Watchlist') return quotes;
-    if (selectedCategory === 'Tech 🇺🇸') return quotes.filter((q) => q.category === 'tech' || ['AAPL', 'TSLA', 'NVDA', 'MSFT'].includes(q.symbol));
-    if (selectedCategory === 'India 🇮🇳') return quotes.filter((q) => q.category === 'india' || ['NIFTY', 'SENSEX', 'RELIANCE', 'TCS', 'HDFCBANK'].includes(q.symbol));
-    if (selectedCategory === 'Crypto 🌐') return quotes.filter((q) => q.category === 'crypto' || ['BTCUSD', 'BTCUSDT', 'ETHUSD', 'SOLUSD'].includes(q.symbol));
+    if (selectedCategory === '<MY WATCHLIST>') return quotes;
+    if (selectedCategory === '<TECH 🇺🇸>') return quotes.filter((q) => q.category === 'tech' || ['AAPL', 'TSLA', 'NVDA', 'MSFT'].includes(q.symbol));
+    if (selectedCategory === '<INDIA 🇮🇳>') return quotes.filter((q) => q.category === 'india' || ['NIFTY', 'SENSEX', 'RELIANCE', 'TCS', 'HDFCBANK'].includes(q.symbol));
+    if (selectedCategory === '<CRYPTO 🌐>') return quotes.filter((q) => q.category === 'crypto' || ['BTCUSD', 'BTCUSDT', 'ETHUSD', 'SOLUSD'].includes(q.symbol));
     return quotes;
   }, [quotes, selectedCategory]);
 
   return (
-    <div className="flex flex-col min-h-screen bg-black text-white select-none pb-24">
+    <div className="flex flex-col min-h-screen bg-[#000000] text-white font-mono select-none pb-24">
       <TerminalHeader
-        title="Watchlists"
-        subtitle="CURATED DESKS <WL>"
+        title="WATCHLIST MONITOR"
+        subtitle="CUSTOM SECURITY BASKET <WL <GO>>"
         onSearchClick={onSearchClick}
         onAlertsClick={onAlertsClick}
       />
 
-      <div className="flex flex-col gap-4 px-4 pt-4">
-        {/* Capsule Category Filter Bar */}
-        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar -mx-4 px-4 pb-1">
+      <div className="flex flex-col gap-3 px-3 pt-3">
+        {/* Category Filter Keys */}
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
           {categories.map((cat) => {
             const isActive = selectedCategory === cat;
             return (
@@ -53,10 +53,10 @@ export const WatchlistView: React.FC<WatchlistViewProps> = ({
                   terminalAudio.playTick();
                   setSelectedCategory(cat);
                 }}
-                className={`px-3.5 py-1.5 rounded-full text-[12px] font-bold whitespace-nowrap transition-all cursor-pointer ${
+                className={`px-2.5 py-1 text-[11px] font-bold rounded-sm whitespace-nowrap transition-colors cursor-pointer border ${
                   isActive
-                    ? 'bg-[#ff8800] text-black shadow-[0_0_10px_rgba(255,136,0,0.35)]'
-                    : 'bg-[#141924] text-[#8e95a5] hover:text-white border border-[#232b3d]'
+                    ? 'bg-[#ff8800] text-black border-[#ff8800]'
+                    : 'bg-[#0c1018] text-[#8e95a5] hover:text-white border-[#1c2436]'
                 }`}
               >
                 {cat}
@@ -69,30 +69,30 @@ export const WatchlistView: React.FC<WatchlistViewProps> = ({
               terminalAudio.playTick();
               onSearchClick();
             }}
-            className="w-7 h-7 rounded-full bg-[#141924] border border-[#232b3d] flex items-center justify-center text-[#8e95a5] hover:text-[#ff8800] shrink-0 ml-1 cursor-pointer"
-            title="Add to Watchlist"
+            className="px-2 py-1 bg-[#101520] border border-[#1e2a40] text-[#ff8800] text-[10px] font-bold rounded-sm flex items-center gap-1 shrink-0 cursor-pointer"
+            title="Add Security <SECF>"
           >
-            <Plus size={15} />
+            <Plus size={11} />
+            <span>&lt;ADD&gt;</span>
           </button>
         </div>
 
-        {/* Watchlist Count & Status */}
-        <div className="flex items-center justify-between px-1 text-[11px] text-[#8e95a5]">
-          <span className="font-bold uppercase tracking-wider text-[#d1d5db]">
-            {selectedCategory} ({filteredQuotes.length})
-          </span>
-          <span className="font-mono text-[#00c176]">● STREAMING LIVE</span>
-        </div>
+        {/* Watchlist Blotter */}
+        <div className="border border-[#182030] bg-[#070a10]">
+          <div className="px-2.5 py-1 bg-[#101520] border-b border-[#182030] flex items-center justify-between text-[10px] text-[#8e95a5] font-bold">
+            <span className="text-[#ff8800]">SECURITIES IN BASKET: {selectedCategory}</span>
+            <span className="text-[#00ff66]">ACTIVE COUNT: {filteredQuotes.length}</span>
+          </div>
 
-        {/* Quotes List */}
-        <div className="bg-[#0e1118] border border-[#1b2230] rounded-xl px-3 py-1 shadow-sm divide-y divide-[#181d28]/70">
-          {filteredQuotes.map((q) => (
-            <QuoteRow
-              key={q.id || q.symbol}
-              quote={q}
-              onClick={() => onSelectQuote(q)}
-            />
-          ))}
+          <div className="divide-y divide-[#182030]">
+            {filteredQuotes.map((q) => (
+              <QuoteRow
+                key={q.id || q.symbol}
+                quote={q}
+                onClick={() => onSelectQuote(q)}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </div>

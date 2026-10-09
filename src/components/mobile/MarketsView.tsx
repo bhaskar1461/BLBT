@@ -5,7 +5,7 @@ import React, { useState, useMemo } from 'react';
 import { TerminalHeader } from './TerminalHeader';
 import { QuoteRow } from './QuoteRow';
 import type { Quote } from './types';
-import { Search, X, TrendingUp, TrendingDown } from 'lucide-react';
+import { Search, X, TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { terminalAudio } from '@/lib/terminalAudio';
 
 interface MarketsViewProps {
@@ -23,11 +23,11 @@ export const MarketsView: React.FC<MarketsViewProps> = ({
   const [selectedAssetClass, setSelectedAssetClass] = useState<'all' | 'india' | 'tech' | 'crypto' | 'commodities'>('all');
 
   const assetClasses = [
-    { id: 'all', label: 'All Markets' },
-    { id: 'india', label: 'India Equities 🇮🇳' },
-    { id: 'tech', label: 'Global Tech 🇺🇸' },
-    { id: 'crypto', label: 'Crypto Majors 🌐' },
-    { id: 'commodities', label: 'Commodities 🟡' },
+    { id: 'all', label: '<ALL>' },
+    { id: 'india', label: '<INDIA 🇮🇳>' },
+    { id: 'tech', label: '<TECH 🇺🇸>' },
+    { id: 'crypto', label: '<CRYPTO>' },
+    { id: 'commodities', label: '<COMDTY 🟡>' },
   ] as const;
 
   const filteredQuotes = useMemo(() => {
@@ -55,33 +55,33 @@ export const MarketsView: React.FC<MarketsViewProps> = ({
 
   // Major Indian and Global Market Indices matching Bloomberg WEI function
   const indices = [
-    { title: 'NIFTY 50', value: '24,612.30', change: '-0.49%', isUp: false, region: '🇮🇳 NSE' },
-    { title: 'SENSEX', value: '80,814.73', change: '+0.22%', isUp: true, region: '🇮🇳 BSE' },
-    { title: 'BANKNIFTY', value: '51,320.10', change: '+0.34%', isUp: true, region: '🇮🇳 NSE' },
-    { title: 'NASDAQ', value: '18,291.62', change: '+0.48%', isUp: true, region: '🇺🇸 US' },
-    { title: 'S&P 500', value: '5,864.67', change: '+0.37%', isUp: true, region: '🇺🇸 US' },
-    { title: 'GOLD (XAU)', value: '$2,658.20', change: '+0.85%', isUp: true, region: '🟡 SPOT' },
-    { title: 'BRENT OIL', value: '$78.40', change: '-1.12%', isUp: false, region: '🛢️ CRUDE' },
+    { title: 'NIFTY 50', value: '24,612.30', change: '-0.49%', isUp: false, region: 'NSE' },
+    { title: 'SENSEX', value: '80,814.73', change: '+0.22%', isUp: true, region: 'BSE' },
+    { title: 'BANKNIFTY', value: '51,320.10', change: '+0.34%', isUp: true, region: 'NSE' },
+    { title: 'NASDAQ', value: '18,291.62', change: '+0.48%', isUp: true, region: 'US' },
+    { title: 'S&P 500', value: '5,864.67', change: '+0.37%', isUp: true, region: 'US' },
+    { title: 'GOLD (XAU)', value: '$2,658.20', change: '+0.85%', isUp: true, region: 'SPOT' },
+    { title: 'BRENT OIL', value: '$78.40', change: '-1.12%', isUp: false, region: 'CRUDE' },
   ];
 
   return (
-    <div className="flex flex-col min-h-screen bg-black text-white select-none pb-24">
+    <div className="flex flex-col min-h-screen bg-[#000000] text-white font-mono select-none pb-24">
       <TerminalHeader
-        title="Markets"
-        subtitle="WORLD EQUITY INDICES <WEI>"
+        title="WORLD EQUITY INDICES"
+        subtitle="MONITOR <WEI <GO>> & EXECUTION <EMSX>"
         onAlertsClick={onAlertsClick}
       />
 
-      <div className="flex flex-col gap-4 px-4 pt-4">
-        {/* Search Bar Input */}
-        <div className="relative flex items-center">
-          <Search size={17} className="absolute left-3.5 text-[#8e95a5] pointer-events-none" />
+      <div className="flex flex-col gap-3 px-3 pt-3">
+        {/* Command Search Bar Input */}
+        <div className="flex items-center bg-[#070a10] border border-[#ff8800] rounded-sm px-3 py-1.5 shadow-[0_0_8px_rgba(255,136,0,0.15)]">
+          <span className="text-[#ff8800] font-black text-xs mr-2">WEI &gt;</span>
           <input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search symbol, company or index..."
-            className="w-full bg-[#0e1118] border border-[#1b2230] rounded-xl pl-10 pr-9 py-2.5 text-[14px] text-white placeholder-[#5c6475] focus:outline-none focus:border-[#ff8800] transition-colors"
+            placeholder="Search ticker, security, or index (e.g. BTC, NIFTY, TSLA)..."
+            className="w-full bg-transparent text-white font-mono font-bold text-xs placeholder-[#5c6880] outline-none uppercase"
           />
           {query && (
             <button
@@ -89,46 +89,53 @@ export const MarketsView: React.FC<MarketsViewProps> = ({
                 terminalAudio.playTick();
                 setQuery('');
               }}
-              className="absolute right-3 text-[#8e95a5] hover:text-white p-1"
+              className="text-[#8e95a5] hover:text-white text-xs px-1"
             >
-              <X size={15} />
+              ✕
             </button>
           )}
         </div>
 
-        {/* MarketIndexStrip: Horizontal Scrolling Indices Chips */}
-        <div className="flex gap-2.5 overflow-x-auto no-scrollbar -mx-4 px-4 pb-1">
-          {indices.map((idx) => (
-            <div
-              key={idx.title}
-              className="bg-[#0e1118] border border-[#1b2230] rounded-xl p-3 shrink-0 min-w-[135px] flex flex-col justify-between hover:border-[#2f3b52] active:scale-[0.99] transition-all shadow-sm"
-            >
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] font-bold text-[#8e95a5] tracking-wide">
-                  {idx.title}
-                </span>
-                <span className="text-[9px] text-[#5c6475] font-mono">{idx.region}</span>
-              </div>
+        {/* Dense WEI Indices Horizontal Strip */}
+        <div className="border border-[#182030] bg-[#070a10]">
+          <div className="px-2 py-1 bg-[#101520] border-b border-[#182030] text-[10px] text-[#8e95a5] flex items-center justify-between font-bold">
+            <span className="text-[#ff8800]">WORLD INDICES TICKER TAPE</span>
+            <span>REAL-TIME SNAPSHOT</span>
+          </div>
 
-              <div className="mt-2">
-                <div className="font-mono text-[14px] font-bold text-white tracking-tight tabular-nums">
-                  {idx.value}
+          <div className="flex gap-2 overflow-x-auto no-scrollbar p-1.5">
+            {indices.map((idx) => (
+              <div
+                key={idx.title}
+                className="bg-[#0b0f17] border border-[#1b2436] p-2 shrink-0 min-w-[120px] flex flex-col justify-between"
+              >
+                <div className="flex items-center justify-between text-[10px]">
+                  <span className="font-bold text-white tracking-wide">
+                    {idx.title}
+                  </span>
+                  <span className="text-[9px] text-[#00e5ff] font-semibold">{idx.region}</span>
                 </div>
-                <div
-                  className={`flex items-center gap-1 text-[11px] font-mono font-bold mt-0.5 tabular-nums ${
-                    idx.isUp ? 'text-[#00c176]' : 'text-[#ff4d4f]'
-                  }`}
-                >
-                  {idx.isUp ? <TrendingUp size={11} /> : <TrendingDown size={11} />}
-                  <span>{idx.change}</span>
+
+                <div className="mt-1">
+                  <div className="font-mono text-xs font-bold text-white tabular-nums">
+                    {idx.value}
+                  </div>
+                  <div
+                    className={`flex items-center gap-0.5 text-[10px] font-mono font-bold mt-0.5 tabular-nums ${
+                      idx.isUp ? 'text-[#00ff66]' : 'text-[#ff3b30]'
+                    }`}
+                  >
+                    {idx.isUp ? <ArrowUpRight size={10} /> : <ArrowDownRight size={10} />}
+                    <span>{idx.change}</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
 
-        {/* Asset Class Filter Pills */}
-        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar -mx-4 px-4 pb-1">
+        {/* Function Filter Mnemonic Keys */}
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
           {assetClasses.map((ac) => {
             const isActive = selectedAssetClass === ac.id;
             return (
@@ -138,10 +145,10 @@ export const MarketsView: React.FC<MarketsViewProps> = ({
                   terminalAudio.playTick();
                   setSelectedAssetClass(ac.id as any);
                 }}
-                className={`px-3 py-1.5 rounded-full text-[12px] font-bold whitespace-nowrap transition-all cursor-pointer ${
+                className={`px-2.5 py-1 text-[11px] font-bold rounded-sm whitespace-nowrap transition-colors cursor-pointer border ${
                   isActive
-                    ? 'bg-[#ff8800] text-black shadow-[0_0_8px_rgba(255,136,0,0.35)]'
-                    : 'bg-[#121622] text-[#8e95a5] hover:text-white border border-[#202738]'
+                    ? 'bg-[#ff8800] text-black border-[#ff8800] shadow-[0_0_8px_rgba(255,136,0,0.3)]'
+                    : 'bg-[#0c1018] text-[#8e95a5] hover:text-white border-[#1c2436]'
                 }`}
               >
                 {ac.label}
@@ -150,18 +157,16 @@ export const MarketsView: React.FC<MarketsViewProps> = ({
           })}
         </div>
 
-        {/* Filtered Quotes List */}
-        <section className="flex flex-col gap-2 mt-1">
-          <div className="flex items-center justify-between px-1">
-            <span className="text-[12px] font-extrabold tracking-[1px] text-[#8e95a5] uppercase">
-              {query ? `MATCHING RESULTS (${filteredQuotes.length})` : `SPOT QUOTES (${filteredQuotes.length})`}
+        {/* Master Monitor Quotes Blotter */}
+        <section className="flex flex-col border border-[#182030] bg-[#070a10]">
+          <div className="px-2.5 py-1.5 bg-[#101520] border-b border-[#182030] flex items-center justify-between text-[10px] text-[#8e95a5] font-bold">
+            <span className="text-[#ff8800] uppercase">
+              {query ? `SECURITIES MATCHING: ${query.toUpperCase()}` : 'LIVE MARKET SECURITIES MONITOR'}
             </span>
-            <span className="text-[10px] text-[#5c6475] font-mono">
-              REAL-TIME FEED
-            </span>
+            <span className="text-[#00ff66]">COUNT: {filteredQuotes.length}</span>
           </div>
 
-          <div className="bg-[#0e1118] border border-[#1b2230] rounded-xl px-3 py-1 shadow-sm divide-y divide-[#181d28]/70">
+          <div className="divide-y divide-[#182030]">
             {filteredQuotes.length > 0 ? (
               filteredQuotes.map((q) => (
                 <QuoteRow
@@ -171,8 +176,8 @@ export const MarketsView: React.FC<MarketsViewProps> = ({
                 />
               ))
             ) : (
-              <div className="py-8 text-center text-[#8e95a5] text-xs font-mono">
-                No matching instruments found for &quot;{query}&quot;
+              <div className="py-8 text-center text-[#8e95a5] text-xs">
+                NO ACTIVE MATCH FOR QUERY &quot;{query.toUpperCase()}&quot;
               </div>
             )}
           </div>

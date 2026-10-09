@@ -129,6 +129,16 @@ export const BloombergUniversalHeader: React.FC<BloombergUniversalHeaderProps> =
           </Link>
 
           <Link
+            href="/"
+            onClick={() => terminalAudio.playTick()}
+            className="px-2 py-1 rounded text-[11px] font-bold tracking-tight transition-colors text-[#ff8800] bg-[#101520] border border-[#ff8800]/40 flex items-center gap-1"
+            title="Instant Bloomberg Messaging Desk <IB>"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-[#00ff66] animate-pulse" />
+            <span>&lt;IB&gt; DESK</span>
+          </Link>
+
+          <Link
             href="/funding"
             onClick={() => terminalAudio.playTick()}
             className={`px-2 py-1 rounded text-[11px] font-bold tracking-tight transition-colors ${

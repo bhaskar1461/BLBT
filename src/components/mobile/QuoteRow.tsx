@@ -3,7 +3,6 @@
 
 import React from 'react';
 import type { Quote } from './types';
-import { MiniSparkline } from './MiniSparkline';
 import { formatPrice } from '@/lib/utils';
 import { terminalAudio } from '@/lib/terminalAudio';
 
@@ -16,7 +15,7 @@ interface QuoteRowProps {
 export const QuoteRow: React.FC<QuoteRowProps> = ({
   quote,
   onClick,
-  showDivider = false,
+  showDivider = true,
 }) => {
   const isPositive = quote.positive;
   const changeFormatted = `${isPositive ? '+' : ''}${quote.change >= 0 ? quote.change.toFixed(2) : quote.change.toFixed(2)}`;
@@ -27,51 +26,56 @@ export const QuoteRow: React.FC<QuoteRowProps> = ({
     onClick?.();
   };
 
+  // Determine Bloomberg asset class mnemonic
+  let tag = '<Equity>';
+  if (quote.category === 'crypto') tag = '<Curncy>';
+  else if (quote.category === 'india') tag = '<Index>';
+  else if (['GOLD', 'SILVER', 'BRENT'].includes(quote.symbol)) tag = '<Comdty>';
+
+  const hiPrice = quote.high ?? quote.price * 1.01;
+  const loPrice = quote.low ?? quote.price * 0.99;
+
   return (
     <div
       onClick={handleClick}
-      className={`group flex items-center justify-between py-2.5 px-3 -mx-3 rounded-lg cursor-pointer active:scale-[0.99] active:bg-[#141923] hover:bg-[#0e121a] transition-all select-none ${
-        showDivider ? 'border-b border-[#181d28]/60' : ''
+      className={`group flex items-center justify-between py-2 px-2 font-mono text-xs cursor-pointer active:bg-[#121824] hover:bg-[#0c1018] transition-colors select-none ${
+        showDivider ? 'border-b border-[#182030]' : ''
       }`}
     >
-      {/* Left: Symbol & Name */}
-      <div className="w-[100px] shrink-0 flex flex-col items-start leading-tight">
-        <div className="text-[15px] font-bold text-white tracking-tight flex items-center gap-1">
-          <span>{quote.symbol}</span>
-          {quote.category === 'india' && (
-            <span className="text-[10px]" title="National Stock Exchange of India">🇮🇳</span>
-          )}
+      {/* Col 1: Symbol, Tag, Company */}
+      <div className="w-[125px] shrink-0 flex flex-col items-start leading-tight">
+        <div className="flex items-center gap-1.5">
+          <span className="font-bold text-[#ff8800] text-[13px] tracking-tight group-hover:underline">
+            {quote.symbol}
+          </span>
+          <span className="text-[9px] text-[#00e5ff] font-semibold">
+            {tag}
+          </span>
         </div>
-        <div className="text-[11px] text-[#8e95a5] font-normal truncate max-w-[95px] mt-0.5">
+        <div className="text-[10px] text-[#8e95a5] truncate max-w-[120px] mt-0.5">
           {quote.name}
         </div>
       </div>
 
-      {/* Middle: Custom Vector MiniSparkline */}
-      <div className="flex-1 flex justify-center px-2">
-        <MiniSparkline
-          positive={isPositive}
-          points={quote.sparkline}
-          width={58}
-          height={24}
-        />
+      {/* Col 2: High / Low Range (Dense Financial Data) */}
+      <div className="hidden sm:flex flex-col items-center px-1 text-[10px] text-[#6b768e] tabular-nums leading-tight">
+        <span>H: {formatPrice(hiPrice, 2)}</span>
+        <span>L: {formatPrice(loPrice, 2)}</span>
       </div>
 
-      {/* Right: Tabular Price & Pill Badge */}
+      {/* Col 3: Price & Net / Pct Change in Bloomberg Tabular Style */}
       <div className="flex flex-col items-end shrink-0 leading-tight">
-        <span className="font-mono text-[15px] font-semibold text-white tabular-nums">
+        <div className="text-[13px] font-bold text-white tabular-nums">
           {quote.currency === 'INR' ? '₹' : '$'}{formatPrice(quote.price, 2)}
-        </span>
+        </div>
 
-        <div
-          className={`mt-0.5 px-1.5 py-0.5 rounded-[4px] font-mono text-[11px] font-bold tracking-tight tabular-nums flex items-center gap-1 ${
-            isPositive
-              ? 'bg-[#00c176]/15 text-[#00c176]'
-              : 'bg-[#ff4d4f]/15 text-[#ff4d4f]'
-          }`}
-        >
-          <span>{changeFormatted}</span>
-          <span>{percentFormatted}</span>
+        <div className="flex items-center gap-1.5 mt-0.5 font-bold tabular-nums text-[11px]">
+          <span className={isPositive ? 'text-[#00ff66]' : 'text-[#ff3b30]'}>
+            {changeFormatted}
+          </span>
+          <span className={isPositive ? 'text-[#00ff66]' : 'text-[#ff3b30]'}>
+            ({percentFormatted})
+          </span>
         </div>
       </div>
     </div>

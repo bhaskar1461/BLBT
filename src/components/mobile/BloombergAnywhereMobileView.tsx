@@ -11,6 +11,7 @@ import { NewsView } from './NewsView';
 import { MoreView } from './MoreView';
 import { NewsArticleModal } from './NewsArticleModal';
 import { BloombergSearchModal } from './BloombergSearchModal';
+import { InstantBloombergView } from './InstantBloombergView';
 import { useTradingStore } from '@/stores/useTradingStore';
 import { useWatchlistStore } from '@/stores/useWatchlistStore';
 import {
@@ -19,6 +20,9 @@ import {
   Star,
   FileText,
   MoreHorizontal,
+  MessageSquare,
+  Terminal,
+  Activity,
   X,
 } from 'lucide-react';
 import { formatPrice, formatInrCrore } from '@/lib/utils';
@@ -300,7 +304,7 @@ export const BloombergAnywhereMobileView: React.FC<BloombergAnywhereMobileViewPr
   const portfolios: PortfolioSummary[] = [
     {
       id: 'main',
-      name: 'Main Portfolio',
+      name: 'ACCOUNT #C782-9901 (INSTITUTIONAL MASTER MARGIN)',
       valueUsd: equityUsdt,
       changePercent: 2.31,
       positive: true,
@@ -308,7 +312,7 @@ export const BloombergAnywhereMobileView: React.FC<BloombergAnywhereMobileViewPr
     },
     {
       id: 'longterm',
-      name: 'Long Term F&O',
+      name: 'ACCOUNT #D441-2044 (DERIVATIVES & L/S HEDGE)',
       valueUsd: 128204.11,
       changePercent: 0.92,
       positive: true,
@@ -362,7 +366,7 @@ export const BloombergAnywhereMobileView: React.FC<BloombergAnywhereMobileViewPr
         />
       ) : (
         <main className="flex-1 flex flex-col">
-          {activeTab === 'home' && (
+          {(activeTab === 'home' || activeTab === 'monitors') && (
             <HomeView
               quotes={quotes}
               news={newsItems}
@@ -372,26 +376,18 @@ export const BloombergAnywhereMobileView: React.FC<BloombergAnywhereMobileViewPr
               onViewAllMarkets={() => setActiveTab('markets')}
               onViewAllPortfolios={() => setIsPortfoliosModalOpen(true)}
               onViewAllNews={() => setActiveTab('news')}
-              onOpenProfile={() => setActiveTab('more')}
+              onOpenProfile={() => setIsPortfoliosModalOpen(true)}
               onSearchClick={() => setIsSearchModalOpen(true)}
               onAlertsClick={() => setIsAlertsModalOpen(true)}
               onSelectFunction={handleSelectFunction}
+              onOpenIB={() => setActiveTab('ib')}
             />
           )}
 
-          {activeTab === 'markets' && (
+          {(activeTab === 'markets' || activeTab === 'emsx') && (
             <MarketsView
               quotes={quotes}
               onSelectQuote={setSelectedQuote}
-              onAlertsClick={() => setIsAlertsModalOpen(true)}
-            />
-          )}
-
-          {activeTab === 'watchlist' && (
-            <WatchlistView
-              quotes={quotes}
-              onSelectQuote={setSelectedQuote}
-              onSearchClick={() => setIsSearchModalOpen(true)}
               onAlertsClick={() => setIsAlertsModalOpen(true)}
             />
           )}
@@ -405,7 +401,14 @@ export const BloombergAnywhereMobileView: React.FC<BloombergAnywhereMobileViewPr
             />
           )}
 
-          {activeTab === 'more' && (
+          {activeTab === 'ib' && (
+            <InstantBloombergView
+              quotes={quotes}
+              onSelectQuote={setSelectedQuote}
+            />
+          )}
+
+          {(activeTab === 'more' || activeTab === 'cmd') && (
             <MoreView
               onNavigateMarkets={() => setActiveTab('markets')}
               onOpenAlerts={() => setIsAlertsModalOpen(true)}
@@ -415,91 +418,94 @@ export const BloombergAnywhereMobileView: React.FC<BloombergAnywhereMobileViewPr
         </main>
       )}
 
-      {/* Pristine 5-Tab Bottom Navigation Bar (SF Symbols Style, Amber Glow) */}
-      <nav className="fixed bottom-0 left-0 right-0 h-[60px] bg-[#080a0e]/95 backdrop-blur-lg border-t border-[#181d28] z-50 flex items-center justify-around px-2 pb-[env(safe-area-inset-bottom,0px)]">
-        {/* Tab 1: Home */}
+      {/* Authentic Bloomberg Professional Bottom Navigation Bar */}
+      <nav className="fixed bottom-0 left-0 right-0 h-[58px] bg-[#05070a] border-t-2 border-[#182030] z-50 flex items-center justify-around px-1 font-mono pb-[env(safe-area-inset-bottom,0px)]">
+        {/* Tab 1: <MON> Monitors */}
         <button
           onClick={() => {
             terminalAudio.playTick();
             setSelectedQuote(null);
             setActiveTab('home');
           }}
-          className={`flex flex-col items-center justify-center flex-1 py-1 gap-1 cursor-pointer transition-all ${
-            activeTab === 'home' && !selectedQuote
+          className={`flex flex-col items-center justify-center flex-1 py-1 gap-0.5 cursor-pointer transition-all ${
+            (activeTab === 'home' || activeTab === 'monitors') && !selectedQuote
               ? 'text-[#ff8800]'
               : 'text-[#8e95a5] hover:text-white'
           }`}
         >
-          <Home size={20} strokeWidth={activeTab === 'home' && !selectedQuote ? 2.5 : 2} />
-          <span className="text-[10px] font-bold">Home</span>
+          <Activity size={18} strokeWidth={2.5} />
+          <span className="text-[10px] font-black tracking-tight">&lt;MON&gt;</span>
         </button>
 
-        {/* Tab 2: Markets */}
+        {/* Tab 2: <EMSX> Execution */}
         <button
           onClick={() => {
             terminalAudio.playTick();
             setSelectedQuote(null);
             setActiveTab('markets');
           }}
-          className={`flex flex-col items-center justify-center flex-1 py-1 gap-1 cursor-pointer transition-all ${
-            activeTab === 'markets' && !selectedQuote
+          className={`flex flex-col items-center justify-center flex-1 py-1 gap-0.5 cursor-pointer transition-all ${
+            (activeTab === 'markets' || activeTab === 'emsx') && !selectedQuote
               ? 'text-[#ff8800]'
               : 'text-[#8e95a5] hover:text-white'
           }`}
         >
-          <BarChart2 size={20} strokeWidth={activeTab === 'markets' && !selectedQuote ? 2.5 : 2} />
-          <span className="text-[10px] font-bold">Markets</span>
+          <BarChart2 size={18} strokeWidth={2.5} />
+          <span className="text-[10px] font-black tracking-tight">&lt;EMSX&gt;</span>
         </button>
 
-        {/* Tab 3: Watchlist */}
-        <button
-          onClick={() => {
-            terminalAudio.playTick();
-            setSelectedQuote(null);
-            setActiveTab('watchlist');
-          }}
-          className={`flex flex-col items-center justify-center flex-1 py-1 gap-1 cursor-pointer transition-all ${
-            activeTab === 'watchlist' && !selectedQuote
-              ? 'text-[#ff8800]'
-              : 'text-[#8e95a5] hover:text-white'
-          }`}
-        >
-          <Star size={20} strokeWidth={activeTab === 'watchlist' && !selectedQuote ? 2.5 : 2} />
-          <span className="text-[10px] font-bold">Watchlist</span>
-        </button>
-
-        {/* Tab 4: News */}
+        {/* Tab 3: <TOP> News */}
         <button
           onClick={() => {
             terminalAudio.playTick();
             setSelectedQuote(null);
             setActiveTab('news');
           }}
-          className={`flex flex-col items-center justify-center flex-1 py-1 gap-1 cursor-pointer transition-all ${
+          className={`flex flex-col items-center justify-center flex-1 py-1 gap-0.5 cursor-pointer transition-all ${
             activeTab === 'news' && !selectedQuote
               ? 'text-[#ff8800]'
               : 'text-[#8e95a5] hover:text-white'
           }`}
         >
-          <FileText size={20} strokeWidth={activeTab === 'news' && !selectedQuote ? 2.5 : 2} />
-          <span className="text-[10px] font-bold">News</span>
+          <FileText size={18} strokeWidth={2.5} />
+          <span className="text-[10px] font-black tracking-tight">&lt;TOP&gt;</span>
         </button>
 
-        {/* Tab 5: More */}
+        {/* Tab 4: <IB> Instant Bloomberg Messaging (The Heart of Bloomberg) */}
+        <button
+          onClick={() => {
+            terminalAudio.playTick();
+            setSelectedQuote(null);
+            setActiveTab('ib');
+          }}
+          className={`relative flex flex-col items-center justify-center flex-1 py-1 gap-0.5 cursor-pointer transition-all ${
+            activeTab === 'ib' && !selectedQuote
+              ? 'text-[#ff8800]'
+              : 'text-[#8e95a5] hover:text-white'
+          }`}
+        >
+          <div className="relative">
+            <MessageSquare size={18} strokeWidth={2.5} />
+            <span className="absolute -top-1 -right-1.5 w-2 h-2 bg-[#00c176] rounded-full animate-pulse shadow-[0_0_6px_#00c176]" />
+          </div>
+          <span className="text-[10px] font-black tracking-tight text-[#ff8800]">&lt;IB&gt;</span>
+        </button>
+
+        {/* Tab 5: <CMD> Functions */}
         <button
           onClick={() => {
             terminalAudio.playTick();
             setSelectedQuote(null);
             setActiveTab('more');
           }}
-          className={`flex flex-col items-center justify-center flex-1 py-1 gap-1 cursor-pointer transition-all ${
-            activeTab === 'more' && !selectedQuote
+          className={`flex flex-col items-center justify-center flex-1 py-1 gap-0.5 cursor-pointer transition-all ${
+            (activeTab === 'more' || activeTab === 'cmd') && !selectedQuote
               ? 'text-[#ff8800]'
               : 'text-[#8e95a5] hover:text-white'
           }`}
         >
-          <MoreHorizontal size={20} strokeWidth={activeTab === 'more' && !selectedQuote ? 2.5 : 2} />
-          <span className="text-[10px] font-bold">More</span>
+          <Terminal size={18} strokeWidth={2.5} />
+          <span className="text-[10px] font-black tracking-tight">&lt;CMD&gt;</span>
         </button>
       </nav>
 
@@ -524,40 +530,65 @@ export const BloombergAnywhereMobileView: React.FC<BloombergAnywhereMobileViewPr
         onSelectFunction={handleSelectFunction}
       />
 
-      {/* Portfolios Modal */}
+      {/* Portfolios Modal <PORT <GO>> */}
       {isPortfoliosModalOpen && (
         <div
           onClick={() => setIsPortfoliosModalOpen(false)}
-          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-end justify-center animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-end justify-center p-2 font-mono"
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-lg bg-[#0e1118] border-t border-[#263145] rounded-t-2xl p-5 pb-8 flex flex-col gap-4 shadow-2xl"
+            className="w-full max-w-lg bg-[#070a10] border-2 border-[#ff8800] p-4 flex flex-col gap-3 shadow-[0_0_30px_rgba(0,0,0,0.9)]"
           >
-            <div className="w-10 h-1 bg-[#3a455a] rounded-full mx-auto" />
-            <div className="flex items-center justify-between">
-              <h3 className="text-[17px] font-bold text-white">My Portfolios (PORT)</h3>
+            {/* Blotter Header */}
+            <div className="flex items-center justify-between border-b border-[#182030] pb-2">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[#ff8800] animate-pulse" />
+                <h3 className="text-xs font-black text-white tracking-wider">
+                  PORT &lt;GO&gt; &mdash; MASTER PORTFOLIO BLOTTER
+                </h3>
+              </div>
               <button
                 onClick={() => {
                   terminalAudio.playTick();
                   setIsPortfoliosModalOpen(false);
                 }}
-                className="text-[#8e95a5] hover:text-white p-1"
+                className="text-[#8e95a5] hover:text-white text-xs px-2 py-0.5 border border-[#1e2a40] bg-[#101520]"
               >
-                <X size={18} />
+                &lt;ESC&gt;
               </button>
             </div>
 
-            <div className="flex flex-col gap-3">
+            {/* Risk Invariant Strip */}
+            <div className="p-2 bg-[#0d121c] border border-[#1f2a3e] text-[10px] text-[#94a3b8] flex items-center justify-between">
+              <span>RISK CAP INVARIANT: <strong className="text-[#00ff66]">1.0% MAX PER TRADE</strong></span>
+              <span>DAILY VAR (99%): <strong className="text-[#ffd600]">2.15%</strong></span>
+            </div>
+
+            {/* Benchmark Invariant */}
+            <div className="p-2 bg-[#121008] border border-[#ff8800]/40 text-[10px] flex items-center justify-between">
+              <span className="text-[#ff8800] font-bold">BENCHMARK MIRROR:</span>
+              <span className="text-white">BTC BUY-AND-HOLD: <strong className="text-[#00ff66]">+1.42%</strong> · YOU: <strong className="text-[#00ff66]">+2.31%</strong></span>
+            </div>
+
+            {/* Account List */}
+            <div className="flex flex-col gap-2">
               {portfolios.map((p) => (
-                <div key={p.id} className="p-4 bg-[#141924] border border-[#212b3d] rounded-xl flex items-center justify-between">
+                <div key={p.id} className="p-2.5 bg-[#0b0f17] border border-[#1c2436] flex items-center justify-between">
                   <div>
-                    <div className="text-xs text-[#8e95a5]">{p.name}</div>
-                    <div className="text-xl font-bold font-mono text-white mt-0.5">${formatPrice(p.valueUsd, 2)}</div>
-                    <div className="text-xs font-mono font-bold text-[#ff8800]">≈ {formatInrCrore(p.valueUsd)}</div>
+                    <div className="text-[10px] text-[#8e95a5] font-bold">{p.name}</div>
+                    <div className="text-base font-black text-white tabular-nums mt-0.5">
+                      ${formatPrice(p.valueUsd, 2)}
+                    </div>
+                    <div className="text-[10px] font-bold text-[#ff8800] tabular-nums">
+                      &asymp; {formatInrCrore(p.valueUsd)}
+                    </div>
                   </div>
                   <div className="text-right">
-                    <span className="text-xs font-bold font-mono text-[#00c176]">+{p.changePercent.toFixed(2)}%</span>
+                    <span className="text-xs font-black text-[#00ff66] tabular-nums">
+                      +{p.changePercent.toFixed(2)}%
+                    </span>
+                    <div className="text-[9px] text-[#55637d] mt-1">STATUS: MARGIN OK</div>
                   </div>
                 </div>
               ))}
@@ -569,59 +600,63 @@ export const BloombergAnywhereMobileView: React.FC<BloombergAnywhereMobileViewPr
                 setIsPortfoliosModalOpen(false);
                 setActiveTab('markets');
               }}
-              className="w-full py-3 bg-[#ff8800] text-black font-extrabold text-sm rounded-xl cursor-pointer"
+              className="w-full py-2 bg-[#ff8800] text-black font-black text-xs tracking-wider cursor-pointer border border-[#ff8800]"
             >
-              Explore Markets &amp; Trade Instruments
+              &lt;EXECUTE INSTRUMENTS IN EMSX &lt;GO&gt;&gt;
             </button>
           </div>
         </div>
       )}
 
-      {/* Alerts Modal */}
+      {/* Alerts Modal <ALRT <GO>> */}
       {isAlertsModalOpen && (
         <div
           onClick={() => setIsAlertsModalOpen(false)}
-          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-end justify-center animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-end justify-center p-2 font-mono"
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-lg bg-[#0e1118] border-t border-[#263145] rounded-t-2xl p-5 pb-8 flex flex-col gap-4 shadow-2xl"
+            className="w-full max-w-lg bg-[#070a10] border-2 border-[#ff8800] p-4 flex flex-col gap-3 shadow-[0_0_30px_rgba(0,0,0,0.9)]"
           >
-            <div className="w-10 h-1 bg-[#3a455a] rounded-full mx-auto" />
-            <div className="flex items-center justify-between">
-              <h3 className="text-[17px] font-bold text-white">Active Terminal Alerts</h3>
+            <div className="flex items-center justify-between border-b border-[#182030] pb-2">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[#00e5ff] animate-pulse" />
+                <h3 className="text-xs font-black text-white tracking-wider">
+                  ALRT &lt;GO&gt; &mdash; VOLATILITY &amp; BREAKOUT TRIGGERS
+                </h3>
+              </div>
               <button
                 onClick={() => {
                   terminalAudio.playTick();
                   setIsAlertsModalOpen(false);
                 }}
-                className="text-[#8e95a5] hover:text-white p-1"
+                className="text-[#8e95a5] hover:text-white text-xs px-2 py-0.5 border border-[#1e2a40] bg-[#101520]"
               >
-                <X size={18} />
+                &lt;ESC&gt;
               </button>
             </div>
 
-            <div className="divide-y divide-[#181d28] bg-[#141924] border border-[#212b3d] rounded-xl p-3 text-xs">
-              <div className="py-2.5 flex justify-between items-center">
+            <div className="divide-y divide-[#182030] border border-[#1c2436] bg-[#0b0f17] text-xs">
+              <div className="p-2.5 flex justify-between items-center">
                 <div>
-                  <div className="font-bold text-white">BTCUSD &gt; $65,000</div>
-                  <div className="text-[10px] text-[#8e95a5]">High volatility breakout trigger</div>
+                  <div className="font-bold text-white">BTCUSD &gt; $65,000.00</div>
+                  <div className="text-[10px] text-[#8e95a5]">High volatility breakout trigger (Binance Spot)</div>
                 </div>
-                <span className="px-2 py-0.5 rounded bg-[#00c176]/15 text-[#00c176] font-bold text-[10px]">ACTIVE</span>
+                <span className="px-1.5 py-0.5 bg-[#00ff66]/10 text-[#00ff66] font-bold text-[10px] border border-[#00ff66]/30">ARMED</span>
               </div>
-              <div className="py-2.5 flex justify-between items-center">
+              <div className="p-2.5 flex justify-between items-center">
                 <div>
-                  <div className="font-bold text-white">NIFTY 50 &gt; 25,000</div>
-                  <div className="text-[10px] text-[#8e95a5]">All-time high resistance level</div>
+                  <div className="font-bold text-white">NIFTY 50 &gt; 25,000.00</div>
+                  <div className="text-[10px] text-[#8e95a5]">All-time high resistance level (NSE India)</div>
                 </div>
-                <span className="px-2 py-0.5 rounded bg-[#00c176]/15 text-[#00c176] font-bold text-[10px]">ACTIVE</span>
+                <span className="px-1.5 py-0.5 bg-[#00ff66]/10 text-[#00ff66] font-bold text-[10px] border border-[#00ff66]/30">ARMED</span>
               </div>
-              <div className="py-2.5 flex justify-between items-center">
+              <div className="p-2.5 flex justify-between items-center">
                 <div>
-                  <div className="font-bold text-white">GOLD (XAU) &gt; $2,700</div>
-                  <div className="text-[10px] text-[#8e95a5]">Safe haven breakout alert</div>
+                  <div className="font-bold text-white">GOLD (XAU) &gt; $2,700.00</div>
+                  <div className="text-[10px] text-[#8e95a5]">Sovereign reserve safe haven trigger</div>
                 </div>
-                <span className="px-2 py-0.5 rounded bg-[#00c176]/15 text-[#00c176] font-bold text-[10px]">ACTIVE</span>
+                <span className="px-1.5 py-0.5 bg-[#00ff66]/10 text-[#00ff66] font-bold text-[10px] border border-[#00ff66]/30">ARMED</span>
               </div>
             </div>
 
@@ -630,9 +665,9 @@ export const BloombergAnywhereMobileView: React.FC<BloombergAnywhereMobileViewPr
                 terminalAudio.playTick();
                 setIsAlertsModalOpen(false);
               }}
-              className="w-full py-2.5 bg-[#202735] text-white font-bold text-xs rounded-xl cursor-pointer"
+              className="w-full py-2 bg-[#121824] hover:bg-[#1a2334] text-white font-bold text-xs border border-[#202c42] cursor-pointer"
             >
-              Dismiss
+              &lt;DISMISS ALERTS &lt;ESC&gt;&gt;
             </button>
           </div>
         </div>

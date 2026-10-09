@@ -1,7 +1,7 @@
 // src/components/mobile/NewsView.tsx
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { TerminalHeader } from './TerminalHeader';
 import type { NewsItem } from './types';
 import { terminalAudio } from '@/lib/terminalAudio';
@@ -19,107 +19,110 @@ export const NewsView: React.FC<NewsViewProps> = ({
   onSearchClick,
   onAlertsClick,
 }) => {
-  const [activeTab, setActiveTab] = useState<'for_you' | 'latest'>('for_you');
+  const [selectedFilter, setSelectedFilter] = useState<'ALL' | 'MACRO' | 'EQUITIES' | 'CRYPTO' | 'COMDTY'>('ALL');
+
+  const filters = [
+    { id: 'ALL', label: '<ALL WIRE>' },
+    { id: 'MACRO', label: '<MACRO>' },
+    { id: 'EQUITIES', label: '<EQUITIES>' },
+    { id: 'CRYPTO', label: '<CRYPTO>' },
+    { id: 'COMDTY', label: '<COMDTY>' },
+  ] as const;
+
+  const filteredNews = useMemo(() => {
+    if (selectedFilter === 'ALL') return news;
+    return news.filter((item) => {
+      const cat = (item.category || '').toUpperCase();
+      if (selectedFilter === 'MACRO') return cat.includes('MACRO') || cat.includes('FED');
+      if (selectedFilter === 'EQUITIES') return cat.includes('INDIA') || cat.includes('TECH') || cat.includes('EQUITY');
+      if (selectedFilter === 'CRYPTO') return cat.includes('CRYPTO') || cat.includes('BTC');
+      if (selectedFilter === 'COMDTY') return cat.includes('COMMODIT') || cat.includes('GOLD') || cat.includes('OIL');
+      return true;
+    });
+  }, [news, selectedFilter]);
 
   return (
-    <div className="flex flex-col min-h-screen bg-black text-white select-none pb-24">
+    <div className="flex flex-col min-h-screen bg-[#000000] text-white font-mono select-none pb-24">
       <TerminalHeader
-        title="News"
-        subtitle="TERMINAL WIRE <TOP>"
+        title="TOP WIRE DISPATCH"
+        subtitle="REAL-TIME NEWS <TOP <GO>>"
         onSearchClick={onSearchClick}
         onAlertsClick={onAlertsClick}
       />
 
-      <div className="flex flex-col gap-4 px-4 pt-4">
-        {/* Sub-header Tabs: FOR YOU vs LATEST */}
-        <div className="flex items-center justify-between border-b border-[#181d28] pb-2">
-          <div className="flex items-center gap-6">
-            <button
-              onClick={() => {
-                terminalAudio.playTick();
-                setActiveTab('for_you');
-              }}
-              className={`text-[12px] font-extrabold tracking-wider transition-all cursor-pointer ${
-                activeTab === 'for_you'
-                  ? 'text-[#ff8800] border-b-2 border-[#ff8800] pb-1'
-                  : 'text-[#8e95a5] hover:text-white pb-1'
-              }`}
-            >
-              FOR YOU
-            </button>
-            <button
-              onClick={() => {
-                terminalAudio.playTick();
-                setActiveTab('latest');
-              }}
-              className={`text-[12px] font-extrabold tracking-wider transition-all cursor-pointer ${
-                activeTab === 'latest'
-                  ? 'text-[#ff8800] border-b-2 border-[#ff8800] pb-1'
-                  : 'text-[#8e95a5] hover:text-white pb-1'
-              }`}
-            >
-              LATEST
-            </button>
-          </div>
-
-          <span className="text-[10px] text-[#5c6475] font-mono">
-            UPDATED 2M AGO
-          </span>
+      <div className="flex flex-col gap-3 px-3 pt-3">
+        {/* Wire Filter Chips */}
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar border-b border-[#182030] pb-2">
+          {filters.map((f) => {
+            const isActive = selectedFilter === f.id;
+            return (
+              <button
+                key={f.id}
+                onClick={() => {
+                  terminalAudio.playTick();
+                  setSelectedFilter(f.id);
+                }}
+                className={`px-2.5 py-1 text-[11px] font-bold rounded-sm whitespace-nowrap transition-colors cursor-pointer border ${
+                  isActive
+                    ? 'bg-[#ff8800] text-black border-[#ff8800]'
+                    : 'bg-[#0c1018] text-[#8e95a5] hover:text-white border-[#1c2436]'
+                }`}
+              >
+                {f.label}
+              </button>
+            );
+          })}
         </div>
 
-        {/* News Items Feed */}
-        <div className="flex flex-col gap-3">
-          {news.map((item) => (
+        {/* Master News Wire Feed */}
+        <div className="border border-[#182030] bg-[#070a10] divide-y divide-[#182030]">
+          <div className="px-2.5 py-1 bg-[#101520] flex items-center justify-between text-[10px] text-[#8e95a5] font-bold">
+            <span className="text-[#ff8800]">BLOOMBERG FIRST WORD WIRE &amp; EXCLUSIVE STORIES</span>
+            <span className="text-[#00ff66]">COUNT: {filteredNews.length}</span>
+          </div>
+
+          {filteredNews.map((item, idx) => (
             <div
               key={item.id}
               onClick={() => {
                 terminalAudio.playTick();
                 onSelectNews(item);
               }}
-              className="bg-[#0e1118] border border-[#1b2230] rounded-xl p-3.5 flex gap-3.5 cursor-pointer hover:border-[#2f3b52] active:scale-[0.99] transition-all shadow-sm"
+              className="p-3 hover:bg-[#0e131d] active:bg-[#141b26] cursor-pointer transition-colors"
             >
-              {/* Graphic Thumbnail */}
-              <div className="w-[74px] h-[64px] rounded-lg bg-[#141924] border border-[#212b3d] flex items-center justify-center shrink-0 overflow-hidden">
-                <svg className="w-full h-full" viewBox="0 0 74 64">
-                  <rect width="74" height="64" fill="#141924" />
-                  {item.category === 'Technology' && (
-                    <path d="M14,50 L28,24 L44,34 L62,14" stroke="#ff8800" strokeWidth="2.5" fill="none" />
-                  )}
-                  {item.category === 'Macro' && (
-                    <>
-                      <circle cx="37" cy="32" r="14" fill="#1c2331" />
-                      <path d="M26,32 L48,32 M37,21 L37,43" stroke="#00c176" strokeWidth="2" />
-                    </>
-                  )}
-                  {item.category === 'India' && (
-                    <>
-                      <rect x="18" y="16" width="38" height="32" rx="4" fill="#1f283a" />
-                      <circle cx="37" cy="32" r="7" fill="none" stroke="#ff8800" strokeWidth="1.5" />
-                    </>
-                  )}
-                  {item.category === 'Crypto' && (
-                    <path d="M12,46 L26,24 L40,32 L58,14" stroke="#00c176" strokeWidth="2.2" fill="none" />
-                  )}
-                  {item.category !== 'Technology' && item.category !== 'Macro' && item.category !== 'India' && item.category !== 'Crypto' && (
-                    <path d="M12,46 L26,28 L42,36 L62,18" stroke="#2979ff" strokeWidth="2.2" fill="none" />
-                  )}
-                </svg>
+              {/* Header: Story #, Time, Source, Urgency */}
+              <div className="flex items-center justify-between text-[10px] text-[#8e95a5] mb-1">
+                <div className="flex items-center gap-1.5">
+                  <span className="font-bold text-[#ff8800]">{idx + 1})</span>
+                  <span className="text-white font-bold">{item.time || '10:48:12'}</span>
+                  <span className="text-[#00e5ff] font-semibold">[{item.source || 'BN'}]</span>
+                  <span className="text-[#ffd600] font-bold">***</span>
+                </div>
+                <span className="text-[9px] uppercase px-1 py-0.2 bg-[#121824] border border-[#1e283d] text-[#6b768e]">
+                  {item.category || 'WIRE'}
+                </span>
               </div>
 
-              {/* Headline & Metadata */}
-              <div className="flex flex-col justify-between flex-1 min-w-0">
-                <h3 className="text-[13px] font-semibold text-white line-clamp-2 leading-snug">
-                  {item.title}
-                </h3>
+              {/* Headline */}
+              <h4 className="text-xs font-bold text-white leading-snug hover:text-[#ff8800] transition-colors">
+                {item.title}
+              </h4>
 
-                <div className="flex items-center gap-2 mt-2">
-                  <span className="text-[10px] font-bold text-[#ff8800] uppercase tracking-wider">
-                    {item.category}
-                  </span>
-                  <span className="text-[10px] text-[#8e95a5]">
-                    {item.source} · {item.time}
-                  </span>
-                </div>
+              {/* Bullets Preview if available */}
+              {item.bullets && item.bullets.length > 0 && (
+                <ul className="mt-1.5 space-y-0.5 border-l-2 border-[#1f2d45] pl-2 text-[10px] text-[#94a3b8]">
+                  {item.bullets.slice(0, 2).map((bullet, bIdx) => (
+                    <li key={bIdx} className="line-clamp-1">
+                      &bull; {bullet}
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+              {/* Footer metadata */}
+              <div className="mt-1.5 flex items-center justify-between text-[9px] text-[#55637d]">
+                <span>PRESS &lt;GO&gt; TO EXPAND FULL STORY</span>
+                <span>DESK: GLOBAL MARKETS</span>
               </div>
             </div>
           ))}

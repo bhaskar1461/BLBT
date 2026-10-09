@@ -10,6 +10,7 @@ import { BloombergPanelTOP } from './BloombergPanelTOP';
 import { BloombergPanelEMSX } from './BloombergPanelEMSX';
 import { BloombergStatusRibbon } from './BloombergStatusRibbon';
 import { BloombergHelpModal } from './BloombergHelpModal';
+import { InstantBloombergModal } from './InstantBloombergModal';
 import { BloombergSearchModal } from '@/components/mobile/BloombergSearchModal';
 import { NewsArticleModal } from '@/components/mobile/NewsArticleModal';
 import type { NewsItem, Quote } from '@/components/mobile/types';
@@ -209,6 +210,7 @@ export const BloombergTerminalDesktop: React.FC<BloombergTerminalDesktopProps> =
   const [activeSecurity, setActiveSecurity] = useState<BloombergSecurity>(securities[0]);
   const [maximizedPanel, setMaximizedPanel] = useState<'WEI' | 'GP' | 'TOP' | 'EMSX' | null>(null);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
+  const [isIBOpen, setIsIBOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [selectedArticle, setSelectedArticle] = useState<NewsItem | null>(null);
 
@@ -321,6 +323,10 @@ export const BloombergTerminalDesktop: React.FC<BloombergTerminalDesktopProps> =
     // 1. Mnemonic Function routing & Panel Maximizing
     if (cleanCmd === 'HELP') {
       setIsHelpOpen(true);
+      return;
+    }
+    if (cleanCmd === 'IB' || cleanCmd === 'MSG' || cleanCmd === 'CHAT' || cleanCmd === 'DESK') {
+      setIsIBOpen(true);
       return;
     }
     if (cleanCmd === 'SECF' || cleanCmd === 'SEARCH') {
@@ -462,6 +468,16 @@ export const BloombergTerminalDesktop: React.FC<BloombergTerminalDesktopProps> =
         article={selectedArticle}
         onClose={() => setSelectedArticle(null)}
         onSelectQuote={(sym) => {
+          const match = securities.find((s) => s.symbol.toUpperCase() === sym.toUpperCase());
+          if (match) setActiveSecurity(match);
+        }}
+      />
+
+      {/* 7. Instant Bloomberg Messaging Modal (<IB <GO>>) */}
+      <InstantBloombergModal
+        isOpen={isIBOpen}
+        onClose={() => setIsIBOpen(false)}
+        onSelectSymbol={(sym) => {
           const match = securities.find((s) => s.symbol.toUpperCase() === sym.toUpperCase());
           if (match) setActiveSecurity(match);
         }}

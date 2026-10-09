@@ -19,7 +19,6 @@ export const NewsArticleModal: React.FC<NewsArticleModalProps> = ({
 }) => {
   if (!article) return null;
 
-  // Curated in-depth analytical content matching Bloomberg wire dispatches
   const isIndia = article.category === 'India';
   const isCrypto = article.category === 'Crypto';
 
@@ -52,122 +51,104 @@ export const NewsArticleModal: React.FC<NewsArticleModalProps> = ({
   return (
     <div
       onClick={onClose}
-      className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex flex-col justify-end animate-in fade-in duration-200 select-none"
+      className="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex flex-col justify-end p-2 font-mono select-none"
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-lg bg-[#0a0d14] border-t border-[#232b3d] rounded-t-2xl p-5 pb-10 flex flex-col max-h-[92vh] overflow-y-auto shadow-2xl text-white"
+        className="w-full max-w-xl mx-auto bg-[#070a10] border-2 border-[#ff8800] p-4 flex flex-col max-h-[90vh] overflow-y-auto shadow-[0_0_30px_rgba(0,0,0,0.95)] text-white"
       >
-        {/* Top Handle & Navigation Bar */}
-        <div className="w-10 h-1 bg-[#2e374a] rounded-full mx-auto mb-3" />
-
-        <div className="flex items-center justify-between pb-3 border-b border-[#181d28]">
+        {/* Navigation Strip */}
+        <div className="flex items-center justify-between pb-2 border-b border-[#182030]">
           <button
             onClick={() => {
               terminalAudio.playTick();
               onClose();
             }}
-            className="flex items-center gap-1 text-[13px] font-bold text-[#ff8800] hover:underline cursor-pointer p-1 -ml-1"
+            className="flex items-center gap-1 text-xs font-bold text-[#ff8800] hover:underline cursor-pointer"
           >
-            <ChevronLeft size={18} />
-            <span>Terminal Wire</span>
+            <ChevronLeft size={16} />
+            <span>&lt;TOP WIRE BACK&gt;</span>
           </button>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] text-[#00ff66] font-bold">BN WIRE TRANSMISSION</span>
             <button
               onClick={() => {
                 terminalAudio.playTick();
-                if (navigator.share) {
-                  navigator.share({ title: article.title, text: article.title, url: window.location.href }).catch(() => {});
-                } else {
-                  alert('Link copied to clipboard.');
-                }
+                onClose();
               }}
-              className="text-[#8e95a5] hover:text-white p-1"
-              title="Share"
+              className="text-[#8e95a5] hover:text-white text-xs px-2 py-0.5 border border-[#1e2a40] bg-[#0c1018]"
             >
-              <Share2 size={17} />
-            </button>
-            <button
-              onClick={() => {
-                terminalAudio.playTick();
-                alert('Article saved to your Bloomberg reading list.');
-              }}
-              className="text-[#8e95a5] hover:text-[#ff8800] p-1"
-              title="Bookmark"
-            >
-              <Bookmark size={17} />
+              &lt;ESC&gt;
             </button>
           </div>
         </div>
 
-        {/* Article Dateline & Category */}
-        <div className="flex items-center gap-2 mt-4 text-[11px] font-mono">
-          <span className="px-2 py-0.5 rounded bg-[#1a2130] text-[#ff8800] font-bold uppercase border border-[#2b374e]">
+        {/* Dateline & Urgency */}
+        <div className="flex items-center gap-2 mt-3 text-[10px] text-[#8e95a5]">
+          <span className="px-1.5 py-0.2 bg-[#ff8800]/20 text-[#ff8800] border border-[#ff8800]/40 font-bold uppercase">
             {article.category}
           </span>
-          <span className="text-[#8e95a5]">
-            {article.source} · {article.time}
-          </span>
+          <span className="text-white font-bold">{article.source}</span>
+          <span>·</span>
+          <span>{article.time}</span>
+          <span className="text-[#ffd600] font-black">***</span>
         </div>
 
         {/* Headline */}
-        <h1 className="text-[20px] font-extrabold text-white mt-2 leading-snug tracking-tight">
+        <h1 className="text-base font-black text-white mt-1.5 leading-snug tracking-tight">
           {article.title}
         </h1>
 
-        <p className="text-[12px] text-[#8e95a5] mt-1 font-mono">
-          REPORTED BY BLOOMBERG FINANCIAL NEWS WIRE (NY / MUMBAI DESK)
-        </p>
+        <div className="text-[10px] text-[#6b768e] mt-1 border-b border-[#141b28] pb-2">
+          BLOOMBERG NEWS WIRE DISPATCH &bull; MONITORED INSTITUTIONAL FEED
+        </div>
 
         {/* Signature Bloomberg Bullet Points Box */}
-        <div className="my-4 p-3.5 bg-[#121622] border-l-4 border-[#ff8800] rounded-r-xl border-y border-r border-[#1e2637]">
-          <div className="text-[11px] font-mono font-bold text-[#ff8800] uppercase tracking-wider mb-2">
-            KEY TAKEAWAYS
+        <div className="my-3 p-3 bg-[#0c1018] border-l-2 border-[#ff8800] border-y border-r border-[#1a2334]">
+          <div className="text-[10px] font-bold text-[#ff8800] uppercase tracking-wider mb-1.5">
+            EXECUTIVE DISPATCH BULLETS:
           </div>
-          <ul className="space-y-2 text-[13px] text-[#d1d5db] list-disc list-inside">
+          <ul className="space-y-1 text-xs text-[#cbd5e1]">
             {bullets.map((b, idx) => (
               <li key={idx} className="leading-snug">
-                {b}
+                &bull; {b}
               </li>
             ))}
           </ul>
         </div>
 
-        {/* Full Analytical Body Text */}
-        <div className="space-y-3 text-[14px] text-[#c0c5d2] leading-relaxed">
+        {/* Analytical Body Text */}
+        <div className="space-y-2.5 text-xs text-[#94a3b8] leading-relaxed">
           <p>
-            Global money managers are recalibrating positioning across primary asset classes as liquidity dynamics shift across both developed and emerging markets. Data published across institutional custody networks demonstrates accelerating turnover in high-beta equity proxies and real asset allocations.
+            Global institutional accounts are recalibrating positioning across primary liquid instruments as macro indicators and rate guidance recalibrate risk premia. Order blotters reflect steady systematic accumulation in high-liquidity proxies.
           </p>
           <p>
-            In institutional strategy notes released this morning, portfolio analysts emphasized that market participants remain focused on underlying capital efficiency, corporate balance-sheet durability, and macroeconomic rate differentials.
-          </p>
-          <p>
-            &quot;The risk-reward calculus has structurally pivoted toward transparent balance sheets and verified execution,&quot; said senior portfolio strategists at the global macro desk. &quot;Turnover without edge remains the principal driver of retail drawdown, while systematic patience continues to outperform.&quot;
+            &quot;Disciplined capital allocation with strict drawdown caps and zero casino turnover remains the structural winner across both volatile and range-bound regimes,&quot; observed global macro strategy desks.
           </p>
         </div>
 
         {article.link && article.link !== '#' && (
-          <div className="mt-4">
+          <div className="mt-3">
             <a
               href={article.link}
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => terminalAudio.playTick()}
-              className="w-full py-2.5 px-4 bg-[#141b27] hover:bg-[#1e2738] border border-[#26354d] hover:border-[#ff8800] rounded-xl text-xs font-bold text-[#ff8800] flex items-center justify-center gap-2 transition-all cursor-pointer"
+              className="w-full py-2 px-3 bg-[#101520] hover:bg-[#182030] border border-[#1e2a40] text-xs font-bold text-[#ff8800] flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
             >
-              <span>Read Full Coverage on {article.source}</span>
-              <ExternalLink size={13} />
+              <span>View Source Telemetry ({article.source})</span>
+              <ExternalLink size={12} />
             </a>
           </div>
         )}
 
-        {/* Related Securities Pill Tags */}
-        <div className="mt-6 pt-4 border-t border-[#181d28]">
-          <span className="text-[11px] font-mono font-bold text-[#8e95a5] uppercase tracking-wider">
-            RELATED INSTRUMENTS
+        {/* Related Securities */}
+        <div className="mt-4 pt-3 border-t border-[#182030]">
+          <span className="text-[10px] font-bold text-[#8e95a5] uppercase">
+            RELATED INSTRUMENTS (INSPECT &lt;DES&gt;):
           </span>
-          <div className="flex items-center gap-2 mt-2">
+          <div className="flex items-center gap-1.5 mt-1.5">
             {relatedTickers.map((sym) => (
               <button
                 key={sym}
@@ -176,10 +157,10 @@ export const NewsArticleModal: React.FC<NewsArticleModalProps> = ({
                   onClose();
                   onSelectQuote?.(sym);
                 }}
-                className="px-3 py-1.5 rounded-lg bg-[#141924] border border-[#232b3d] hover:border-[#ff8800] text-xs font-mono font-bold text-white flex items-center gap-1.5 cursor-pointer transition-colors"
+                className="px-2 py-1 bg-[#101520] border border-[#1e2a40] hover:border-[#ff8800] text-xs font-bold text-white flex items-center gap-1 cursor-pointer transition-colors"
               >
                 <span className="text-[#ff8800]">{sym}</span>
-                <ExternalLink size={12} className="text-[#8e95a5]" />
+                <span className="text-[9px] text-[#00e5ff]">&lt;GO&gt;</span>
               </button>
             ))}
           </div>

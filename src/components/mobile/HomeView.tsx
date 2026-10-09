@@ -1,14 +1,21 @@
 // src/components/mobile/HomeView.tsx
 'use client';
 
-import React from 'react';
-import { TerminalHeader } from './TerminalHeader';
-import { QuoteRow } from './QuoteRow';
-import { MiniSparkline } from './MiniSparkline';
-import { BloombergFunctionBar } from './BloombergFunctionBar';
+import React, { useState } from 'react';
 import type { Quote, NewsItem, PortfolioSummary } from './types';
-import { formatPrice, formatInrCrore } from '@/lib/utils';
-import { ArrowUpRight, Activity } from 'lucide-react';
+import { formatPrice } from '@/lib/utils';
+import {
+  Terminal,
+  Activity,
+  ArrowRight,
+  TrendingUp,
+  TrendingDown,
+  MessageSquare,
+  Search,
+  Bell,
+  Clock,
+  Shield,
+} from 'lucide-react';
 import { terminalAudio } from '@/lib/terminalAudio';
 
 interface HomeViewProps {
@@ -24,6 +31,7 @@ interface HomeViewProps {
   onSearchClick: () => void;
   onAlertsClick: () => void;
   onSelectFunction: (code: string) => void;
+  onOpenIB?: () => void;
 }
 
 export const HomeView: React.FC<HomeViewProps> = ({
@@ -39,257 +47,329 @@ export const HomeView: React.FC<HomeViewProps> = ({
   onSearchClick,
   onAlertsClick,
   onSelectFunction,
+  onOpenIB,
 }) => {
+  const [filterCategory, setFilterCategory] = useState<'ALL' | 'CRYPTO' | 'INDIA' | 'TECH'>('ALL');
+
+  const filteredQuotes = quotes.filter((q) => {
+    if (filterCategory === 'ALL') return true;
+    if (filterCategory === 'CRYPTO') return q.category === 'crypto';
+    if (filterCategory === 'INDIA') return q.category === 'india';
+    if (filterCategory === 'TECH') return q.category === 'tech';
+    return true;
+  });
+
   return (
-    <div className="flex flex-col min-h-screen bg-black text-white select-none pb-24">
-      {/* Pinned Top Terminal Header */}
-      <TerminalHeader
-        title="Overview"
-        subtitle="MARKET TERMINAL"
-        onSearchClick={onSearchClick}
-        onAlertsClick={onAlertsClick}
-      />
-
-      {/* Authentic Bloomberg Function Shortcuts Bar */}
-      <BloombergFunctionBar
-        activeCode="TOP"
-        onSelectFunction={onSelectFunction}
-      />
-
-      {/* Global Market Sessions Pulse Strip */}
-      <div className="flex items-center justify-between px-4 py-1.5 bg-[#07090e] border-b border-[#141822] text-[10px] font-mono">
-        <div className="flex items-center gap-1.5 text-[#00c176]">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#00c176] shadow-[0_0_6px_#00c176] animate-pulse" />
-          <span>NSE: OPEN</span>
-          <span className="text-[#5c6475]">·</span>
-          <span>NYSE: OPEN</span>
+    <div className="flex flex-col min-h-screen bg-[#000000] text-white font-mono select-none pb-24">
+      {/* 1. Bloomberg Professional Terminal Header Bar */}
+      <header className="px-3 py-2 bg-[#05070a] border-b-2 border-[#182030] flex items-center justify-between shrink-0 sticky top-0 z-30">
+        <div className="flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-[#ff8800] shadow-[0_0_8px_#ff8800] animate-pulse" />
+          <span className="text-white font-black text-xs tracking-wider">
+            BLOOMBERG
+          </span>
+          <span className="text-[10px] text-[#ff8800] px-1 bg-[#ff8800]/15 border border-[#ff8800]/40 font-bold">
+            PROFESSIONAL
+          </span>
+          <span className="text-[#2a364d]">|</span>
+          <span className="text-[10px] text-white font-bold">&lt;MON &lt;GO&gt;&gt;</span>
         </div>
-        <div className="flex items-center gap-1 text-[#8e95a5]">
-          <Activity size={10} className="text-[#ff8800]" />
-          <span>CRYPTO 24/7 SPOT</span>
+
+        <div className="flex items-center gap-1.5">
+          <button
+            onClick={() => {
+              terminalAudio.playTick();
+              onSearchClick();
+            }}
+            className="p-1.5 bg-[#101520] hover:bg-[#182338] border border-[#1a2333] text-[#ff8800] rounded-sm transition-colors"
+            title="Search Security <SECF>"
+          >
+            <Search size={13} />
+          </button>
+          <button
+            onClick={() => {
+              terminalAudio.playTick();
+              onAlertsClick();
+            }}
+            className="p-1.5 bg-[#101520] hover:bg-[#182338] border border-[#1a2333] text-[#00c176] rounded-sm transition-colors"
+            title="Alerts"
+          >
+            <Bell size={13} />
+          </button>
+        </div>
+      </header>
+
+      {/* 2. Global Multi-Timezone & Market Session Telemetry Strip */}
+      <div className="flex items-center justify-between px-3 py-1 bg-[#080b11] border-b border-[#141a26] text-[10px] text-[#8e95a5] overflow-x-auto no-scrollbar shrink-0">
+        <div className="flex items-center gap-2 shrink-0">
+          <span className="text-[#00c176] font-bold">● NSE: OPEN</span>
+          <span className="text-[#5c6475]">·</span>
+          <span className="text-[#00c176] font-bold">● NYSE: OPEN</span>
+          <span className="text-[#5c6475]">·</span>
+          <span className="text-[#ff8800] font-bold">CRYPTO 24/7</span>
+        </div>
+        <div className="flex items-center gap-2 shrink-0 text-[#64748b] ml-4">
+          <span>UTC: {new Date().toISOString().substring(11, 16)}</span>
+          <span className="text-[#ff8800]">MUMBAI: 13:30 IST 🇮🇳</span>
         </div>
       </div>
 
-      <div className="flex flex-col gap-5 px-4 pt-4">
-        {/* Profile Strip (Bhaskar Sharma, Individual Investor, Active) */}
+      {/* 3. Terminal Quick Command Strip */}
+      <div className="px-3 py-1.5 bg-[#05070a] border-b border-[#182030] flex items-center gap-1.5 overflow-x-auto no-scrollbar shrink-0">
+        <span className="text-[10px] text-[#64748b] font-bold">COMMANDS:</span>
+        {[
+          { code: 'WEI', label: 'INDICES' },
+          { code: 'GP', label: 'CHART' },
+          { code: 'TOP', label: 'NEWS' },
+          { code: 'EMSX', label: 'ORDERS' },
+          { code: 'PORT', label: 'PORTFOLIO' },
+          { code: 'IB', label: 'CHAT' },
+        ].map((btn) => (
+          <button
+            key={btn.code}
+            onClick={() => {
+              terminalAudio.playTick();
+              if (btn.code === 'IB' && onOpenIB) {
+                onOpenIB();
+              } else {
+                onSelectFunction(btn.code);
+              }
+            }}
+            className="px-2 py-0.5 bg-[#0e1420] hover:bg-[#182338] border border-[#1a2333] hover:border-[#ff8800] text-[10px] text-[#ff8800] font-bold rounded-sm shrink-0 transition-colors"
+          >
+            &lt;{btn.code}&gt; {btn.label}
+          </button>
+        ))}
+      </div>
+
+      <div className="p-3 space-y-3">
+        {/* 4. Instant Bloomberg <IB> Live Terminal Desk Banner */}
         <section
           onClick={() => {
             terminalAudio.playTick();
-            onOpenProfile();
+            onOpenIB?.();
           }}
-          className="flex items-center gap-3.5 p-3.5 -mx-1 rounded-2xl bg-[#0d1017] border border-[#1b2230] cursor-pointer hover:border-[#2f3b52] active:scale-[0.99] transition-all shadow-md"
+          className="p-3 bg-[#070b12] border border-[#ff8800]/60 rounded-sm cursor-pointer hover:bg-[#0c121e] active:scale-[0.99] transition-all flex items-center justify-between"
         >
-          <div className="w-[54px] h-[54px] rounded-full bg-[#151a24] border-2 border-[#2b3547] flex items-center justify-center text-lg font-bold text-white shrink-0 shadow-inner">
-            BS
-          </div>
-
-          <div className="flex flex-col flex-1 min-w-0">
-            <div className="flex items-center justify-between">
-              <h2 className="text-[17px] font-bold text-white truncate leading-tight">
-                Bhaskar Sharma
-              </h2>
-              <div className="flex items-center gap-1.5 text-[11px] font-semibold text-[#00c176]">
-                <span className="w-2 h-2 rounded-full bg-[#00c176] shadow-[0_0_8px_#00c176] animate-pulse" />
-                <span>Active</span>
-              </div>
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-sm bg-[#ff8800] text-black flex items-center justify-center font-black">
+              <MessageSquare size={16} />
             </div>
-
-            <p className="text-[12px] text-[#8e95a5] font-medium leading-none mt-1">
-              Individual Investor · India 🇮🇳
-            </p>
-
-            <div className="flex items-center gap-2 mt-2">
-              <span className="text-[9px] font-bold font-mono tracking-wider text-[#d1d5db] bg-[#1a2130] border border-[#2b374e] px-1.5 py-0.5 rounded-[3px] uppercase">
-                BLOOMBERG ANYWHERE USER
+            <div className="flex flex-col">
+              <div className="flex items-center gap-2">
+                <span className="text-white font-black text-xs">
+                  INSTANT BLOOMBERG &lt;IB &lt;GO&gt;&gt;
+                </span>
+                <span className="px-1 bg-[#00c176]/20 text-[#00c176] text-[9px] font-bold border border-[#00c176]/40">
+                  LIVE BOT DESK
+                </span>
+              </div>
+              <span className="text-[10px] text-[#8e95a5]">
+                Ask Bloomberg Desk Bot for quotes, margins, or market math
               </span>
             </div>
           </div>
-        </section>
-
-        {/* Section 1: MARKET SNAPSHOT */}
-        <section className="flex flex-col gap-2">
-          <div className="flex items-center justify-between">
-            <h3 className="text-[12px] font-extrabold tracking-[1px] text-[#8e95a5] uppercase">
-              MARKET SNAPSHOT
-            </h3>
-            <button
-              onClick={() => {
-                terminalAudio.playTick();
-                onViewAllMarkets();
-              }}
-              className="text-[12px] font-bold text-[#ff8800] hover:underline cursor-pointer flex items-center gap-0.5"
-            >
-              <span>View All</span>
-              <ArrowUpRight size={13} />
-            </button>
-          </div>
-
-          <div className="bg-[#0e1118] border border-[#1b2230] rounded-xl px-3 py-1 shadow-sm divide-y divide-[#181d28]/70">
-            {quotes.slice(0, 4).map((q) => (
-              <QuoteRow
-                key={q.id || q.symbol}
-                quote={q}
-                onClick={() => onSelectQuote(q)}
-              />
-            ))}
+          <div className="text-[10px] text-[#ff8800] font-bold flex items-center gap-1">
+            <span>&lt;OPEN&gt;</span>
+            <ArrowRight size={12} />
           </div>
         </section>
 
-        {/* Section 2: MY PORTFOLIOS (PORT) */}
-        <section className="flex flex-col gap-2">
-          <div className="flex items-center justify-between">
-            <h3 className="text-[12px] font-extrabold tracking-[1px] text-[#8e95a5] uppercase">
-              MY PORTFOLIOS &lt;PORT&gt;
-            </h3>
+        {/* 5. Institutional Portfolio & Margin Blotter (PORT <GO>) */}
+        <section className="bg-[#05070a] border border-[#1a2333] rounded-sm overflow-hidden">
+          <div className="px-3 py-1.5 bg-[#0a0f18] border-b border-[#141a26] flex items-center justify-between text-xs">
+            <div className="flex items-center gap-1.5">
+              <span className="px-1 py-0.2 bg-[#ff8800] text-black font-black text-[9px]">
+                &lt;PORT 01&gt;
+              </span>
+              <span className="text-white font-bold text-[11px] tracking-wider uppercase">
+                PORTFOLIO BLOTTER &amp; MARGIN TELEMETRY
+              </span>
+            </div>
             <button
               onClick={() => {
                 terminalAudio.playTick();
                 onViewAllPortfolios();
               }}
-              className="text-[12px] font-bold text-[#ff8800] hover:underline cursor-pointer flex items-center gap-0.5"
+              className="text-[10px] text-[#ff8800] font-bold hover:underline"
             >
-              <span>View All</span>
-              <ArrowUpRight size={13} />
+              &lt;EXPAND &lt;GO&gt;&gt;
             </button>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            {portfolios.map((p) => {
-              const inrStr = formatInrCrore(p.valueUsd);
-              return (
-                <div
-                  key={p.id}
-                  onClick={() => {
-                    terminalAudio.playTick();
-                    onViewAllPortfolios();
-                  }}
-                  className="bg-[#0e1118] border border-[#1b2230] rounded-xl p-3.5 flex flex-col justify-between cursor-pointer hover:border-[#ff8800]/50 active:scale-[0.99] transition-all shadow-sm"
-                >
-                  <div className="flex flex-col gap-0.5">
-                    <span className="text-[11px] font-medium text-[#8e95a5] truncate">
-                      {p.name}
-                    </span>
-                    <span className="font-mono text-[17px] font-bold text-white tracking-tight tabular-nums">
-                      ${formatPrice(p.valueUsd, 2)}
-                    </span>
-                    <span className="font-mono text-[11px] font-bold text-[#ff8800] mt-0.5">
-                      ≈ {inrStr}
-                    </span>
-                  </div>
+          <div className="p-3 space-y-2">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+              <div className="p-2 bg-[#000000] border border-[#141a26] rounded-sm">
+                <span className="text-[9px] text-[#64748b] block uppercase">ACCOUNT NAV</span>
+                <span className="text-sm font-black text-white">$10,000.00</span>
+                <span className="text-[9px] text-[#64748b] block">USDT Base (10^8)</span>
+              </div>
 
-                  <div className="flex items-center justify-between mt-3 pt-2 border-t border-[#181d28]">
-                    <span
-                      className={`text-[11px] font-bold font-mono ${
-                        p.positive ? 'text-[#00c176]' : 'text-[#ff4d4f]'
-                      }`}
-                    >
-                      {p.positive ? '+' : ''}{p.changePercent.toFixed(2)}%
-                    </span>
-                    <MiniSparkline
-                      positive={p.positive}
-                      points={p.sparkline}
-                      width={48}
-                      height={18}
-                    />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+              <div className="p-2 bg-[#000000] border border-[#141a26] rounded-sm">
+                <span className="text-[9px] text-[#64748b] block uppercase">AVAIL CASH</span>
+                <span className="text-sm font-black text-[#00c176]">$9,850.00</span>
+                <span className="text-[9px] text-[#64748b] block">98.5% Liquid</span>
+              </div>
 
-          {/* Asset Allocation Bar (Equities 48%, Crypto 32%, F&O 15%, Cash 5%) */}
-          <div className="p-3 bg-[#0e1118] border border-[#1b2230] rounded-xl flex flex-col gap-2 mt-1">
-            <div className="flex items-center justify-between text-[11px] font-mono">
-              <span className="text-[#8e95a5] font-bold">ASSET ALLOCATION</span>
-              <span className="text-white font-semibold">$745,734.11 TOTAL</span>
+              <div className="p-2 bg-[#000000] border border-[#141a26] rounded-sm">
+                <span className="text-[9px] text-[#64748b] block uppercase">REALIZED P&amp;L</span>
+                <span className="text-sm font-black text-[#00c176]">+$150.00</span>
+                <span className="text-[9px] text-[#00c176] block">+1.50% Net</span>
+              </div>
+
+              <div className="p-2 bg-[#000000] border border-[#141a26] rounded-sm">
+                <span className="text-[9px] text-[#64748b] block uppercase">RISK PER TRADE</span>
+                <span className="text-sm font-black text-[#ff8800]">1.0% MAX</span>
+                <span className="text-[9px] text-[#ff8800] block">Enforced Hard Cap</span>
+              </div>
             </div>
 
-            {/* Segmented Horizontal Progress Bar */}
-            <div className="w-full h-2 rounded-full overflow-hidden flex bg-[#161c28]">
-              <div className="bg-[#00c176] h-full" style={{ width: '48%' }} title="Equities 48%" />
-              <div className="bg-[#ff8800] h-full" style={{ width: '32%' }} title="Crypto 32%" />
-              <div className="bg-[#2979ff] h-full" style={{ width: '15%' }} title="F&O 15%" />
-              <div className="bg-[#8e95a5] h-full" style={{ width: '5%' }} title="Cash 5%" />
-            </div>
-
-            <div className="flex items-center justify-between text-[10px] font-mono text-[#8e95a5] pt-1">
-              <span className="flex items-center gap-1">
-                <span className="w-2 h-2 rounded-full bg-[#00c176]" />
-                <span>EQ 48%</span>
+            {/* Benchmark Mirror Line */}
+            <div className="p-2 bg-[#000000] border border-[#141a26] rounded-sm flex items-center justify-between text-[10px]">
+              <span className="text-[#8e95a5]">
+                BENCHMARK: Same capital in BTC buy-and-hold: <strong className="text-white">+0.66%</strong>. Active P&amp;L: <strong className="text-[#00c176]">+1.50%</strong>.
               </span>
-              <span className="flex items-center gap-1">
-                <span className="w-2 h-2 rounded-full bg-[#ff8800]" />
-                <span>CRYPTO 32%</span>
-              </span>
-              <span className="flex items-center gap-1">
-                <span className="w-2 h-2 rounded-full bg-[#2979ff]" />
-                <span>F&amp;O 15%</span>
-              </span>
-              <span className="flex items-center gap-1">
-                <span className="w-2 h-2 rounded-full bg-[#8e95a5]" />
-                <span>CASH 5%</span>
-              </span>
+              <span className="text-[#00c176] font-bold uppercase shrink-0">OUTPERFORMING</span>
             </div>
           </div>
         </section>
 
-        {/* Section 3: RECENT NEWS <TOP> */}
-        <section className="flex flex-col gap-2">
-          <div className="flex items-center justify-between">
-            <h3 className="text-[12px] font-extrabold tracking-[1px] text-[#8e95a5] uppercase">
-              TOP NEWS &lt;TOP&gt;
-            </h3>
+        {/* 6. World Equity & Market Monitors (WEI <GO>) */}
+        <section className="bg-[#05070a] border border-[#1a2333] rounded-sm overflow-hidden">
+          <div className="px-3 py-1.5 bg-[#0a0f18] border-b border-[#141a26] flex items-center justify-between text-xs">
+            <div className="flex items-center gap-1.5">
+              <span className="px-1 py-0.2 bg-[#ff8800] text-black font-black text-[9px]">
+                &lt;WEI 02&gt;
+              </span>
+              <span className="text-white font-bold text-[11px] tracking-wider uppercase">
+                WORLD MARKET MONITORS
+              </span>
+            </div>
+
+            <div className="flex items-center gap-1 text-[10px]">
+              {(['ALL', 'CRYPTO', 'INDIA', 'TECH'] as const).map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => {
+                    terminalAudio.playTick();
+                    setFilterCategory(cat);
+                  }}
+                  className={`px-1.5 py-0.5 rounded-sm font-bold transition-colors ${
+                    filterCategory === cat
+                      ? 'bg-[#ff8800] text-black'
+                      : 'text-[#8e95a5] hover:text-white bg-[#0e1420]'
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* High-Density Monospace Quotes Table */}
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead>
+                <tr className="border-b border-[#141a26] bg-[#080b11] text-[#ff8800] text-[10px] uppercase">
+                  <th className="py-2 px-3 font-bold">Security</th>
+                  <th className="py-2 px-3 font-bold text-right">Last</th>
+                  <th className="py-2 px-3 font-bold text-right">Net Chg</th>
+                  <th className="py-2 px-3 font-bold text-right">% Chg</th>
+                  <th className="py-2 px-3 font-bold text-right">Volume</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#141a26]">
+                {filteredQuotes.map((q) => {
+                  const isPos = q.percent >= 0;
+                  return (
+                    <tr
+                      key={q.id || q.symbol}
+                      onClick={() => {
+                        terminalAudio.playTick();
+                        onSelectQuote(q);
+                      }}
+                      className="hover:bg-[#0c121e] active:bg-[#141c2c] cursor-pointer transition-colors"
+                    >
+                      <td className="py-2.5 px-3">
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-bold text-white text-xs">{q.symbol}</span>
+                          <span className="text-[10px] text-[#64748b] truncate max-w-[90px]">
+                            {q.name}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="py-2.5 px-3 text-right font-black text-white">
+                        ${formatPrice(q.price, 2)}
+                      </td>
+                      <td
+                        className={`py-2.5 px-3 text-right font-bold text-xs ${
+                          isPos ? 'text-[#00c176]' : 'text-red-400'
+                        }`}
+                      >
+                        {isPos ? '+' : ''}
+                        {formatPrice(q.change, 2)}
+                      </td>
+                      <td
+                        className={`py-2.5 px-3 text-right font-black text-xs ${
+                          isPos ? 'text-[#00c176]' : 'text-red-400'
+                        }`}
+                      >
+                        {isPos ? '+' : ''}
+                        {q.percent.toFixed(2)}%
+                      </td>
+                      <td className="py-2.5 px-3 text-right text-[10px] text-[#8e95a5]">
+                        {q.volume || '—'}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        {/* 7. Bloomberg News Wire Dispatch (<TOP <GO>>) */}
+        <section className="bg-[#05070a] border border-[#1a2333] rounded-sm overflow-hidden">
+          <div className="px-3 py-1.5 bg-[#0a0f18] border-b border-[#141a26] flex items-center justify-between text-xs">
+            <div className="flex items-center gap-1.5">
+              <span className="px-1 py-0.2 bg-[#ff8800] text-black font-black text-[9px]">
+                &lt;TOP 03&gt;
+              </span>
+              <span className="text-white font-bold text-[11px] tracking-wider uppercase">
+                BLOOMBERG REAL-TIME WIRE DISPATCH
+              </span>
+            </div>
             <button
               onClick={() => {
                 terminalAudio.playTick();
                 onViewAllNews();
               }}
-              className="text-[12px] font-bold text-[#ff8800] hover:underline cursor-pointer flex items-center gap-0.5"
+              className="text-[10px] text-[#ff8800] font-bold hover:underline"
             >
-              <span>View All</span>
-              <ArrowUpRight size={13} />
+              &lt;READ &lt;GO&gt;&gt;
             </button>
           </div>
 
-          <div className="flex flex-col gap-2.5">
-            {news.slice(0, 3).map((item) => (
+          <div className="divide-y divide-[#141a26]">
+            {news.slice(0, 4).map((item) => (
               <div
                 key={item.id}
                 onClick={() => {
                   terminalAudio.playTick();
                   onSelectNews(item);
                 }}
-                className="bg-[#0e1118] border border-[#1b2230] rounded-xl p-3 flex gap-3 cursor-pointer hover:border-[#2f3b52] active:scale-[0.99] transition-all shadow-sm"
+                className="p-2.5 hover:bg-[#0c121e] active:bg-[#141c2c] cursor-pointer transition-colors space-y-1"
               >
-                <div className="w-[68px] h-[54px] rounded-lg bg-[#151a24] border border-[#212b3d] flex items-center justify-center shrink-0 overflow-hidden">
-                  <svg className="w-full h-full" viewBox="0 0 68 54">
-                    <rect width="68" height="54" fill="#151a24" />
-                    {item.category === 'India' ? (
-                      <>
-                        <circle cx="34" cy="27" r="12" fill="#1f2736" />
-                        <path d="M26,27 L42,27 M34,19 L34,35" stroke="#00c176" strokeWidth="2" />
-                      </>
-                    ) : item.category === 'Crypto' ? (
-                      <path d="M12,42 L24,24 L36,32 L54,14" stroke="#00c176" strokeWidth="2.2" fill="none" />
-                    ) : (
-                      <path d="M10,42 L24,20 L38,28 L56,12" stroke="#ff8800" strokeWidth="2.2" fill="none" />
-                    )}
-                  </svg>
+                <div className="flex items-center gap-2 text-[10px]">
+                  <span className="text-[#ff8800] font-bold">{item.time}</span>
+                  <span className="text-[#5c6475]">·</span>
+                  <span className="text-[#00c176] font-bold uppercase">{item.source}</span>
+                  <span className="text-[#5c6475]">·</span>
+                  <span className="text-[#64748b] uppercase">{item.category}</span>
                 </div>
-
-                <div className="flex flex-col justify-between flex-1 min-w-0">
-                  <h4 className="text-[13px] font-semibold text-white line-clamp-2 leading-snug">
-                    {item.title}
-                  </h4>
-                  <div className="flex items-center gap-2 mt-1">
-                    <span className="text-[10px] font-bold text-[#ff8800] uppercase tracking-wider">
-                      {item.category}
-                    </span>
-                    <span className="text-[10px] text-[#8e95a5]">
-                      {item.source} · {item.time}
-                    </span>
-                  </div>
-                </div>
+                <h4 className="text-xs font-bold text-white hover:text-[#ff8800] leading-snug">
+                  {item.title}
+                </h4>
               </div>
             ))}
           </div>
