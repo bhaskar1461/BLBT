@@ -48,11 +48,11 @@ const FALLBACK_ITEMS: NewsItem[] = [
   {
     id: 'fallback-1',
     title: 'Global markets hold firm as Federal Reserve commentary signals potential rate easing trajectory',
-    source: 'Bloomberg News Desk',
+    source: 'Celsius Macro Desk',
     time: '11:15:00',
     category: 'Macro',
     iconType: 'macro',
-    link: 'https://bloomberg.com',
+    link: 'https://celsius.network',
     bullets: [
       'Treasury yields tick lower across 2Y and 10Y benchmarks.',
       'FOMC participants cite cooling labor pressures.',
@@ -63,11 +63,11 @@ const FALLBACK_ITEMS: NewsItem[] = [
   {
     id: 'fallback-2',
     title: 'Indian markets see robust institutional participation led by BFSI and Infrastructure leaders',
-    source: 'Bloomberg Mumbai Bureau 🇮🇳',
+    source: 'Mumbai Financial Bureau 🇮🇳',
     time: '11:10:00',
     category: 'India',
     iconType: 'india',
-    link: 'https://bloomberg.com',
+    link: 'https://celsius.network',
     bullets: [
       'NIFTY 50 holds above key technical inflection zone.',
       'Domestic Institutional Investors record sustained net positive capital formation.',
@@ -78,11 +78,11 @@ const FALLBACK_ITEMS: NewsItem[] = [
   {
     id: 'fallback-3',
     title: 'Bitcoin trades near all-time peak as institutional spot exchange liquidity deepens',
-    source: 'Bloomberg Crypto Wire',
+    source: 'Digital Asset Wire',
     time: '11:05:00',
     category: 'Crypto',
     iconType: 'crypto',
-    link: 'https://bloomberg.com',
+    link: 'https://celsius.network',
     bullets: [
       'Spot Bitcoin ETF net aggregate inflows expand.',
       'Realized market volatility compresses to multi-month range.',
@@ -93,11 +93,11 @@ const FALLBACK_ITEMS: NewsItem[] = [
   {
     id: 'fallback-4',
     title: 'Semiconductor manufacturers gain on generative AI infrastructure capital expenditure projections',
-    source: 'Bloomberg Tech Wire',
+    source: 'Global Technology Wire',
     time: '10:55:00',
     category: 'Technology',
     iconType: 'chart',
-    link: 'https://bloomberg.com',
+    link: 'https://celsius.network',
     bullets: [
       'Data center GPU procurement contracts booked through fiscal quarters.',
       'Hyperscaler capex revisions trend upward by 18% YoY.',
@@ -149,7 +149,7 @@ async function fetchFeed(config: typeof FEED_CONFIGS[0]): Promise<NewsItem[]> {
       const parts = rawTitle.split(' - ');
       const parsedSource = sourceMatch
         ? sourceMatch[1].replace(/<!\[CDATA\[(.*?)\]\]>/g, '$1').trim()
-        : (parts.length > 1 ? parts[parts.length - 1].trim() : 'Bloomberg News');
+        : (parts.length > 1 ? parts[parts.length - 1].trim() : 'Global Market Wire');
       
       const cleanTitle = parts.length > 1 ? parts.slice(0, -1).join(' - ').trim() : rawTitle;
 

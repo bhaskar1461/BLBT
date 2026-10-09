@@ -36,7 +36,7 @@ if (fs.existsSync(publicDir)) {
   }
 }
 
-// Generate authentic Bloomberg Professional Anywhere Mobile Terminal in dist/index.html & ios/App/App/public/index.html
+// Generate Celsius Terminal Anywhere Mobile App in dist/index.html & ios/App/App/public/index.html
 const mobileBloombergAnywhereHtml = `<!doctype html>
 <html lang="en">
 <head>
@@ -1463,4 +1463,4 @@ const iosIndexPath = path.join(iosPublicDir, 'index.html');
 fs.writeFileSync(indexPath, mobileBloombergAnywhereHtml, 'utf8');
 fs.writeFileSync(iosIndexPath, mobileBloombergAnywhereHtml, 'utf8');
 
-console.log(`[prepare-mobile] Successfully built authentic Bloomberg Terminal Mobile App in ${indexPath} and ${iosIndexPath}`);
+console.log(`[prepare-mobile] Successfully built Celsius Terminal Anywhere Mobile App in ${indexPath} and ${iosIndexPath}`);
