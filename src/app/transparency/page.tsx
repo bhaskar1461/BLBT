@@ -74,7 +74,7 @@ export default function TransparencyPage() {
               <div className="shrink-0">
                 <CopyHashButton
                   hash={latestSnapshot.root_hash}
-                  label="Copy SHA-256 Root"
+                  label="Copy Fingerprint"
                   className="px-4 py-2 bg-[#ff8800] hover:bg-[#ffa033] text-black rounded-sm font-black text-xs transition-colors cursor-pointer shadow-sm"
                 />
               </div>
@@ -161,12 +161,49 @@ export default function TransparencyPage() {
             </table>
           </div>
         </div>
+
+        {/* Section: What is a Verified Record? */}
+        <div className="border border-[#1a2333] bg-[#05070a] p-6 rounded-sm space-y-4">
+          <div className="flex items-center gap-2 border-b border-[#141a26] pb-3 text-xs">
+            <span className="px-1 py-0.2 bg-[#ff8800] text-black font-black text-[9px]">&lt;TRUST 01&gt;</span>
+            <h2 className="font-bold text-white text-sm tracking-tight uppercase">What is a Verified Record?</h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs leading-relaxed text-[#8e95a5]">
+            <div className="p-4 bg-[#0c1017] border border-[#141a26] rounded-sm space-y-2">
+              <h3 className="font-bold text-white text-xs text-red-400">The Screenshot Problem</h3>
+              <p>
+                Anyone can inspect element or photoshop a broker screenshot in under 60 seconds to fabricate millions in trading profits. Trading influencers flaunt fake gains while quietly hiding blown accounts.
+              </p>
+            </div>
+
+            <div className="p-4 bg-[#0c1017] border border-[#141a26] rounded-sm space-y-2">
+              <h3 className="font-bold text-white text-xs text-[#00c176]">The Verified Record Standard</h3>
+              <p>
+                When a trader makes their record public at <span className="text-[#00d8d6] font-mono">/u/[username]</span>, our server independently calculates their complete track record from the append-only ledger and stamps it with the daily cryptographic root hash.
+              </p>
+            </div>
+          </div>
+
+          <div className="p-3 bg-[#0c1017] border-l-2 border-[#ff8800] text-xs text-white">
+            <strong>Platform Rule:</strong> &ldquo;A public profile is a resume, not a highlight reel.&rdquo; All wins and losses receive equal billing.
+          </div>
+
+          <div className="pt-2 flex items-center gap-4 text-[11px]">
+            <Link href="/backtest" className="text-[#ff8800] hover:underline font-bold">
+              &rarr; Test strategies objectively on the Backtester
+            </Link>
+          </div>
+        </div>
       </main>
 
-      {/* Bloomberg Professional Terminal Footer */}
+      {/* Terminal Footer */}
       <footer className="border-t border-[#1a2333] bg-[#000000] py-4 text-center text-[10px] text-[#64748b]">
         <div className="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <span className="text-[#ff8800]">BLOOMBERG PROFESSIONAL // IMMUTABLE LEDGER VERIFICATION</span>
+          <span className="text-[#ff8800]">CELSIUS TERMINAL // IMMUTABLE LEDGER VERIFICATION</span>
+          <div className="flex items-center gap-3">
+            <Link href="/backtest" className="hover:text-[#ff8800] transition-colors">&lt;BTST&gt; Backtester</Link>
+          </div>
           <span>&quot;THE ONLY TRADING PLATFORM THAT PROFITS FROM YOU NOT LOSING MONEY.&quot; • SHA-256 CHAINED</span>
         </div>
       </footer>

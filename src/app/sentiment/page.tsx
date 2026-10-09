@@ -247,6 +247,14 @@ export default function SentimentPage({ searchParams }: SentimentPageProps) {
             </p>
           </div>
         </div>
+
+        {/* Navigation & Research Link */}
+        <div className="pt-4 border-t border-subtle flex items-center justify-between text-xs text-muted">
+          <span>Data derived from aggregate paper-trading execution.</span>
+          <Link href="/backtest" className="text-primary hover:underline font-bold flex items-center gap-1">
+            <span>&rarr; Test trading hypotheses on the Backtester</span>
+          </Link>
+        </div>
       </main>
     </div>
   );

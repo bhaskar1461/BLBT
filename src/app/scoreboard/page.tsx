@@ -103,10 +103,13 @@ export default function ScoreboardPage() {
         </div>
       </main>
 
-      {/* Bloomberg Professional Terminal Footer */}
+      {/* Terminal Footer */}
       <footer className="border-t border-[#1a2333] bg-[#000000] py-4 text-center text-[10px] text-[#64748b]">
         <div className="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <span className="text-[#ff8800]">BLOOMBERG PROFESSIONAL // THE SCOREBOARD</span>
+          <span className="text-[#ff8800]">CELSIUS TERMINAL // THE SCOREBOARD</span>
+          <div className="flex items-center gap-3">
+            <Link href="/backtest" className="hover:text-[#ff8800] transition-colors">&lt;BTST&gt; Backtester</Link>
+          </div>
           <span>&ldquo;THE ONLY TRADING PLATFORM THAT PROFITS FROM YOU NOT LOSING MONEY.&rdquo; • BINANCE VERIFIED</span>
         </div>
       </footer>

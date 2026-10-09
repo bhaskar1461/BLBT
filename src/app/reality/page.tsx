@@ -110,7 +110,7 @@ export default function RealityPage({
                     : 'text-[#8e95a5] hover:text-white'
                 }`}
               >
-                &lt;30 DAYS&gt;
+                Last 30 Days
               </Link>
               <Link
                 href="/reality?period=90"
@@ -120,7 +120,7 @@ export default function RealityPage({
                     : 'text-[#8e95a5] hover:text-white'
                 }`}
               >
-                &lt;90 DAYS&gt;
+                Last 90 Days
               </Link>
             </div>
 
@@ -188,7 +188,7 @@ export default function RealityPage({
           <div className="border-b border-[#141a26] pb-2">
             <div className="flex items-center gap-2">
               <span className="px-1 py-0.2 bg-[#ff8800] text-black font-black text-[9px]">&lt;DIST 02&gt;</span>
-              <h3 className="text-xs font-bold text-white uppercase tracking-wider">THE P&amp;L DISTRIBUTION CURVE</h3>
+              <h3 className="text-xs font-bold text-white uppercase tracking-wider">P&amp;L Distribution Curve</h3>
             </div>
             <p className="text-[10px] text-[#8e95a5] mt-1">
               Sample of {stats.totalActiveTraders} paper accounts across {stats.totalTradesRecorded} closed executions. Notice the heavy skew toward deep drawdowns.
@@ -229,7 +229,7 @@ export default function RealityPage({
           <div className="flex items-center justify-between border-b border-[#141a26] pb-2">
             <div className="flex items-center gap-2">
               <span className="px-1 py-0.2 bg-[#ff8800] text-black font-black text-[9px]">&lt;ASSET 03&gt;</span>
-              <h3 className="text-xs font-bold text-white uppercase tracking-wider">TOP 3 MOST-TRADED ASSETS VS. ACTUAL PERFORMANCE</h3>
+              <h3 className="text-xs font-bold text-white uppercase tracking-wider">Top 3 Most-Traded Assets vs. Actual Performance</h3>
             </div>
             <span className="text-[10px] text-[#64748b]">
               {period}-DAY REALIZED TELEMETRY
@@ -277,7 +277,7 @@ export default function RealityPage({
         {/* Psychological Pitfalls Anatomy */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div className="p-4 rounded-sm bg-[#05070a] border border-red-500/30 space-y-2">
-            <h3 className="text-xs font-bold text-red-400">#1 KILLER: {stats.mostCommonLosingBehavior.name.toUpperCase()}</h3>
+            <h3 className="text-xs font-bold text-red-400">#1 KILLER: {stats.mostCommonLosingBehavior.name}</h3>
             <p className="text-[10px] text-[#8e95a5] leading-relaxed">
               {stats.mostCommonLosingBehavior.description}
             </p>
@@ -316,10 +316,13 @@ export default function RealityPage({
         </div>
       </main>
 
-      {/* Bloomberg Professional Terminal Footer */}
+      {/* Terminal Footer */}
       <footer className="border-t border-[#1a2333] bg-[#000000] py-4 text-center text-[10px] text-[#64748b]">
         <div className="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <span className="text-[#ff8800]">BLOOMBERG PROFESSIONAL // REALITY CHECK TELEMETRY</span>
+          <span className="text-[#ff8800]">CELSIUS TERMINAL // REALITY CHECK TELEMETRY</span>
+          <div className="flex items-center gap-3">
+            <Link href="/backtest" className="hover:text-[#ff8800] transition-colors">&lt;BTST&gt; Backtester</Link>
+          </div>
           <span>100% UNVARNISHED DATABASE PROOF • SUB-SECOND DELIVERY • INTEGER RECONCILED</span>
         </div>
       </footer>
