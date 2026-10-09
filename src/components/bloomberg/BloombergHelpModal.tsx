@@ -25,6 +25,10 @@ export const BloombergHelpModal: React.FC<BloombergHelpModalProps> = ({
     { code: 'DES', name: 'Security Description', desc: 'Key fundamental stats, high/low range, VWAP, market capitalization' },
     { code: 'EMSX', name: 'Execution Management', desc: 'Deterministic order ticket & execution blotter (Market / Limit / Stop)' },
     { code: 'PORT', name: 'Portfolio & Risk', desc: 'NAV valuation, realized P&L, drawdown and Buy-and-Hold benchmark comparison' },
+    { code: 'MAX GP', name: 'Maximize Chart Panel', desc: 'Expand price chart into full-screen workspace' },
+    { code: 'MAX EMSX', name: 'Maximize Execution Blotter', desc: 'Expand order execution blotter into full workspace' },
+    { code: 'RESTORE', name: 'Restore 4-Panel Launchpad', desc: 'Reset all tiles back to standard 4-panel Bloomberg Launchpad layout' },
+    { code: 'TV', name: 'TradingView Layout', desc: 'Switch layout to TradingView Supercharts workspace' },
     { code: 'SECF', name: 'Security Finder', desc: 'Universal cross-asset search for equities, crypto pairs, and commodities' },
     { code: 'HELP', name: 'Help & Reference', desc: 'Terminal command cheat sheet and core platform invariants' },
   ];

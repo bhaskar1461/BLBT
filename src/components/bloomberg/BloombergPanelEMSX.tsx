@@ -13,16 +13,22 @@ import {
   TrendingUp,
   TrendingDown,
   Lock,
+  Maximize2,
+  Minimize2,
 } from 'lucide-react';
 import { formatPrice, formatInrCrore } from '@/lib/utils';
 import { terminalAudio } from '@/lib/terminalAudio';
 
 interface BloombergPanelEMSXProps {
   security: BloombergSecurity;
+  isMaximized?: boolean;
+  onToggleMaximize?: () => void;
 }
 
 export const BloombergPanelEMSX: React.FC<BloombergPanelEMSXProps> = ({
   security,
+  isMaximized,
+  onToggleMaximize,
 }) => {
   const {
     account,
@@ -85,6 +91,16 @@ export const BloombergPanelEMSX: React.FC<BloombergPanelEMSXProps> = ({
           <span className="text-[#ff8800] font-bold">
             ≈ {formatInrCrore(account?.equity || 576000)}
           </span>
+
+          {onToggleMaximize && (
+            <button
+              onClick={onToggleMaximize}
+              className="p-1 hover:bg-[#1a2333] text-[#8e95a5] hover:text-[#ff8800] rounded transition-colors"
+              title={isMaximized ? "Restore 4-Panel Layout" : "Maximize Panel"}
+            >
+              {isMaximized ? <Minimize2 size={12} /> : <Maximize2 size={12} />}
+            </button>
+          )}
         </div>
       </div>
 

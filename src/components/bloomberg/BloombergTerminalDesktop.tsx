@@ -207,6 +207,7 @@ export const BloombergTerminalDesktop: React.FC<BloombergTerminalDesktopProps> =
   ], [btcPrice, btcChg, ethPrice, ethChg, solPrice, solChg]);
 
   const [activeSecurity, setActiveSecurity] = useState<BloombergSecurity>(securities[0]);
+  const [maximizedPanel, setMaximizedPanel] = useState<'WEI' | 'GP' | 'TOP' | 'EMSX' | null>(null);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [selectedArticle, setSelectedArticle] = useState<NewsItem | null>(null);
@@ -298,13 +299,37 @@ export const BloombergTerminalDesktop: React.FC<BloombergTerminalDesktopProps> =
     terminalAudio.playTick();
     const cleanCmd = cmd.trim().toUpperCase();
 
-    // 1. Mnemonic Function routing
+    // 1. Mnemonic Function routing & Panel Maximizing
     if (cleanCmd === 'HELP') {
       setIsHelpOpen(true);
       return;
     }
     if (cleanCmd === 'SECF' || cleanCmd === 'SEARCH') {
       setIsSearchOpen(true);
+      return;
+    }
+    if (cleanCmd === 'RESTORE' || cleanCmd === 'MIN' || cleanCmd === 'LAUNCHPAD') {
+      setMaximizedPanel(null);
+      return;
+    }
+    if (cleanCmd === 'WEI' || cleanCmd === 'MAX WEI') {
+      setMaximizedPanel(maximizedPanel === 'WEI' ? null : 'WEI');
+      return;
+    }
+    if (cleanCmd === 'GP' || cleanCmd === 'CHART' || cleanCmd === 'MAX GP') {
+      setMaximizedPanel(maximizedPanel === 'GP' ? null : 'GP');
+      return;
+    }
+    if (cleanCmd === 'TOP' || cleanCmd === 'NEWS' || cleanCmd === 'MAX TOP') {
+      setMaximizedPanel(maximizedPanel === 'TOP' ? null : 'TOP');
+      return;
+    }
+    if (cleanCmd === 'EMSX' || cleanCmd === 'TRADE' || cleanCmd === 'PORT' || cleanCmd === 'MAX EMSX') {
+      setMaximizedPanel(maximizedPanel === 'EMSX' ? null : 'EMSX');
+      return;
+    }
+    if (cleanCmd === 'TV' || cleanCmd === 'SUPERCHARTS') {
+      onToggleToTradingView?.();
       return;
     }
 
@@ -338,40 +363,56 @@ export const BloombergTerminalDesktop: React.FC<BloombergTerminalDesktopProps> =
       {/* 2. Main 4-Panel Tiled Workspace (Bloomberg Launchpad Style) */}
       <main className="flex-1 p-2 grid grid-cols-1 lg:grid-cols-12 grid-rows-2 gap-2 min-h-0 overflow-hidden">
         {/* Panel 1: Top-Left (WEI: World Equity Indices & Macro Monitor) */}
-        <div className="lg:col-span-6 h-full min-h-0 overflow-hidden shadow-lg">
-          <BloombergPanelWEI
-            securities={securities}
-            activeSymbol={activeSecurity.symbol}
-            onSelectSecurity={(sec) => {
-              setActiveSecurity(sec);
-            }}
-          />
-        </div>
+        {(!maximizedPanel || maximizedPanel === 'WEI') && (
+          <div className={`${maximizedPanel === 'WEI' ? 'lg:col-span-12 row-span-2' : 'lg:col-span-6'} h-full min-h-0 overflow-hidden shadow-lg`}>
+            <BloombergPanelWEI
+              securities={securities}
+              activeSymbol={activeSecurity.symbol}
+              onSelectSecurity={(sec) => {
+                setActiveSecurity(sec);
+              }}
+              isMaximized={maximizedPanel === 'WEI'}
+              onToggleMaximize={() => setMaximizedPanel(maximizedPanel === 'WEI' ? null : 'WEI')}
+            />
+          </div>
+        )}
 
         {/* Panel 2: Top-Right (GP: Graph Price & Security Description Inspector) */}
-        <div className="lg:col-span-6 h-full min-h-0 overflow-hidden shadow-lg">
-          <BloombergPanelGP
-            security={activeSecurity}
-            onTradeAction={(side) => {
-              terminalAudio.playTick();
-            }}
-          />
-        </div>
+        {(!maximizedPanel || maximizedPanel === 'GP') && (
+          <div className={`${maximizedPanel === 'GP' ? 'lg:col-span-12 row-span-2' : 'lg:col-span-6'} h-full min-h-0 overflow-hidden shadow-lg`}>
+            <BloombergPanelGP
+              security={activeSecurity}
+              onTradeAction={(side) => {
+                terminalAudio.playTick();
+              }}
+              isMaximized={maximizedPanel === 'GP'}
+              onToggleMaximize={() => setMaximizedPanel(maximizedPanel === 'GP' ? null : 'GP')}
+            />
+          </div>
+        )}
 
         {/* Panel 3: Bottom-Left (TOP: Bloomberg Real-Time Wire Dispatch) */}
-        <div className="lg:col-span-6 h-full min-h-0 overflow-hidden shadow-lg">
-          <BloombergPanelTOP
-            news={newsItems}
-            onSelectArticle={setSelectedArticle}
-          />
-        </div>
+        {(!maximizedPanel || maximizedPanel === 'TOP') && (
+          <div className={`${maximizedPanel === 'TOP' ? 'lg:col-span-12 row-span-2' : 'lg:col-span-6'} h-full min-h-0 overflow-hidden shadow-lg`}>
+            <BloombergPanelTOP
+              news={newsItems}
+              onSelectArticle={setSelectedArticle}
+              isMaximized={maximizedPanel === 'TOP'}
+              onToggleMaximize={() => setMaximizedPanel(maximizedPanel === 'TOP' ? null : 'TOP')}
+            />
+          </div>
+        )}
 
         {/* Panel 4: Bottom-Right (EMSX: Execution Management System & Risk Blotter) */}
-        <div className="lg:col-span-6 h-full min-h-0 overflow-hidden shadow-lg">
-          <BloombergPanelEMSX
-            security={activeSecurity}
-          />
-        </div>
+        {(!maximizedPanel || maximizedPanel === 'EMSX') && (
+          <div className={`${maximizedPanel === 'EMSX' ? 'lg:col-span-12 row-span-2' : 'lg:col-span-6'} h-full min-h-0 overflow-hidden shadow-lg`}>
+            <BloombergPanelEMSX
+              security={activeSecurity}
+              isMaximized={maximizedPanel === 'EMSX'}
+              onToggleMaximize={() => setMaximizedPanel(maximizedPanel === 'EMSX' ? null : 'EMSX')}
+            />
+          </div>
+        )}
       </main>
 
       {/* 3. Bottom Bloomberg Telemetry Ribbon & Streaming Ticker Tape */}

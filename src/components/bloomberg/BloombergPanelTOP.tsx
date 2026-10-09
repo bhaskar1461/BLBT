@@ -3,17 +3,21 @@
 
 import React, { useState, useMemo } from 'react';
 import type { NewsItem } from '@/components/mobile/types';
-import { Newspaper, BellRing, ExternalLink, Search, Clock, ArrowRight } from 'lucide-react';
+import { Newspaper, BellRing, ExternalLink, Search, Clock, ArrowRight, Maximize2, Minimize2 } from 'lucide-react';
 import { terminalAudio } from '@/lib/terminalAudio';
 
 interface BloombergPanelTOPProps {
   news: NewsItem[];
   onSelectArticle: (article: NewsItem) => void;
+  isMaximized?: boolean;
+  onToggleMaximize?: () => void;
 }
 
 export const BloombergPanelTOP: React.FC<BloombergPanelTOPProps> = ({
   news,
   onSelectArticle,
+  isMaximized,
+  onToggleMaximize,
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState('');
@@ -65,6 +69,16 @@ export const BloombergPanelTOP: React.FC<BloombergPanelTOPProps> = ({
             <span className="w-1.5 h-1.5 rounded-full bg-[#ff8800] animate-ping" />
             <span>FLASH WIRE</span>
           </div>
+
+          {onToggleMaximize && (
+            <button
+              onClick={onToggleMaximize}
+              className="p-1 hover:bg-[#1a2333] text-[#8e95a5] hover:text-[#ff8800] rounded transition-colors"
+              title={isMaximized ? "Restore 4-Panel Layout" : "Maximize Panel"}
+            >
+              {isMaximized ? <Minimize2 size={12} /> : <Maximize2 size={12} />}
+            </button>
+          )}
         </div>
       </div>
 

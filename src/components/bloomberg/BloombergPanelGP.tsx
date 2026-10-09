@@ -12,6 +12,8 @@ import {
   PieChart,
   BarChart2,
   Calendar,
+  Maximize2,
+  Minimize2,
 } from 'lucide-react';
 import { formatPrice, formatInrCrore } from '@/lib/utils';
 import { terminalAudio } from '@/lib/terminalAudio';
@@ -19,11 +21,15 @@ import { terminalAudio } from '@/lib/terminalAudio';
 interface BloombergPanelGPProps {
   security: BloombergSecurity;
   onTradeAction?: (side: 'BUY' | 'SELL') => void;
+  isMaximized?: boolean;
+  onToggleMaximize?: () => void;
 }
 
 export const BloombergPanelGP: React.FC<BloombergPanelGPProps> = ({
   security,
   onTradeAction,
+  isMaximized,
+  onToggleMaximize,
 }) => {
   const [activeSubTab, setActiveSubTab] = useState<'GP' | 'DES' | 'FA' | 'ANR'>('GP');
   const [chartType, setChartType] = useState<'candles' | 'line'>('candles');
@@ -132,6 +138,16 @@ export const BloombergPanelGP: React.FC<BloombergPanelGPProps> = ({
               SELL / SHORT
             </button>
           </div>
+
+          {onToggleMaximize && (
+            <button
+              onClick={onToggleMaximize}
+              className="p-1 hover:bg-[#1a2333] text-[#8e95a5] hover:text-[#ff8800] rounded transition-colors"
+              title={isMaximized ? "Restore 4-Panel Layout" : "Maximize Panel"}
+            >
+              {isMaximized ? <Minimize2 size={12} /> : <Maximize2 size={12} />}
+            </button>
+          )}
         </div>
       </div>
 

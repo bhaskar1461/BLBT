@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { TrendingUp, TrendingDown, Search, ArrowUpDown, Filter } from 'lucide-react';
+import { TrendingUp, TrendingDown, Search, ArrowUpDown, Filter, Maximize2, Minimize2 } from 'lucide-react';
 import { formatPrice, formatInrCrore } from '@/lib/utils';
 import { terminalAudio } from '@/lib/terminalAudio';
 
@@ -26,12 +26,16 @@ interface BloombergPanelWEIProps {
   securities: BloombergSecurity[];
   activeSymbol: string;
   onSelectSecurity: (sec: BloombergSecurity) => void;
+  isMaximized?: boolean;
+  onToggleMaximize?: () => void;
 }
 
 export const BloombergPanelWEI: React.FC<BloombergPanelWEIProps> = ({
   securities,
   activeSymbol,
   onSelectSecurity,
+  isMaximized,
+  onToggleMaximize,
 }) => {
   const [filterRegion, setFilterRegion] = useState<'ALL' | 'Americas' | 'APAC' | 'Crypto' | 'Commodities'>('ALL');
   const [searchQuery, setSearchQuery] = useState('');
@@ -99,6 +103,16 @@ export const BloombergPanelWEI: React.FC<BloombergPanelWEIProps> = ({
           </div>
 
           <span className="text-[10px] text-[#00c176] font-bold">● LIVE</span>
+
+          {onToggleMaximize && (
+            <button
+              onClick={onToggleMaximize}
+              className="p-1 hover:bg-[#1a2333] text-[#8e95a5] hover:text-[#ff8800] rounded transition-colors"
+              title={isMaximized ? "Restore 4-Panel Layout" : "Maximize Panel"}
+            >
+              {isMaximized ? <Minimize2 size={12} /> : <Maximize2 size={12} />}
+            </button>
+          )}
         </div>
       </div>
 
