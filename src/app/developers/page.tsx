@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { developerApiService } from '@/lib/developerApiService';
 import { DeveloperClientView } from '@/components/developers/DeveloperClientView';
+import { BloombergUniversalHeader } from '@/components/bloomberg/BloombergUniversalHeader';
 
 export const dynamic = 'force-dynamic';
 
@@ -36,69 +37,12 @@ export default function DevelopersPage() {
   const initialUsage = developerApiService.getUsageStats(demoUserId);
 
   return (
-    <div className="min-h-screen bg-canvas text-main font-sans selection:bg-bull/20">
-      {/* Top Header Navigation */}
-      <header className="border-b border-subtle bg-panel/80 backdrop-blur sticky top-0 z-30">
-        <div className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Link
-              href="/"
-              className="flex items-center gap-2 hover:opacity-80 transition-opacity"
-            >
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-bull to-primary flex items-center justify-center font-bold text-black text-sm shadow-md shadow-bull/20">
-                °C
-              </div>
-              <span className="font-bold text-sm tracking-tight text-white hidden sm:inline">
-                Celsius Network
-              </span>
-            </Link>
-            <span className="text-faint text-xs font-mono">•</span>
-            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-primary/10 text-primary border border-primary/20 text-xs font-mono font-bold">
-              <Code2 size={12} />
-              <span>DEVELOPER API</span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3 text-xs">
-            <Link
-              href="/funding"
-              className="text-faint hover:text-white transition-colors hidden md:inline"
-            >
-              Transparent Funding
-            </Link>
-            <Link
-              href="/tournaments"
-              className="text-faint hover:text-white transition-colors hidden md:inline"
-            >
-              Tournaments
-            </Link>
-            <Link
-              href="/scoreboard"
-              className="text-faint hover:text-white transition-colors hidden md:inline"
-            >
-              Scoreboard
-            </Link>
-            <Link
-              href="/backtest"
-              className="text-faint hover:text-white transition-colors hidden md:inline"
-            >
-              Backtester
-            </Link>
-            <Link
-              href="/reality"
-              className="text-faint hover:text-white transition-colors hidden md:inline"
-            >
-              Reality Check
-            </Link>
-            <Link
-              href="/"
-              className="btn btn-primary py-1.5 px-3 rounded-lg text-xs font-bold"
-            >
-              Launch Terminal →
-            </Link>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-[#000000] text-[#d1d4dc] font-mono selection:bg-[#ff8800]/30">
+      {/* Bloomberg Universal Header */}
+      <BloombergUniversalHeader
+        activeMnemonic="API"
+        subtitle="DEVELOPER PORTAL // SENTIMENT TELEMETRY API"
+      />
 
       {/* Main Container */}
       <main className="max-w-6xl mx-auto px-4 py-8 space-y-10">

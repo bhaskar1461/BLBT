@@ -3,50 +3,24 @@ import React from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ShieldCheck, Scale, FileText, CheckCircle2, AlertTriangle, ArrowRight } from 'lucide-react';
+import { BloombergUniversalHeader } from '@/components/bloomberg/BloombergUniversalHeader';
 
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'Terms of Truth & Plain-Language Agreement | Celsius Network',
+  title: 'Terms of Truth & Plain-Language Agreement | Bloomberg Professional',
   description:
     'Our terms written in brutally plain English. No dense legalese, no hidden arbitration traps, and no selling your data to offshore brokers.',
 };
 
 export default function TermsPage() {
   return (
-    <div className="min-h-screen bg-canvas text-main font-sans selection:bg-bull/20">
-      {/* Header Navigation */}
-      <header className="border-b border-subtle bg-panel/80 backdrop-blur sticky top-0 z-30">
-        <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-bull to-primary flex items-center justify-center font-bold text-black text-sm shadow-md shadow-bull/20">
-                °C
-              </div>
-              <span className="font-bold text-sm tracking-tight text-white hidden sm:inline">
-                Celsius Network
-              </span>
-            </Link>
-            <span className="text-faint text-xs font-mono">•</span>
-            <span className="text-xs font-mono font-bold text-bull">PLAIN-LANGUAGE TERMS</span>
-          </div>
-
-          <div className="flex items-center gap-3 text-xs">
-            <Link href="/about" className="text-faint hover:text-white transition-colors hidden md:inline">
-              About Us
-            </Link>
-            <Link href="/funding" className="text-faint hover:text-white transition-colors hidden md:inline">
-              Funding
-            </Link>
-            <Link href="/transparency" className="text-faint hover:text-white transition-colors hidden md:inline">
-              Transparency
-            </Link>
-            <Link href="/" className="btn btn-primary py-1.5 px-3 rounded-lg text-xs font-bold">
-              Launch Terminal →
-            </Link>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-[#000000] text-[#d1d4dc] font-mono selection:bg-[#ff8800]/30">
+      {/* Bloomberg Universal Header */}
+      <BloombergUniversalHeader
+        activeMnemonic="TERMS"
+        subtitle="CONTRACT OF TRANSPARENCY // RIGHT OF REPLY"
+      />
 
       {/* Main Container */}
       <main className="max-w-3xl mx-auto px-4 py-12 space-y-10">

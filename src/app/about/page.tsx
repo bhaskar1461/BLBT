@@ -13,15 +13,16 @@ import {
   Clock,
   Zap,
 } from 'lucide-react';
+import { BloombergUniversalHeader } from '@/components/bloomberg/BloombergUniversalHeader';
 
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'About The Honest Terminal — The Anti-Casino Trading Platform | Celsius Network',
+  title: 'About The Honest Terminal — The Anti-Casino Trading Platform | Bloomberg Professional',
   description:
     'The only trading platform that profits from you not losing money. Free forever. Faster than everything. We show you what the herd is doing — and what happens to herds.',
   openGraph: {
-    title: 'About Celsius Network — The Honest Terminal',
+    title: 'About Bloomberg Professional — The Honest Terminal',
     description: '“The only trading platform that profits from you not losing money.” Zero ads. Zero affiliates.',
     images: ['/api/og/reality?period=30'],
   },
@@ -29,45 +30,12 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-canvas text-main font-sans selection:bg-bull/20">
-      {/* Header Navigation */}
-      <header className="border-b border-subtle bg-panel/80 backdrop-blur sticky top-0 z-30">
-        <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-bull to-primary flex items-center justify-center font-bold text-black text-sm shadow-md shadow-bull/20">
-                °C
-              </div>
-              <span className="font-bold text-sm tracking-tight text-white hidden sm:inline">
-                Celsius Network
-              </span>
-            </Link>
-            <span className="text-faint text-xs font-mono">•</span>
-            <span className="text-xs font-mono font-bold text-bull">ABOUT THE MISSION</span>
-          </div>
-
-          <div className="flex items-center gap-3 text-xs">
-            <Link href="/reality" className="text-faint hover:text-white transition-colors hidden md:inline">
-              Reality Check
-            </Link>
-            <Link href="/sentiment" className="text-faint hover:text-white transition-colors hidden md:inline">
-              Sentiment Index
-            </Link>
-            <Link href="/scoreboard" className="text-faint hover:text-white transition-colors hidden md:inline">
-              The Scoreboard
-            </Link>
-            <Link href="/funding" className="text-faint hover:text-white transition-colors hidden md:inline">
-              Funding
-            </Link>
-            <Link href="/changelog" className="text-faint hover:text-white transition-colors hidden md:inline">
-              Changelog
-            </Link>
-            <Link href="/" className="btn btn-primary py-1.5 px-3 rounded-lg text-xs font-bold">
-              Launch Terminal →
-            </Link>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-[#000000] text-[#d1d4dc] font-mono selection:bg-[#ff8800]/30">
+      {/* Bloomberg Universal Header */}
+      <BloombergUniversalHeader
+        activeMnemonic="ABOUT"
+        subtitle="FOUNDING MANIFESTO // INDEPENDENT ARCHITECTURE"
+      />
 
       {/* Main Container */}
       <main className="max-w-4xl mx-auto px-4 py-12 space-y-12">

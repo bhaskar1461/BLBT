@@ -17,6 +17,7 @@ import { sentimentService } from '@/lib/sentimentService';
 import { SentimentChart } from '@/components/sentiment/SentimentChart';
 import { ShareSentimentButton } from '@/components/sentiment/ShareSentimentButton';
 import { formatPrice } from '@/lib/utils';
+import { BloombergUniversalHeader } from '@/components/bloomberg/BloombergUniversalHeader';
 
 interface SentimentPageProps {
   searchParams: {
@@ -69,62 +70,12 @@ export default function SentimentPage({ searchParams }: SentimentPageProps) {
   ];
 
   return (
-    <div className="min-h-screen bg-canvas text-main font-sans selection:bg-primary/20">
-      {/* Top Header Navigation */}
-      <header className="border-b border-subtle bg-panel/80 backdrop-blur sticky top-0 z-30">
-        <div className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Link
-              href="/"
-              className="flex items-center gap-2 hover:opacity-80 transition-opacity"
-            >
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-amber-500 flex items-center justify-center font-bold text-black text-sm shadow-md shadow-primary/20">
-                °C
-              </div>
-              <span className="font-bold text-sm tracking-tight text-white hidden sm:inline">
-                Celsius Network
-              </span>
-            </Link>
-            <span className="text-faint text-xs font-mono">•</span>
-            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 text-xs font-mono font-bold">
-              <span>SENTIMENT INDEX</span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3 text-xs">
-            <Link
-              href="/scoreboard"
-              className="text-faint hover:text-white transition-colors hidden md:inline"
-            >
-              The Scoreboard
-            </Link>
-            <Link
-              href="/backtest"
-              className="text-faint hover:text-white transition-colors hidden md:inline"
-            >
-              The Backtester
-            </Link>
-            <Link
-              href="/reality"
-              className="text-faint hover:text-white transition-colors hidden md:inline"
-            >
-              The Reality Check
-            </Link>
-            <Link
-              href="/transparency"
-              className="text-faint hover:text-white transition-colors hidden md:inline"
-            >
-              Ledger Transparency
-            </Link>
-            <Link
-              href="/"
-              className="btn btn-primary py-1.5 px-3 rounded-lg text-xs font-bold"
-            >
-              Launch Live Terminal →
-            </Link>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-[#000000] text-[#d1d4dc] font-mono selection:bg-[#ff8800]/30 flex flex-col justify-between">
+      {/* Bloomberg Universal Header */}
+      <BloombergUniversalHeader
+        activeMnemonic="SENT"
+        subtitle="AGGREGATE POSITIONING // CONTRARIAN INDEX"
+      />
 
       {/* Hero Section */}
       <main className="max-w-6xl mx-auto px-4 py-8 space-y-8">

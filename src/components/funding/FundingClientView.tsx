@@ -13,6 +13,7 @@ import {
   TrendingUp,
 } from 'lucide-react';
 import type { FundingSummary, CostItem, DonationRecord } from '@/lib/fundingService';
+import { terminalAudio } from '@/lib/terminalAudio';
 
 interface FundingClientViewProps {
   initialSummary: FundingSummary;
@@ -35,6 +36,7 @@ export const FundingClientView: React.FC<FundingClientViewProps> = ({ initialSum
 
   const handleDonate = async (e: React.FormEvent) => {
     e.preventDefault();
+    terminalAudio.playOrderFilled();
     if (finalAmount <= 0) {
       setErrorMsg('Please specify a positive contribution amount.');
       return;
@@ -97,83 +99,84 @@ export const FundingClientView: React.FC<FundingClientViewProps> = ({ initialSum
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 font-mono">
       {/* 1. Treasury Balance Sheet Summary Grid */}
-      <div className="border border-[#2a2e39] bg-[#171b26] rounded-md overflow-hidden">
-        <div className="px-5 py-3 border-b border-[#2a2e39] flex items-center justify-between text-xs font-mono">
-          <span className="text-[#787b86] uppercase tracking-wider font-semibold">
-            01 // TREASURY OPERATING STATUS & COVERAGE RATIO
+      <div className="border border-[#1a2333] bg-[#05070a] rounded-sm overflow-hidden">
+        <div className="px-4 py-2.5 border-b border-[#141a26] flex items-center justify-between text-xs">
+          <span className="text-[#ff8800] uppercase tracking-wider font-bold text-[11px] flex items-center gap-1.5">
+            <span className="px-1 py-0.2 bg-[#ff8800] text-black font-black text-[9px]">&lt;BAL 01&gt;</span>
+            <span>TREASURY OPERATING STATUS &amp; COVERAGE RATIO</span>
           </span>
-          <span className="text-[#50535e]">
+          <span className="text-[#64748b] text-[10px] hidden sm:inline">
             RUNWAY = (RESERVE + MONTHLY_INFLOW) / MONTHLY_BURN
           </span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-[#2a2e39]">
+        <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-[#1a2333]">
           {/* Metric 1: Monthly Burn */}
-          <div className="p-5 space-y-2">
-            <div className="text-[11px] font-mono uppercase text-[#787b86]">
+          <div className="p-4 space-y-1.5 bg-[#05070a]">
+            <div className="text-[10px] uppercase text-[#64748b]">
               Net Monthly Operating Burn
             </div>
             <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-bold font-mono text-white">
+              <span className="text-2xl font-black text-white">
                 ${monthlyCostUsd}
               </span>
-              <span className="text-xs text-[#787b86] font-mono">/ month</span>
+              <span className="text-xs text-[#64748b]">/ MONTH</span>
             </div>
-            <p className="text-[11px] text-[#787b86] leading-relaxed">
+            <p className="text-[10px] text-[#8e95a5] leading-relaxed">
               Audited infrastructure commitments. Zero corporate salaries, offices, or marketing fluff.
             </p>
           </div>
 
           {/* Metric 2: Monthly Inflow */}
-          <div className="p-5 space-y-2">
+          <div className="p-4 space-y-1.5 bg-[#05070a]">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-mono uppercase text-[#787b86]">
+              <span className="text-[10px] uppercase text-[#64748b]">
                 Community Coverage (Current Period)
               </span>
-              <span className="text-[10px] font-mono text-[#089981] font-semibold">
+              <span className="text-[10px] text-[#00c176] font-bold">
                 {summary.currentMonthCoveredPct}% COVERED
               </span>
             </div>
             <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-bold font-mono text-[#089981]">
+              <span className="text-2xl font-black text-[#00c176]">
                 ${monthlyDonationsUsd}
               </span>
-              <span className="text-xs text-[#787b86] font-mono">
-                of ${monthlyCostUsd} target
+              <span className="text-xs text-[#64748b]">
+                OF ${monthlyCostUsd} TARGET
               </span>
             </div>
 
             {/* Coverage Progress Bar */}
-            <div className="w-full bg-[#1e222d] h-1.5 rounded-full overflow-hidden">
+            <div className="w-full bg-[#101520] h-1.5 rounded-none overflow-hidden border border-[#1a2333]">
               <div
-                className="bg-[#089981] h-full transition-all duration-500"
+                className="bg-[#00c176] h-full transition-all duration-500 shadow-[0_0_8px_#00c176]"
                 style={{ width: `${Math.min(100, summary.currentMonthCoveredPct)}%` }}
               />
             </div>
-            <p className="text-[11px] text-[#787b86] leading-relaxed">
+            <p className="text-[10px] text-[#8e95a5] leading-relaxed">
               Micro-underwriting from disciplined traders who value unvarnished numbers.
             </p>
           </div>
 
           {/* Metric 3: Sovereign Runway */}
-          <div className="p-5 space-y-2">
+          <div className="p-4 space-y-1.5 bg-[#05070a]">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-mono uppercase text-[#787b86]">
+              <span className="text-[10px] uppercase text-[#64748b]">
                 Verified Treasury Runway
               </span>
-              <span className="text-[10px] font-mono text-white bg-[#1e222d] px-1.5 py-0.5 rounded border border-[#2a2e39]">
+              <span className="text-[10px] text-[#ff8800] bg-[#101520] px-1.5 py-0.5 rounded-sm border border-[#1a2333] font-bold">
                 ${reserveUsd} RESERVE
               </span>
             </div>
             <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-bold font-mono text-white">
+              <span className="text-2xl font-black text-white">
                 {summary.runwayMonths}
               </span>
-              <span className="text-xs text-[#787b86] font-mono">Months</span>
+              <span className="text-xs text-[#64748b]">MONTHS</span>
             </div>
-            <p className="text-[11px] text-[#787b86] leading-relaxed">
+            <p className="text-[10px] text-[#8e95a5] leading-relaxed">
               Autonomous operating buffer to resist VC, token sponsor, or casino broker leverage.
             </p>
           </div>
@@ -181,17 +184,18 @@ export const FundingClientView: React.FC<FundingClientViewProps> = ({ initialSum
       </div>
 
       {/* 2. Audited Itemized Operating Schedule */}
-      <div className="border border-[#2a2e39] bg-[#171b26] rounded-md overflow-hidden space-y-0">
-        <div className="px-5 py-3 border-b border-[#2a2e39] flex items-center justify-between text-xs">
+      <div className="border border-[#1a2333] bg-[#05070a] rounded-sm overflow-hidden space-y-0">
+        <div className="px-4 py-2.5 border-b border-[#141a26] flex items-center justify-between text-xs">
           <div className="flex items-center gap-2">
-            <span className="font-semibold text-white tracking-tight">
-              Schedule of Itemized Operating Expenses
+            <span className="px-1 py-0.2 bg-[#ff8800] text-black font-black text-[9px]">&lt;EXP 02&gt;</span>
+            <span className="font-bold text-white tracking-tight">
+              SCHEDULE OF ITEMIZED OPERATING EXPENSES
             </span>
-            <span className="text-[10px] font-mono text-[#787b86] bg-[#1e222d] px-1.5 py-0.5 rounded border border-[#2a2e39]">
+            <span className="text-[10px] text-[#00c176] bg-[#00c176]/10 px-1.5 py-0.5 rounded-sm border border-[#00c176]/30">
               FIXED INFRASTRUCTURE
             </span>
           </div>
-          <span className="font-mono text-[11px] text-[#787b86]">
+          <span className="text-[10px] text-[#64748b]">
             AUDITED TO THE CENT
           </span>
         </div>
@@ -199,15 +203,15 @@ export const FundingClientView: React.FC<FundingClientViewProps> = ({ initialSum
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="border-b border-[#2a2e39] bg-[#131722] text-[#787b86] font-mono text-[11px]">
-                <th className="py-2.5 px-4 font-medium w-24">Item Ref</th>
-                <th className="py-2.5 px-4 font-medium w-64">Service Component</th>
-                <th className="py-2.5 px-4 font-medium w-48">Vendor / Provider</th>
-                <th className="py-2.5 px-4 font-medium">Technical Purpose & Specification</th>
-                <th className="py-2.5 px-4 font-medium text-right w-36">Monthly Cost</th>
+              <tr className="border-b border-[#141a26] bg-[#0c1017] text-[#ff8800] text-[10px] uppercase tracking-wider">
+                <th className="py-2 px-3 font-bold w-20">Item Ref</th>
+                <th className="py-2 px-3 font-bold w-56">Service Component</th>
+                <th className="py-2 px-3 font-bold w-40">Vendor / Provider</th>
+                <th className="py-2 px-3 font-bold">Technical Purpose &amp; Specification</th>
+                <th className="py-2 px-3 font-bold text-right w-36">Monthly Cost</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#2a2e39]/60 font-sans">
+            <tbody className="divide-y divide-[#141a26]">
               {summary.costBreakdown.map((item, idx) => {
                 const itemPct = ((item.amountCents / summary.monthlyOperatingCostCents) * 100).toFixed(1);
                 const refCode = `EXP-0${idx + 1}`;
@@ -215,23 +219,23 @@ export const FundingClientView: React.FC<FundingClientViewProps> = ({ initialSum
                 return (
                   <tr
                     key={item.id}
-                    className="hover:bg-[#1e222d]/50 transition-colors"
+                    className="hover:bg-[#0c121e] transition-colors text-xs"
                   >
-                    <td className="py-3 px-4 font-mono text-[11px] text-[#787b86]">
+                    <td className="py-2.5 px-3 text-[11px] text-[#64748b] font-bold">
                       {refCode}
                     </td>
-                    <td className="py-3 px-4 font-medium text-white">
+                    <td className="py-2.5 px-3 font-bold text-white">
                       {item.name}
                     </td>
-                    <td className="py-3 px-4 font-mono text-[11px] text-[#d1d4dc]">
+                    <td className="py-2.5 px-3 text-[11px] text-[#00d8d6]">
                       {item.provider}
                     </td>
-                    <td className="py-3 px-4 text-[#787b86] text-[11px] leading-relaxed">
+                    <td className="py-2.5 px-3 text-[#8e95a5] text-[11px] leading-relaxed">
                       {item.description}
                     </td>
-                    <td className="py-3 px-4 text-right font-mono font-semibold text-white">
+                    <td className="py-2.5 px-3 text-right font-bold text-white">
                       ${(item.amountCents / 100).toFixed(2)}
-                      <span className="text-[10px] text-[#50535e] font-normal ml-1">
+                      <span className="text-[10px] text-[#64748b] font-normal ml-1">
                         ({itemPct}%)
                       </span>
                     </td>
@@ -240,12 +244,12 @@ export const FundingClientView: React.FC<FundingClientViewProps> = ({ initialSum
               })}
 
               {/* Total Accounting Row */}
-              <tr className="bg-[#131722] border-t-2 border-[#2a2e39] font-mono">
-                <td colSpan={4} className="py-3 px-4 text-white font-bold uppercase text-[11px] tracking-wider">
-                  Total Monthly Operating Commitment
+              <tr className="bg-[#0c1017] border-t-2 border-[#1a2333]">
+                <td colSpan={4} className="py-2.5 px-3 text-[#ff8800] font-black uppercase text-[11px] tracking-wider">
+                  TOTAL MONTHLY OPERATING COMMITMENT
                 </td>
-                <td className="py-3 px-4 text-right font-bold text-[#089981] text-sm">
-                  ${monthlyCostUsd} / mo
+                <td className="py-2.5 px-3 text-right font-black text-[#00c176] text-sm">
+                  ${monthlyCostUsd} / MO
                 </td>
               </tr>
             </tbody>
@@ -254,84 +258,93 @@ export const FundingClientView: React.FC<FundingClientViewProps> = ({ initialSum
       </div>
 
       {/* 3. Independent Treasury Underwriting Portal */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 border border-[#2a2e39] bg-[#171b26] rounded-md overflow-hidden">
+      <div className="grid grid-cols-1 lg:grid-cols-12 border border-[#1a2333] bg-[#05070a] rounded-sm overflow-hidden">
         {/* Left Column: Mission Alignment Context */}
-        <div className="lg:col-span-5 p-6 border-b lg:border-b-0 lg:border-r border-[#2a2e39] space-y-4 bg-[#131722]/50">
+        <div className="lg:col-span-5 p-5 border-b lg:border-b-0 lg:border-r border-[#1a2333] space-y-4 bg-[#080b11]">
           <div className="space-y-1.5">
-            <span className="text-[10px] font-mono uppercase text-[#089981] font-bold tracking-wider">
-              INDEPENDENT PATRONAGE
-            </span>
-            <h2 className="text-lg font-bold text-white tracking-tight leading-snug">
+            <div className="flex items-center gap-1.5">
+              <span className="px-1 py-0.2 bg-[#ff8800] text-black font-black text-[9px]">&lt;ALLOC 03&gt;</span>
+              <span className="text-[10px] uppercase text-[#00c176] font-bold tracking-wider">
+                INDEPENDENT PATRONAGE
+              </span>
+            </div>
+            <h2 className="text-base font-black text-white tracking-tight leading-snug">
               Underwrite Independent Market Telemetry
             </h2>
-            <p className="text-xs text-[#787b86] leading-relaxed">
+            <p className="text-xs text-[#8e95a5] leading-relaxed">
               Celsius is intentionally architected to operate with minimal overhead. When you underwrite our operating costs, you ensure that unbiased trade journaling, verified track records, and honest sentiment data remain free from broker liquidation kickbacks.
             </p>
           </div>
 
-          <div className="p-3.5 rounded bg-[#1e222d] border border-[#2a2e39] space-y-2">
-            <div className="text-[10px] font-mono text-[#787b86] uppercase tracking-wider">
+          <div className="p-3 rounded-sm bg-[#000000] border border-[#1a2333] space-y-1.5">
+            <div className="text-[10px] text-[#ff8800] uppercase font-bold tracking-wider">
               Selected Allocation Impact
             </div>
-            <p className="text-xs text-white leading-relaxed font-sans">
+            <p className="text-xs text-white leading-relaxed">
               {getImpactText(finalAmount)}
             </p>
           </div>
 
-          <div className="space-y-2 text-[11px] text-[#787b86]">
+          <div className="space-y-1.5 text-[11px] text-[#8e95a5]">
             <div className="flex items-center gap-2">
-              <span className="text-[#089981]">✓</span>
+              <span className="text-[#00c176] font-bold">✓</span>
               <span>100% itemized public accounting</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-[#089981]">✓</span>
+              <span className="text-[#00c176] font-bold">✓</span>
               <span>Optional anonymous ledger recording</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-[#089981]">✓</span>
+              <span className="text-[#00c176] font-bold">✓</span>
               <span>Zero third-party tracking pixels or telemetry cookies</span>
             </div>
           </div>
         </div>
 
         {/* Right Column: Underwriting Form */}
-        <div className="lg:col-span-7 p-6 space-y-5">
-          <form onSubmit={handleDonate} className="space-y-5">
+        <div className="lg:col-span-7 p-5 space-y-4 bg-[#05070a]">
+          <form onSubmit={handleDonate} className="space-y-4">
             {/* Cadence Selector */}
             <div className="space-y-1.5">
-              <label className="text-[10px] font-mono uppercase text-[#787b86] block">
-                Cadence Selection
+              <label className="text-[10px] uppercase text-[#64748b] block font-bold">
+                CADENCE SELECTION
               </label>
-              <div className="grid grid-cols-2 gap-2 text-xs font-mono">
+              <div className="grid grid-cols-2 gap-2 text-xs">
                 <button
                   type="button"
-                  onClick={() => setIsMonthly(true)}
-                  className={`py-2 px-3 rounded border text-center transition-colors font-medium ${
+                  onClick={() => {
+                    terminalAudio.playTick();
+                    setIsMonthly(true);
+                  }}
+                  className={`py-2 px-3 rounded-sm border text-center transition-colors font-bold ${
                     isMonthly
-                      ? 'bg-[#2962ff] text-white border-[#2962ff]'
-                      : 'bg-[#1e222d] text-[#787b86] border-[#2a2e39] hover:text-white'
+                      ? 'bg-[#ff8800] text-black border-[#ff8800]'
+                      : 'bg-[#0c1017] text-[#8e95a5] border-[#1a2333] hover:text-white hover:border-[#ff8800]/50'
                   }`}
                 >
-                  Monthly Underwriter (Recommended)
+                  &lt;MONTHLY UNDERWRITER&gt;
                 </button>
                 <button
                   type="button"
-                  onClick={() => setIsMonthly(false)}
-                  className={`py-2 px-3 rounded border text-center transition-colors font-medium ${
+                  onClick={() => {
+                    terminalAudio.playTick();
+                    setIsMonthly(false);
+                  }}
+                  className={`py-2 px-3 rounded-sm border text-center transition-colors font-bold ${
                     !isMonthly
-                      ? 'bg-[#2962ff] text-white border-[#2962ff]'
-                      : 'bg-[#1e222d] text-[#787b86] border-[#2a2e39] hover:text-white'
+                      ? 'bg-[#ff8800] text-black border-[#ff8800]'
+                      : 'bg-[#0c1017] text-[#8e95a5] border-[#1a2333] hover:text-white hover:border-[#ff8800]/50'
                   }`}
                 >
-                  Single Allocation
+                  &lt;SINGLE ALLOCATION&gt;
                 </button>
               </div>
             </div>
 
             {/* Amount Selection Matrix */}
             <div className="space-y-1.5">
-              <label className="text-[10px] font-mono uppercase text-[#787b86] block">
-                Contribution Amount (USD)
+              <label className="text-[10px] uppercase text-[#64748b] block font-bold">
+                CONTRIBUTION AMOUNT (USD)
               </label>
               <div className="grid grid-cols-5 gap-2">
                 {[3, 5, 10, 25].map((amt) => (
@@ -339,34 +352,38 @@ export const FundingClientView: React.FC<FundingClientViewProps> = ({ initialSum
                     key={amt}
                     type="button"
                     onClick={() => {
+                      terminalAudio.playTick();
                       setSelectedAmount(amt);
                       setIsCustom(false);
                     }}
-                    className={`py-2 rounded border text-xs font-mono font-bold transition-colors ${
+                    className={`py-2 rounded-sm border text-xs font-bold transition-colors ${
                       !isCustom && selectedAmount === amt
-                        ? 'bg-[#1e222d] text-white border-[#2962ff]'
-                        : 'bg-[#131722] text-[#787b86] border-[#2a2e39] hover:text-white hover:border-[#363a45]'
+                        ? 'bg-[#ff8800] text-black border-[#ff8800]'
+                        : 'bg-[#0c1017] text-[#8e95a5] border-[#1a2333] hover:text-white hover:border-[#ff8800]/50'
                     }`}
                   >
-                    ${amt}
+                    &lt;${amt}&gt;
                   </button>
                 ))}
                 <button
                   type="button"
-                  onClick={() => setIsCustom(true)}
-                  className={`py-2 rounded border text-xs font-mono font-bold transition-colors ${
+                  onClick={() => {
+                    terminalAudio.playTick();
+                    setIsCustom(true);
+                  }}
+                  className={`py-2 rounded-sm border text-xs font-bold transition-colors ${
                     isCustom
-                      ? 'bg-[#1e222d] text-white border-[#2962ff]'
-                      : 'bg-[#131722] text-[#787b86] border-[#2a2e39] hover:text-white hover:border-[#363a45]'
+                      ? 'bg-[#ff8800] text-black border-[#ff8800]'
+                      : 'bg-[#0c1017] text-[#8e95a5] border-[#1a2333] hover:text-white hover:border-[#ff8800]/50'
                   }`}
                 >
-                  Custom
+                  &lt;CUSTOM&gt;
                 </button>
               </div>
 
               {isCustom && (
                 <div className="relative mt-2">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#787b86] font-mono text-xs">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#ff8800] text-xs font-bold">
                     $
                   </span>
                   <input
@@ -376,7 +393,7 @@ export const FundingClientView: React.FC<FundingClientViewProps> = ({ initialSum
                     placeholder="Enter custom USD allocation"
                     value={customAmount}
                     onChange={(e) => setCustomAmount(e.target.value)}
-                    className="w-full bg-[#131722] border border-[#2a2e39] rounded pl-7 pr-3 py-2 text-xs text-white placeholder-[#50535e] focus:outline-none focus:border-[#2962ff] font-mono"
+                    className="w-full bg-[#000000] border border-[#1a2333] rounded-sm pl-7 pr-3 py-2 text-xs text-white placeholder-[#50535e] focus:outline-none focus:border-[#ff8800]"
                     required
                   />
                 </div>
@@ -384,18 +401,18 @@ export const FundingClientView: React.FC<FundingClientViewProps> = ({ initialSum
             </div>
 
             {/* Contributor Metadata */}
-            <div className="space-y-3 pt-1 border-t border-[#2a2e39]/60">
+            <div className="space-y-2.5 pt-2 border-t border-[#141a26]">
               <div className="flex items-center gap-2">
                 <input
                   type="checkbox"
                   id="anon"
                   checked={isAnonymous}
                   onChange={(e) => setIsAnonymous(e.target.checked)}
-                  className="rounded border-[#2a2e39] bg-[#131722] text-[#2962ff] focus:ring-0 focus:ring-offset-0 cursor-pointer"
+                  className="rounded-sm border-[#1a2333] bg-[#000000] text-[#ff8800] focus:ring-0 cursor-pointer"
                 />
                 <label
                   htmlFor="anon"
-                  className="text-xs text-[#787b86] cursor-pointer select-none"
+                  className="text-xs text-[#8e95a5] cursor-pointer select-none"
                 >
                   Record anonymously on the public support journal
                 </label>
@@ -408,7 +425,7 @@ export const FundingClientView: React.FC<FundingClientViewProps> = ({ initialSum
                     placeholder="Contributor Name or Trading Handle (optional)"
                     value={donorName}
                     onChange={(e) => setDonorName(e.target.value)}
-                    className="w-full bg-[#131722] border border-[#2a2e39] rounded px-3 py-2 text-xs text-white placeholder-[#50535e] focus:outline-none focus:border-[#2962ff] font-sans"
+                    className="w-full bg-[#000000] border border-[#1a2333] rounded-sm px-3 py-2 text-xs text-white placeholder-[#50535e] focus:outline-none focus:border-[#ff8800]"
                   />
                 </div>
               )}
@@ -419,21 +436,21 @@ export const FundingClientView: React.FC<FundingClientViewProps> = ({ initialSum
                   placeholder="Statement or Note for Public Ledger (optional)"
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  className="w-full bg-[#131722] border border-[#2a2e39] rounded px-3 py-2 text-xs text-white placeholder-[#50535e] focus:outline-none focus:border-[#2962ff] font-sans"
+                  className="w-full bg-[#000000] border border-[#1a2333] rounded-sm px-3 py-2 text-xs text-white placeholder-[#50535e] focus:outline-none focus:border-[#ff8800]"
                 />
               </div>
             </div>
 
             {/* Notification Callouts */}
             {errorMsg && (
-              <div className="p-3 rounded bg-[#f23645]/10 border border-[#f23645]/30 text-[#f23645] text-xs flex items-center gap-2">
+              <div className="p-2.5 rounded-sm bg-[#f23645]/10 border border-[#f23645]/40 text-[#f23645] text-xs flex items-center gap-2">
                 <AlertCircle size={14} className="shrink-0" />
                 <span>{errorMsg}</span>
               </div>
             )}
 
             {successMsg && (
-              <div className="p-3 rounded bg-[#089981]/10 border border-[#089981]/30 text-[#089981] text-xs flex items-center gap-2">
+              <div className="p-2.5 rounded-sm bg-[#00c176]/10 border border-[#00c176]/40 text-[#00c176] text-xs flex items-center gap-2">
                 <Check size={14} className="shrink-0" />
                 <span>{successMsg}</span>
               </div>
@@ -443,14 +460,14 @@ export const FundingClientView: React.FC<FundingClientViewProps> = ({ initialSum
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-[#2962ff] hover:bg-[#1e53e5] text-white py-2.5 rounded font-mono font-bold text-xs transition-colors flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer shadow-sm"
+              className="w-full bg-[#ff8800] hover:bg-[#ffa033] text-black py-2.5 rounded-sm font-black text-xs transition-colors flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer shadow-sm tracking-wider"
             >
               {loading ? (
-                <span>Recording in Ledger...</span>
+                <span>RECORDING IN LEDGER...</span>
               ) : (
                 <span>
-                  Confirm Contribution (${finalAmount.toFixed(2)}{' '}
-                  {isMonthly ? '/ month' : ''})
+                  &lt;CONFIRM ALLOCATION &lt;GO&gt;&gt; (${finalAmount.toFixed(2)}{' '}
+                  {isMonthly ? '/ MO' : ''})
                 </span>
               )}
             </button>
@@ -459,60 +476,61 @@ export const FundingClientView: React.FC<FundingClientViewProps> = ({ initialSum
       </div>
 
       {/* 4. Public Support Ledger */}
-      <div className="border border-[#2a2e39] bg-[#171b26] rounded-md overflow-hidden space-y-0">
-        <div className="px-5 py-3 border-b border-[#2a2e39] flex items-center justify-between text-xs">
+      <div className="border border-[#1a2333] bg-[#05070a] rounded-sm overflow-hidden space-y-0">
+        <div className="px-4 py-2.5 border-b border-[#141a26] flex items-center justify-between text-xs">
           <div className="flex items-center gap-2">
-            <span className="font-semibold text-white tracking-tight">
-              Public Underwriting Journal
+            <span className="px-1 py-0.2 bg-[#ff8800] text-black font-black text-[9px]">&lt;JRNL 04&gt;</span>
+            <span className="font-bold text-white tracking-tight">
+              PUBLIC UNDERWRITING JOURNAL
             </span>
-            <span className="text-[10px] font-mono text-[#787b86] bg-[#1e222d] px-1.5 py-0.5 rounded border border-[#2a2e39]">
+            <span className="text-[10px] text-[#ff8800] bg-[#101520] px-1.5 py-0.5 rounded-sm border border-[#1a2333]">
               {summary.recentDonations.length} RECORDS
             </span>
           </div>
-          <span className="font-mono text-[11px] text-[#787b86]">
+          <span className="text-[10px] text-[#64748b]">
             APPEND-ONLY FINANCIAL JOURNAL
           </span>
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs font-sans">
+          <table className="w-full text-left text-xs">
             <thead>
-              <tr className="border-b border-[#2a2e39] bg-[#131722] text-[#787b86] font-mono text-[11px]">
-                <th className="py-2.5 px-4 font-medium w-48">Timestamp</th>
-                <th className="py-2.5 px-4 font-medium w-56">Underwriter</th>
-                <th className="py-2.5 px-4 font-medium w-28">Cadence</th>
-                <th className="py-2.5 px-4 font-medium">Public Note / Statement</th>
-                <th className="py-2.5 px-4 font-medium text-right w-32">Allocation</th>
+              <tr className="border-b border-[#141a26] bg-[#0c1017] text-[#ff8800] text-[10px] uppercase tracking-wider">
+                <th className="py-2 px-3 font-bold w-40">Timestamp</th>
+                <th className="py-2 px-3 font-bold w-48">Underwriter</th>
+                <th className="py-2 px-3 font-bold w-24">Cadence</th>
+                <th className="py-2 px-3 font-bold">Public Note / Statement</th>
+                <th className="py-2 px-3 font-bold text-right w-32">Allocation</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#2a2e39]/60">
+            <tbody className="divide-y divide-[#141a26]">
               {summary.recentDonations.map((don) => (
-                <tr key={don.id} className="hover:bg-[#1e222d]/40 transition-colors">
-                  <td className="py-3 px-4 font-mono text-[11px] text-[#787b86]">
+                <tr key={don.id} className="hover:bg-[#0c121e] transition-colors">
+                  <td className="py-2.5 px-3 text-[11px] text-[#64748b]">
                     {new Date(don.createdAt).toLocaleDateString(undefined, {
                       year: 'numeric',
                       month: 'short',
                       day: 'numeric',
                     })}
                   </td>
-                  <td className="py-3 px-4 font-medium text-white">
+                  <td className="py-2.5 px-3 font-bold text-white">
                     {don.donorName}
                   </td>
-                  <td className="py-3 px-4 font-mono text-[10px]">
+                  <td className="py-2.5 px-3 text-[10px]">
                     {don.isMonthly ? (
-                      <span className="text-[#089981] bg-[#089981]/10 px-1.5 py-0.5 rounded border border-[#089981]/20">
+                      <span className="text-[#00c176] bg-[#00c176]/10 px-1.5 py-0.5 rounded-sm border border-[#00c176]/30 font-bold">
                         MONTHLY
                       </span>
                     ) : (
-                      <span className="text-[#787b86] bg-[#1e222d] px-1.5 py-0.5 rounded border border-[#2a2e39]">
+                      <span className="text-[#8e95a5] bg-[#101520] px-1.5 py-0.5 rounded-sm border border-[#1a2333]">
                         ONE-TIME
                       </span>
                     )}
                   </td>
-                  <td className="py-3 px-4 text-[#787b86] text-[11px] italic">
+                  <td className="py-2.5 px-3 text-[#8e95a5] text-[11px] italic">
                     {don.message ? `“${don.message}”` : '—'}
                   </td>
-                  <td className="py-3 px-4 text-right font-mono font-bold text-[#089981]">
+                  <td className="py-2.5 px-3 text-right font-black text-[#00c176]">
                     +${(don.amountCents / 100).toFixed(2)}
                   </td>
                 </tr>

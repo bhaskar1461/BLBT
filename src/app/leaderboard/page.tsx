@@ -21,6 +21,7 @@ import { formatPrice } from '@/lib/utils';
 import type { LeaderboardEntry } from '@/types/trading';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { BloombergUniversalHeader } from '@/components/bloomberg/BloombergUniversalHeader';
 
 export default function LeaderboardPage() {
   const [timeframe, setTimeframe] = useState<'24h' | '7d' | '30d' | 'all'>('all');
@@ -64,48 +65,12 @@ export default function LeaderboardPage() {
   const isUserInTop50 = rankings.some((r) => r.userId === user.id);
 
   return (
-    <main className="min-h-screen bg-canvas text-main font-sans selection:bg-bull/30 flex flex-col">
-      {/* Top Header */}
-      <header className="h-14 bg-surface border-b border-subtle flex items-center justify-between px-4 sm:px-8 shrink-0 z-20">
-        <div className="flex items-center gap-3">
-          <Link href="/">
-            <Button variant="default" size="sm" className="gap-1.5 text-xs">
-              <ArrowLeft size={14} />
-              <span>Terminal</span>
-            </Button>
-          </Link>
-
-          <div className="flex items-center gap-2 border-l border-subtle pl-3">
-            <div className="w-7 h-7 rounded-md bg-gradient-to-br from-[#ffd700] to-[#ff9f1c] flex items-center justify-center font-extrabold text-xs text-canvas shadow-md shadow-gold/20">
-              🏆
-            </div>
-            <div className="flex flex-col">
-              <span className="font-extrabold text-sm tracking-tight text-white leading-none">
-                PAPER TRADING LEADERBOARD
-              </span>
-              <span className="text-[10px] text-faint font-mono">
-                {totalTraders.toLocaleString()} active traders • Ranked by Realized P&L %
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          {/* Share my stats card button */}
-          <Link href={`/share/stats/${encodeURIComponent(user.id)}`}>
-            <Button variant="default" size="sm" className="gap-1.5 border-primary/30 text-primary hover:text-white text-xs">
-              <Share2 size={13} />
-              <span className="hidden sm:inline">Share My Stats Card</span>
-            </Button>
-          </Link>
-
-          {/* User Status pill */}
-          <div className="flex items-center gap-1.5 bg-card border border-subtle px-2.5 py-1 rounded text-xs">
-            <User size={13} className="text-bull" />
-            <span className="font-bold text-white text-xs">{user.displayName}</span>
-          </div>
-        </div>
-      </header>
+    <main className="min-h-screen bg-[#000000] text-[#d1d4dc] font-mono selection:bg-[#ff8800]/30 flex flex-col">
+      {/* Bloomberg Universal Header */}
+      <BloombergUniversalHeader
+        activeMnemonic="LEAD"
+        subtitle="PAPER TRADING LEADERBOARD // RANKINGS"
+      />
 
       {/* Main Content Area */}
       <div className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 flex flex-col gap-6">

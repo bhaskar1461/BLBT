@@ -17,6 +17,7 @@ import {
 import { realityService } from '@/lib/realityService';
 import { formatPrice } from '@/lib/utils';
 import { ShareRealityButton } from '@/components/reality/ShareRealityButton';
+import { BloombergUniversalHeader } from '@/components/bloomberg/BloombergUniversalHeader';
 
 export const dynamic = 'force-dynamic';
 
@@ -28,7 +29,7 @@ export async function generateMetadata({
   const period = searchParams?.period === '90' ? 90 : 30;
   const stats = realityService.getRealityStats(period);
 
-  const title = 'Reality Check — Everyone shows you their wins. We show you everything.';
+  const title = 'Reality Check — Everyone shows you their wins. We show you everything. | Bloomberg Professional';
   const description = `${stats.unprofitableTradersPct}% of active retail paper traders lost money over the last ${period} days. Median return: -$${Math.abs(stats.medianPnlUsdt).toFixed(2)}. Unvarnished database proof from the Celsius trading ledger.`;
 
   return {
@@ -38,13 +39,13 @@ export async function generateMetadata({
       title,
       description,
       url: `/reality?period=${period}`,
-      siteName: 'Celsius Terminal',
+      siteName: 'Bloomberg Professional',
       images: [
         {
           url: `/api/og/reality?period=${period}`,
           width: 1200,
           height: 630,
-          alt: 'Celsius Terminal Reality Check — Unfiltered Retail Trading Proof',
+          alt: 'Bloomberg Professional Reality Check — Unfiltered Retail Trading Proof',
         },
       ],
       type: 'website',
@@ -67,98 +68,59 @@ export default function RealityPage({
   const stats = realityService.getRealityStats(period);
 
   return (
-    <main className="min-h-screen bg-canvas text-main flex flex-col items-center justify-between p-4 sm:p-8 font-sans selection:bg-bear/30">
-      {/* Top Navbar */}
-      <header className="w-full max-w-5xl flex items-center justify-between py-4 border-b border-subtle">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-bear to-amber-500 flex items-center justify-center font-extrabold text-sm text-canvas shadow-lg shadow-bear/20">
-            °C
-          </div>
-          <span className="font-bold text-lg tracking-tight text-white">
-            CELSIUS <span className="text-bear text-xs font-mono font-medium ml-1">REALITY CHECK</span>
-          </span>
-        </Link>
+    <div className="min-h-screen bg-[#000000] text-[#d1d4dc] font-mono selection:bg-[#ff8800]/30 flex flex-col justify-between">
+      {/* Bloomberg Universal Header */}
+      <BloombergUniversalHeader
+        activeMnemonic="REALITY"
+        subtitle="AGGREGATE TRADING TRUTH // DATABASE AUDIT"
+      />
 
-        <div className="flex items-center gap-3">
-          <Link
-            href="/tournaments"
-            className="text-xs font-semibold text-faint hover:text-white transition-colors hidden md:flex items-center gap-1.5"
-          >
-            <span>🏆 Tournaments</span>
-          </Link>
-          <Link
-            href="/backtest"
-            className="text-xs font-semibold text-faint hover:text-white transition-colors hidden md:flex items-center gap-1.5"
-          >
-            <span>🔄 Backtester</span>
-          </Link>
-          <Link
-            href="/scoreboard"
-            className="text-xs font-semibold text-faint hover:text-white transition-colors hidden md:flex items-center gap-1.5"
-          >
-            <span>⚖️ Scoreboard</span>
-          </Link>
-          <Link
-            href="/transparency"
-            className="text-xs font-semibold text-faint hover:text-white transition-colors flex items-center gap-1.5"
-          >
-            <span>🛡️ Ledger Proofs</span>
-          </Link>
-          <Link
-            href="/leaderboard"
-            className="text-xs font-semibold text-faint hover:text-white transition-colors hidden sm:flex items-center gap-1.5"
-          >
-            <span>🏆 Leaderboard</span>
-          </Link>
-          <Link
-            href="/"
-            className="btn btn-primary text-xs px-3.5 py-1.5 rounded-md font-bold"
-          >
-            Open Terminal
-          </Link>
-        </div>
-      </header>
-
-      {/* Main Showcase Section */}
-      <section className="w-full max-w-5xl my-8 space-y-8">
+      {/* Main Content */}
+      <main className="w-full max-w-6xl mx-auto px-4 py-8 space-y-6 flex-1">
         {/* Hero Section */}
-        <div className="text-center space-y-3 max-w-2xl mx-auto">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-bear/10 border border-bear/20 text-bear text-xs font-mono font-bold tracking-tight">
-            <AlertTriangle size={14} />
-            <span>THE UNFILTERED TRUTH ABOUT RETAIL TRADING</span>
+        <div className="border border-[#1a2333] bg-[#05070a] p-6 rounded-sm space-y-3">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#141a26] pb-3 text-[11px]">
+            <div className="flex items-center gap-2">
+              <span className="px-1.5 py-0.2 bg-[#ff8800] text-black font-black text-[10px]">&lt;REAL 01&gt;</span>
+              <span className="text-[#ff8800] font-bold">THE UNFILTERED TRUTH ABOUT RETAIL TRADING</span>
+            </div>
+            <div className="flex items-center gap-1.5 text-red-400 font-bold text-[10px]">
+              <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+              <span>LIVE DATABASE COHORT: {stats.totalActiveTraders} TRADERS</span>
+            </div>
           </div>
 
-          <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight">
+          <h1 className="text-xl sm:text-3xl font-black text-white tracking-tight leading-snug">
             Everyone shows you their wins.<br />
-            <span className="text-bear">We show you everything.</span>
+            <span className="text-[#ff8800]">We show you everything.</span>
           </h1>
 
-          <p className="text-sm text-muted leading-relaxed">
+          <p className="text-xs text-[#8e95a5] leading-relaxed max-w-3xl">
             Every day, retail brokers and signal sellers post 100x screenshots while hiding that 8 out of 10 traders lose capital. Below is the unvarnished aggregate reality across all {stats.totalActiveTraders}+ paper accounts on Celsius. Computed live from our immutable ledger at render time.
           </p>
 
           {/* Timeframe Switcher & Share */}
-          <div className="flex items-center justify-center gap-3 pt-2">
-            <div className="inline-flex rounded-xl bg-panel border border-subtle p-1 font-mono text-xs">
+          <div className="flex flex-wrap items-center gap-3 pt-2">
+            <div className="inline-flex rounded-sm bg-[#0c1017] border border-[#1a2333] p-0.5 text-xs">
               <Link
                 href="/reality?period=30"
-                className={`px-3.5 py-1.5 rounded-lg font-bold transition-all ${
+                className={`px-3 py-1 rounded-sm font-bold transition-all ${
                   period === 30
-                    ? 'bg-primary text-canvas shadow-md'
-                    : 'text-faint hover:text-white'
+                    ? 'bg-[#ff8800] text-black'
+                    : 'text-[#8e95a5] hover:text-white'
                 }`}
               >
-                Last 30 Days
+                &lt;30 DAYS&gt;
               </Link>
               <Link
                 href="/reality?period=90"
-                className={`px-3.5 py-1.5 rounded-lg font-bold transition-all ${
+                className={`px-3 py-1 rounded-sm font-bold transition-all ${
                   period === 90
-                    ? 'bg-primary text-canvas shadow-md'
-                    : 'text-faint hover:text-white'
+                    ? 'bg-[#ff8800] text-black'
+                    : 'text-[#8e95a5] hover:text-white'
                 }`}
               >
-                Last 90 Days
+                &lt;90 DAYS&gt;
               </Link>
             </div>
 
@@ -167,89 +129,89 @@ export default function RealityPage({
         </div>
 
         {/* Brutal Truth KPI Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {/* 1. Profitable Traders */}
-          <div className="p-6 rounded-2xl bg-panel border border-bear/30 relative overflow-hidden shadow-xl shadow-bear/5">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-faint">
-              Traders In Profit ({period}d)
+          <div className="p-4 rounded-sm bg-[#05070a] border border-red-500/40 space-y-1">
+            <span className="text-[10px] uppercase text-[#64748b]">
+              TRADERS IN PROFIT ({period}D)
             </span>
-            <div className="text-3xl sm:text-4xl font-extrabold font-mono text-bear mt-2">
+            <div className="text-3xl font-black text-red-500">
               {`${stats.profitableTradersPct}%`}
             </div>
-            <p className="text-xs text-muted mt-2 leading-relaxed">
+            <p className="text-[10px] text-[#8e95a5] leading-normal pt-1">
               <strong className="text-white">{`${stats.unprofitableTradersPct}% of accounts lost money`}</strong> over this period. Only {`${stats.profitableTradersPct}%`} maintained a balance above zero.
             </p>
           </div>
 
           {/* 2. Median & Average Trader P&L */}
-          <div className="p-6 rounded-2xl bg-panel border border-subtle relative overflow-hidden">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-faint">
-              Median / Average Return
+          <div className="p-4 rounded-sm bg-[#05070a] border border-[#1a2333] space-y-1">
+            <span className="text-[10px] uppercase text-[#64748b]">
+              MEDIAN / AVERAGE RETURN
             </span>
-            <div className="text-3xl sm:text-4xl font-extrabold font-mono text-bear mt-2">
+            <div className="text-3xl font-black text-red-500">
               {`-$${formatPrice(Math.abs(stats.medianPnlUsdt), 0)}`}
             </div>
-            <p className="text-xs text-muted mt-2 leading-relaxed">
-              Median loss: <strong className="text-white">{`-$${formatPrice(Math.abs(stats.medianPnlUsdt), 2)} USDT`}</strong>. Average loss: <strong className="text-bear">{`-$${formatPrice(Math.abs(stats.averagePnlUsdt), 2)} USDT`}</strong> due to catastrophic liquidation tails.
+            <p className="text-[10px] text-[#8e95a5] leading-normal pt-1">
+              Median loss: <strong className="text-white">{`-$${formatPrice(Math.abs(stats.medianPnlUsdt), 2)} USDT`}</strong>. Average loss: <strong className="text-red-400">{`-$${formatPrice(Math.abs(stats.averagePnlUsdt), 2)} USDT`}</strong>.
             </p>
           </div>
 
           {/* 3. Underperformed BTC Buy & Hold */}
-          <div className="p-6 rounded-2xl bg-panel border border-subtle relative overflow-hidden">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-faint">
-              Lost To Buy-And-Hold
+          <div className="p-4 rounded-sm bg-[#05070a] border border-[#1a2333] space-y-1">
+            <span className="text-[10px] uppercase text-[#64748b]">
+              LOST TO BUY-AND-HOLD
             </span>
-            <div className="text-3xl sm:text-4xl font-extrabold font-mono text-amber-400 mt-2">
+            <div className="text-3xl font-black text-[#ff8800]">
               {stats.buyAndHoldOutperformedPct}%
             </div>
-            <p className="text-xs text-muted mt-2 leading-relaxed">
+            <p className="text-[10px] text-[#8e95a5] leading-normal pt-1">
               Over 83% of active traders underperformed simply holding Bitcoin over the exact same period with zero stress.
             </p>
           </div>
 
           {/* 4. Average Holding Time */}
-          <div className="p-6 rounded-2xl bg-panel border border-subtle relative overflow-hidden">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-faint">
-              Average Hold Duration
+          <div className="p-4 rounded-sm bg-[#05070a] border border-[#1a2333] space-y-1">
+            <span className="text-[10px] uppercase text-[#64748b]">
+              AVERAGE HOLD DURATION
             </span>
-            <div className="text-3xl sm:text-4xl font-extrabold font-mono text-white mt-2">
+            <div className="text-3xl font-black text-white">
               {stats.averageHoldTimeFormatted}
             </div>
-            <p className="text-xs text-muted mt-2 leading-relaxed">
+            <p className="text-[10px] text-[#8e95a5] leading-normal pt-1">
               Hyperactivity symptom: retail orders are closed in minutes, paying massive spread and fee drag to casino exchanges.
             </p>
           </div>
         </div>
 
         {/* P&L Distribution Curve Chart */}
-        <div className="p-6 sm:p-8 rounded-2xl bg-panel border border-subtle space-y-6">
-          <div>
+        <div className="p-5 rounded-sm bg-[#05070a] border border-[#1a2333] space-y-4">
+          <div className="border-b border-[#141a26] pb-2">
             <div className="flex items-center gap-2">
-              <BarChart3 size={18} className="text-primary" />
-              <h3 className="text-base font-bold text-white">The P&L Distribution Curve</h3>
+              <span className="px-1 py-0.2 bg-[#ff8800] text-black font-black text-[9px]">&lt;DIST 02&gt;</span>
+              <h3 className="text-xs font-bold text-white uppercase tracking-wider">THE P&amp;L DISTRIBUTION CURVE</h3>
             </div>
-            <p className="text-xs text-muted mt-1">
+            <p className="text-[10px] text-[#8e95a5] mt-1">
               Sample of {stats.totalActiveTraders} paper accounts across {stats.totalTradesRecorded} closed executions. Notice the heavy skew toward deep drawdowns.
             </p>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-2.5">
             {stats.pnlDistribution.map((bucket) => {
               const isLoss = bucket.range.includes('-');
               return (
-                <div key={bucket.range} className="space-y-1.5">
+                <div key={bucket.range} className="space-y-1">
                   <div className="flex items-center justify-between text-xs">
-                    <span className={`font-mono font-bold ${isLoss ? 'text-bear' : 'text-bull'}`}>
+                    <span className={`font-bold ${isLoss ? 'text-red-400' : 'text-[#00c176]'}`}>
                       {bucket.range}
                     </span>
-                    <span className="font-mono text-faint">
+                    <span className="text-[10px] text-[#64748b]">
                       {bucket.pct}% of all traders ({bucket.count} accounts)
                     </span>
                   </div>
 
-                  <div className="w-full h-3 rounded-full bg-canvas border border-subtle overflow-hidden">
+                  <div className="w-full h-2 rounded-none bg-[#0c1017] border border-[#1a2333] overflow-hidden">
                     <div
-                      className="h-full rounded-full transition-all duration-500"
+                      className="h-full transition-all duration-500"
                       style={{
                         width: `${bucket.pct * 2.8}%`,
                         backgroundColor: bucket.color,
@@ -262,53 +224,48 @@ export default function RealityPage({
           </div>
         </div>
 
-        {/* Top 3 Most-Traded Assets vs Actual Market Performance (Prompt 2.1) */}
-        <div className="p-6 sm:p-8 rounded-2xl bg-panel border border-subtle space-y-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="flex items-center gap-2">
-                <Activity size={18} className="text-amber-400" />
-                <h3 className="text-base font-bold text-white">Top 3 Most-Traded Assets vs. Actual Performance</h3>
-              </div>
-              <p className="text-xs text-muted mt-1">
-                Comparing what the market did versus what retail traders achieved on the exact same asset.
-              </p>
+        {/* Top 3 Most-Traded Assets vs Actual Market Performance */}
+        <div className="p-5 rounded-sm bg-[#05070a] border border-[#1a2333] space-y-4">
+          <div className="flex items-center justify-between border-b border-[#141a26] pb-2">
+            <div className="flex items-center gap-2">
+              <span className="px-1 py-0.2 bg-[#ff8800] text-black font-black text-[9px]">&lt;ASSET 03&gt;</span>
+              <h3 className="text-xs font-bold text-white uppercase tracking-wider">TOP 3 MOST-TRADED ASSETS VS. ACTUAL PERFORMANCE</h3>
             </div>
-            <span className="text-xs font-mono text-faint">
-              {period}-Day Realized Telemetry
+            <span className="text-[10px] text-[#64748b]">
+              {period}-DAY REALIZED TELEMETRY
             </span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {stats.topAssetsVsPerformance.map((asset) => (
               <div
                 key={asset.symbol}
-                className="p-5 rounded-xl bg-canvas border border-subtle space-y-3 flex flex-col justify-between"
+                className="p-4 rounded-sm bg-[#000000] border border-[#1a2333] space-y-2.5 flex flex-col justify-between"
               >
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-sm text-white">{`${asset.name} (${asset.symbol})`}</span>
-                    <span className="text-[10px] font-mono bg-white/5 px-2 py-0.5 rounded text-faint">
-                      {`${asset.tradeSharePct}% of Volume`}
+                    <span className="font-bold text-xs text-white">{`${asset.name} (${asset.symbol})`}</span>
+                    <span className="text-[10px] bg-[#101520] px-1.5 py-0.5 rounded-sm text-[#ff8800] border border-[#1a2333]">
+                      {`${asset.tradeSharePct}% VOL`}
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2 pt-1 font-mono text-xs">
-                    <div className="p-2.5 rounded-lg bg-panel border border-subtle">
-                      <div className="text-[10px] text-faint uppercase">Asset Price Move</div>
-                      <div className="text-sm font-bold text-bull mt-0.5">
+                  <div className="grid grid-cols-2 gap-2 pt-1 text-xs">
+                    <div className="p-2 rounded-sm bg-[#05070a] border border-[#1a2333]">
+                      <div className="text-[9px] text-[#64748b] uppercase">ASSET MOVE</div>
+                      <div className="text-xs font-bold text-[#00c176] mt-0.5">
                         +{asset.assetPriceChangePct}%
                       </div>
                     </div>
-                    <div className="p-2.5 rounded-lg bg-panel border border-subtle">
-                      <div className="text-[10px] text-faint uppercase">Trader Avg Return</div>
-                      <div className="text-sm font-bold text-bear mt-0.5">
+                    <div className="p-2 rounded-sm bg-[#05070a] border border-[#1a2333]">
+                      <div className="text-[9px] text-[#64748b] uppercase">TRADER RETURN</div>
+                      <div className="text-xs font-bold text-red-400 mt-0.5">
                         {asset.traderAveragePnlPct}%
                       </div>
                     </div>
                   </div>
 
-                  <p className="text-xs text-muted leading-relaxed pt-1">
+                  <p className="text-[10px] text-[#8e95a5] leading-relaxed pt-1">
                     {asset.honestInsight}
                   </p>
                 </div>
@@ -318,58 +275,54 @@ export default function RealityPage({
         </div>
 
         {/* Psychological Pitfalls Anatomy */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="p-6 rounded-2xl bg-panel border border-bear/20 space-y-3">
-            <div className="w-9 h-9 rounded-xl bg-bear/10 text-bear flex items-center justify-center font-bold">
-              <Flame size={18} />
-            </div>
-            <h3 className="text-sm font-bold text-white">#1 Killer: {stats.mostCommonLosingBehavior.name}</h3>
-            <p className="text-xs text-muted leading-relaxed">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="p-4 rounded-sm bg-[#05070a] border border-red-500/30 space-y-2">
+            <h3 className="text-xs font-bold text-red-400">#1 KILLER: {stats.mostCommonLosingBehavior.name.toUpperCase()}</h3>
+            <p className="text-[10px] text-[#8e95a5] leading-relaxed">
               {stats.mostCommonLosingBehavior.description}
             </p>
-            <div className="p-3 rounded-xl bg-canvas border border-bear/20 text-xs font-mono font-bold text-bear">
+            <div className="p-2 rounded-sm bg-[#000000] border border-red-500/20 text-[11px] font-bold text-red-400">
               {stats.mostCommonLosingBehavior.stat}
             </div>
           </div>
 
-          <div className="p-6 rounded-2xl bg-panel border border-subtle space-y-3">
-            <div className="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold">
-              <Brain size={18} />
-            </div>
-            <h3 className="text-sm font-bold text-white">#2 Killer: {stats.secondaryLosingBehavior.name}</h3>
-            <p className="text-xs text-muted leading-relaxed">
+          <div className="p-4 rounded-sm bg-[#05070a] border border-[#1a2333] space-y-2">
+            <h3 className="text-xs font-bold text-[#ff8800]">#2 KILLER: {stats.secondaryLosingBehavior.name.toUpperCase()}</h3>
+            <p className="text-[10px] text-[#8e95a5] leading-relaxed">
               {stats.secondaryLosingBehavior.description}
             </p>
-            <div className="p-3 rounded-xl bg-canvas border border-subtle text-xs font-mono font-bold text-amber-400">
+            <div className="p-2 rounded-sm bg-[#000000] border border-[#1a2333] text-[11px] font-bold text-[#ff8800]">
               {stats.secondaryLosingBehavior.stat}
             </div>
           </div>
         </div>
 
         {/* The Honest Platform Promise Banner */}
-        <div className="p-6 sm:p-8 rounded-2xl bg-gradient-to-r from-canvas via-panel to-canvas border border-primary/30 text-center space-y-4">
-          <h2 className="text-2xl font-bold text-white tracking-tight">
+        <div className="p-5 rounded-sm bg-[#05070a] border border-[#ff8800]/40 text-center space-y-3">
+          <h2 className="text-base font-bold text-white tracking-tight">
             &quot;The only trading platform that profits from you not losing money.&quot;
           </h2>
-          <p className="text-xs text-muted max-w-xl mx-auto leading-relaxed">
+          <p className="text-xs text-[#8e95a5] max-w-xl mx-auto leading-relaxed">
             We don&apos;t sell secret signals. We don&apos;t take commissions on your churn. We build tamper-evident ledgers, daily hard loss caps, and brutal honesty so you can learn without losing your life savings.
           </p>
-          <div className="pt-2">
+          <div className="pt-1">
             <Link
               href="/"
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-primary hover:bg-primary-hover text-canvas font-bold text-xs transition-colors shadow-xl shadow-primary/20"
+              className="inline-flex items-center gap-2 px-5 py-2 rounded-sm bg-[#ff8800] hover:bg-[#ffa033] text-black font-black text-xs transition-colors shadow-sm"
             >
-              <span>Practice With Risk-Free Paper Capital</span>
-              <ArrowRight size={14} />
+              <span>&lt;OPEN 4-PANEL LAUNCHPAD &lt;GO&gt;&gt;</span>
             </Link>
           </div>
         </div>
-      </section>
+      </main>
 
-      {/* Footer */}
-      <footer className="w-full max-w-5xl text-center py-6 border-t border-subtle text-xs text-faint">
-        Celsius Network • Real-time Binance streams • 10,000 USDT Virtual Paper Trading • Verified Aggregate Telemetry
+      {/* Bloomberg Professional Terminal Footer */}
+      <footer className="border-t border-[#1a2333] bg-[#000000] py-4 text-center text-[10px] text-[#64748b]">
+        <div className="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+          <span className="text-[#ff8800]">BLOOMBERG PROFESSIONAL // REALITY CHECK TELEMETRY</span>
+          <span>100% UNVARNISHED DATABASE PROOF • SUB-SECOND DELIVERY • INTEGER RECONCILED</span>
+        </div>
       </footer>
-    </main>
+    </div>
   );
 }

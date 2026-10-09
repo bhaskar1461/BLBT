@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { scoreboardService } from '@/lib/scoreboardService';
 import { ScoreboardViewer } from '@/components/scoreboard/ScoreboardViewer';
+import { BloombergUniversalHeader } from '@/components/bloomberg/BloombergUniversalHeader';
 
 export const dynamic = 'force-dynamic';
 
@@ -20,24 +21,24 @@ export async function generateMetadata(): Promise<Metadata> {
   const ogUrl = `/api/og/scoreboard?headline=${encodeURIComponent(summary.headlineFact)}`;
 
   return {
-    title: 'The Scoreboard — Public Trading Call Scoring | Celsius Network',
+    title: 'The Scoreboard — Public Trading Call Scoring | Bloomberg Professional',
     description: `Objectively scoring public figure trading calls against real Binance prices upon expiry. ${summary.headlineFact} Neutral. Factual. Undeniable.`,
     openGraph: {
-      title: 'The Scoreboard — The Controversy Engine | Celsius Network',
+      title: 'The Scoreboard — The Controversy Engine | Bloomberg Professional',
       description: `${summary.headlineFact} Every public call held accountable against real Binance spot execution.`,
       images: [
         {
           url: ogUrl,
           width: 1200,
           height: 630,
-          alt: 'Celsius Scoreboard Accountability Engine',
+          alt: 'Bloomberg Professional Scoreboard Accountability Engine',
           type: 'image/png',
         },
       ],
     },
     twitter: {
       card: 'summary_large_image',
-      title: 'The Scoreboard — The Controversy Engine | Celsius Network',
+      title: 'The Scoreboard — The Controversy Engine | Bloomberg Professional',
       description: `${summary.headlineFact} Verified against real Binance market prices.`,
       images: [ogUrl],
     },
@@ -48,83 +49,33 @@ export default function ScoreboardPage() {
   const summary = scoreboardService.getScoreboardSummary();
 
   return (
-    <div className="min-h-screen bg-canvas text-main font-sans selection:bg-primary/20">
-      {/* Top Header Navigation */}
-      <header className="border-b border-subtle bg-panel/80 backdrop-blur sticky top-0 z-30">
-        <div className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Link
-              href="/"
-              className="flex items-center gap-2 hover:opacity-80 transition-opacity"
-            >
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-amber-500 flex items-center justify-center font-bold text-black text-sm shadow-md shadow-primary/20">
-                °C
-              </div>
-              <span className="font-bold text-sm tracking-tight text-white hidden sm:inline">
-                Celsius Network
-              </span>
-            </Link>
-            <span className="text-faint text-xs font-mono">•</span>
-            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 text-xs font-mono font-bold">
-              <span>THE SCOREBOARD</span>
+    <div className="min-h-screen bg-[#000000] text-[#d1d4dc] font-mono selection:bg-[#ff8800]/30 flex flex-col justify-between">
+      {/* Bloomberg Universal Header */}
+      <BloombergUniversalHeader
+        activeMnemonic="SCORE"
+        subtitle="PUBLIC CALL SCORING // CONTROVERSY ENGINE"
+      />
+
+      {/* Main Container */}
+      <main className="w-full max-w-6xl mx-auto px-4 py-8 space-y-6 flex-1">
+        {/* Hero Section */}
+        <div className="border border-[#1a2333] bg-[#05070a] p-6 rounded-sm space-y-3">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#141a26] pb-3 text-[11px]">
+            <div className="flex items-center gap-2">
+              <span className="px-1.5 py-0.2 bg-[#ff8800] text-black font-black text-[10px]">&lt;SCORE 01&gt;</span>
+              <span className="text-[#ff8800] font-bold">PUBLIC INFLUENCER ACCOUNTABILITY ENGINE</span>
+            </div>
+            <div className="flex items-center gap-1.5 text-[#00c176] font-bold text-[10px]">
+              <span className="w-2 h-2 rounded-full bg-[#00c176] animate-pulse" />
+              <span>REAL BINANCE SPOT EXPIRY EXECUTION</span>
             </div>
           </div>
 
-          <div className="flex items-center gap-3 text-xs">
-            <Link
-              href="/tournaments"
-              className="text-faint hover:text-white transition-colors hidden md:inline"
-            >
-              Tournaments
-            </Link>
-            <Link
-              href="/backtest"
-              className="text-faint hover:text-white transition-colors hidden md:inline"
-            >
-              The Backtester
-            </Link>
-            <Link
-              href="/sentiment"
-              className="text-faint hover:text-white transition-colors hidden md:inline"
-            >
-              Sentiment Index
-            </Link>
-            <Link
-              href="/reality"
-              className="text-faint hover:text-white transition-colors hidden md:inline"
-            >
-              The Reality Check
-            </Link>
-            <Link
-              href="/transparency"
-              className="text-faint hover:text-white transition-colors hidden md:inline"
-            >
-              Ledger Transparency
-            </Link>
-            <Link
-              href="/"
-              className="btn btn-primary py-1.5 px-3 rounded-lg text-xs font-bold"
-            >
-              Launch Terminal →
-            </Link>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Container */}
-      <main className="max-w-6xl mx-auto px-4 py-8 space-y-8">
-        {/* Hero Section */}
-        <div className="space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-subtle text-xs text-muted font-mono">
-            <Scale size={13} className="text-amber-400" />
-            <span>Public Call Scoring • The Controversy Engine</span>
-          </div>
-
-          <h1 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
+          <h1 className="text-xl sm:text-3xl font-black text-white tracking-tight leading-snug">
             Holding public influencers accountable against real market data.
           </h1>
 
-          <p className="text-muted text-sm sm:text-base max-w-2xl leading-relaxed">
+          <p className="text-xs text-[#8e95a5] max-w-3xl leading-relaxed">
             Anyone can submit a public figure&apos;s trading call. When their stated timeframe expires,
             our engine objectively scores the result against authoritative Binance prices: correct, wrong,
             or undefined — with exact percentage movement.
@@ -135,26 +86,29 @@ export default function ScoreboardPage() {
         <ScoreboardViewer initialSummary={summary} />
 
         {/* Grounding & Ethics Section */}
-        <div className="p-6 rounded-2xl bg-panel border border-subtle space-y-3 text-xs leading-relaxed text-muted">
-          <div className="flex items-center gap-2 text-white font-bold text-sm">
-            <Info size={16} className="text-primary" />
-            <span>Methodology & Neutrality Invariant</span>
+        <div className="p-5 rounded-sm bg-[#05070a] border border-[#1a2333] space-y-2 text-xs leading-relaxed text-[#8e95a5]">
+          <div className="flex items-center gap-2 text-white font-bold text-xs">
+            <span className="text-[#ff8800]">&lt;NOTE&gt;</span>
+            <span>METHODOLOGY &amp; NEUTRALITY INVARIANT</span>
           </div>
-          <p>
+          <p className="text-[11px]">
             The Scoreboard does not exist to mock individuals. It exists to protect retail traders from the
-            asymmetry ofdeleted tweets, selective screenshot marketing, and unverified signal channels.
+            asymmetry of deleted tweets, selective screenshot marketing, and unverified signal channels.
             All price calculations are derived directly from authoritative Binance Spot Kline records at the
             exact minute of call expiration.
           </p>
-          <p className="text-faint font-mono text-[11px] pt-1">
+          <p className="text-[#64748b] text-[10px] pt-1">
             &ldquo;Tone: neutral, factual, undeniable. Never mock — let the numbers do the talking.&rdquo;
           </p>
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="w-full max-w-6xl mx-auto text-center py-8 border-t border-subtle text-xs text-faint">
-        Celsius Network • &ldquo;The only trading platform that profits from you not losing money.&rdquo; • Real Binance Feeds
+      {/* Bloomberg Professional Terminal Footer */}
+      <footer className="border-t border-[#1a2333] bg-[#000000] py-4 text-center text-[10px] text-[#64748b]">
+        <div className="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+          <span className="text-[#ff8800]">BLOOMBERG PROFESSIONAL // THE SCOREBOARD</span>
+          <span>&ldquo;THE ONLY TRADING PLATFORM THAT PROFITS FROM YOU NOT LOSING MONEY.&rdquo; • BINANCE VERIFIED</span>
+        </div>
       </footer>
     </div>
   );
