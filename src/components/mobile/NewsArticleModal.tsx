@@ -23,7 +23,9 @@ export const NewsArticleModal: React.FC<NewsArticleModalProps> = ({
   const isIndia = article.category === 'India';
   const isCrypto = article.category === 'Crypto';
 
-  const bullets = isIndia
+  const bullets = article.bullets && article.bullets.length > 0
+    ? article.bullets
+    : isIndia
     ? [
         'Reserve Bank of India maintains overnight system liquidity surplus above ₹1.5 lakh crore.',
         'Domestic retail inflation remains within the 4% target band despite localized food price friction.',
@@ -144,6 +146,21 @@ export const NewsArticleModal: React.FC<NewsArticleModalProps> = ({
             &quot;The risk-reward calculus has structurally pivoted toward transparent balance sheets and verified execution,&quot; said senior portfolio strategists at the global macro desk. &quot;Turnover without edge remains the principal driver of retail drawdown, while systematic patience continues to outperform.&quot;
           </p>
         </div>
+
+        {article.link && article.link !== '#' && (
+          <div className="mt-4">
+            <a
+              href={article.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => terminalAudio.playTick()}
+              className="w-full py-2.5 px-4 bg-[#141b27] hover:bg-[#1e2738] border border-[#26354d] hover:border-[#ff8800] rounded-xl text-xs font-bold text-[#ff8800] flex items-center justify-center gap-2 transition-all cursor-pointer"
+            >
+              <span>Read Full Coverage on {article.source}</span>
+              <ExternalLink size={13} />
+            </a>
+          </div>
+        )}
 
         {/* Related Securities Pill Tags */}
         <div className="mt-6 pt-4 border-t border-[#181d28]">

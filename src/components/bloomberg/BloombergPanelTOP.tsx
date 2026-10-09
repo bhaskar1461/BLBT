@@ -3,7 +3,7 @@
 
 import React, { useState, useMemo } from 'react';
 import type { NewsItem } from '@/components/mobile/types';
-import { Newspaper, BellRing, ExternalLink, Search, Clock, ArrowRight, Maximize2, Minimize2 } from 'lucide-react';
+import { Newspaper, BellRing, ExternalLink, Search, Clock, ArrowRight, Maximize2, Minimize2, RotateCcw } from 'lucide-react';
 import { terminalAudio } from '@/lib/terminalAudio';
 
 interface BloombergPanelTOPProps {
@@ -11,6 +11,8 @@ interface BloombergPanelTOPProps {
   onSelectArticle: (article: NewsItem) => void;
   isMaximized?: boolean;
   onToggleMaximize?: () => void;
+  onRefresh?: () => void;
+  isRefreshing?: boolean;
 }
 
 export const BloombergPanelTOP: React.FC<BloombergPanelTOPProps> = ({
@@ -18,6 +20,8 @@ export const BloombergPanelTOP: React.FC<BloombergPanelTOPProps> = ({
   onSelectArticle,
   isMaximized,
   onToggleMaximize,
+  onRefresh,
+  isRefreshing,
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState('');
@@ -64,6 +68,20 @@ export const BloombergPanelTOP: React.FC<BloombergPanelTOPProps> = ({
               className="w-28 bg-[#141b27] border border-[#232f45] focus:border-[#ff8800] rounded pl-6 pr-2 py-0.5 text-[10px] text-white placeholder-[#505d75] outline-none uppercase font-mono"
             />
           </div>
+
+          {onRefresh && (
+            <button
+              onClick={() => {
+                terminalAudio.playTick();
+                onRefresh();
+              }}
+              disabled={isRefreshing}
+              className="p-1 text-[#8e95a5] hover:text-[#ff8800] rounded hover:bg-[#1a2333] transition-colors"
+              title="Refresh Real-Time Wire"
+            >
+              <RotateCcw size={11} className={isRefreshing ? 'animate-spin text-[#ff8800]' : ''} />
+            </button>
+          )}
 
           <div className="flex items-center gap-1 text-[#ff8800] text-[10px] font-bold">
             <span className="w-1.5 h-1.5 rounded-full bg-[#ff8800] animate-ping" />

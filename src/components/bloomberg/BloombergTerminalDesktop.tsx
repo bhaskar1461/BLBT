@@ -1,7 +1,7 @@
 // src/components/bloomberg/BloombergTerminalDesktop.tsx
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import type { BloombergSecurity } from './BloombergPanelWEI';
 import { BloombergTopCommandBar } from './BloombergTopCommandBar';
 import { BloombergPanelWEI } from './BloombergPanelWEI';
@@ -212,8 +212,8 @@ export const BloombergTerminalDesktop: React.FC<BloombergTerminalDesktopProps> =
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [selectedArticle, setSelectedArticle] = useState<NewsItem | null>(null);
 
-  // Wire News Dispatch Feed
-  const newsItems: NewsItem[] = [
+  // Wire News Dispatch Feed with Live API Hook
+  const [newsItems, setNewsItems] = useState<NewsItem[]>([
     {
       id: 'bn-1',
       title: 'Global markets hold firm as Federal Reserve commentary signals potential rate easing trajectory',
@@ -266,7 +266,26 @@ export const BloombergTerminalDesktop: React.FC<BloombergTerminalDesktopProps> =
       ],
       body: 'Spot gold held firmly above $2,650 per ounce as ongoing sovereign reserve accumulation and macroeconomic hedging provided sustained physical demand.'
     },
-  ];
+  ]);
+
+  const fetchLiveNews = useCallback(async () => {
+    try {
+      const res = await fetch('/api/news');
+      if (!res.ok) return;
+      const data = await res.json();
+      if (data.items && Array.isArray(data.items) && data.items.length > 0) {
+        setNewsItems(data.items);
+      }
+    } catch (err) {
+      // Retain fallback items on network error
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchLiveNews();
+    const interval = setInterval(fetchLiveNews, 60000);
+    return () => clearInterval(interval);
+  }, [fetchLiveNews]);
 
   // Convert securities to Quote interface for compatibility with Search Modal
   const quotesForSearch: Quote[] = useMemo(() => {
@@ -399,6 +418,7 @@ export const BloombergTerminalDesktop: React.FC<BloombergTerminalDesktopProps> =
               onSelectArticle={setSelectedArticle}
               isMaximized={maximizedPanel === 'TOP'}
               onToggleMaximize={() => setMaximizedPanel(maximizedPanel === 'TOP' ? null : 'TOP')}
+              onRefresh={fetchLiveNews}
             />
           </div>
         )}

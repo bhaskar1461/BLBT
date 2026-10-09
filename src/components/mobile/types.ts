@@ -28,6 +28,7 @@ export interface NewsItem {
   bullets?: string[];
   body?: string;
   readTime?: string;
+  link?: string;
 }
 
 export interface PortfolioSummary {

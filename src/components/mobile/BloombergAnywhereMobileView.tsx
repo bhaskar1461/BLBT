@@ -1,7 +1,7 @@
 // src/components/mobile/BloombergAnywhereMobileView.tsx
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import type { Quote, NewsItem, PortfolioSummary, MobileTab } from './types';
 import { HomeView } from './HomeView';
 import { MarketsView } from './MarketsView';
@@ -244,8 +244,8 @@ export const BloombergAnywhereMobileView: React.FC<BloombergAnywhereMobileViewPr
     },
   ], [btcPrice, btcChg, ethPrice, ethChg, solPrice, solChg]);
 
-  // Terminal News Items matching NewsView.swift + Bloomberg Analytical Wire
-  const newsItems: NewsItem[] = [
+  // Terminal News Items with Live API Hook
+  const [newsItems, setNewsItems] = useState<NewsItem[]>([
     {
       id: 'news-1',
       title: 'Markets steady as Fed comments fuel rate-cut expectations and reshape the global macro outlook',
@@ -274,7 +274,26 @@ export const BloombergAnywhereMobileView: React.FC<BloombergAnywhereMobileViewPr
       time: '5h ago',
       category: 'Crypto',
     },
-  ];
+  ]);
+
+  const fetchMobileNews = useCallback(async () => {
+    try {
+      const res = await fetch('/api/news');
+      if (!res.ok) return;
+      const data = await res.json();
+      if (data.items && Array.isArray(data.items) && data.items.length > 0) {
+        setNewsItems(data.items);
+      }
+    } catch (err) {
+      // Retain fallback news items on network issue
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchMobileNews();
+    const interval = setInterval(fetchMobileNews, 60000);
+    return () => clearInterval(interval);
+  }, [fetchMobileNews]);
 
   // User Portfolios with dual USD and INR valuation
   const equityUsdt = account?.equity || 617530;
