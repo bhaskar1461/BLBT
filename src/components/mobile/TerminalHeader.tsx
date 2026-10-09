@@ -46,17 +46,21 @@ export const TerminalHeader: React.FC<TerminalHeaderProps> = ({
   }, []);
 
   return (
-    <header className="sticky top-0 z-40 bg-[#000000] border-b-2 border-[#182030] px-3 pt-2.5 pb-2 font-mono select-none">
+    <header className="sticky top-0 z-40 bg-[#080a0f] border-b border-[#1a2336] px-3 pt-2 pb-2 font-sans select-none">
       {/* Top Telemetry Line */}
-      <div className="flex items-center justify-between text-[10px] text-[#6b768e] border-b border-[#101622] pb-1 mb-1.5">
-        <div className="flex items-center gap-1.5 font-bold">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#ff8800] animate-pulse" />
-          <span className="text-white font-black tracking-normal">BLOOMBERG</span>
-          <span className="text-[#ff8800]">ANYWHERE</span>
+      <div className="flex items-center justify-between text-[10px] text-[#64748b] border-b border-[#141b28] pb-1 mb-1.5 font-mono">
+        <div className="flex items-center gap-1.5">
+          <span className="w-2 h-2 rounded-full bg-[#10b981] animate-pulse" />
+          <span className="text-white font-bold tracking-tight">CELSIUS</span>
+          <span className="text-[#f59e0b] font-bold">TERMINAL</span>
+          <span className="text-[#334155]">&bull;</span>
+          <span className="text-[9px] px-1 py-0.2 rounded bg-[#10b981]/15 text-[#10b981] font-semibold">
+            LIVE FEEDS
+          </span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-[#00ff66]">LIVE</span>
-          <span className="text-white font-bold">{clock}</span>
+          <span className="text-[#94a3b8]">UTC</span>
+          <span className="text-white font-semibold tabular-nums">{clock}</span>
         </div>
       </div>
 
@@ -69,36 +73,37 @@ export const TerminalHeader: React.FC<TerminalHeaderProps> = ({
                 terminalAudio.playTick();
                 onBack?.();
               }}
-              className="text-[#ff8800] hover:text-white active:scale-95 transition-all p-0.5 -ml-1 cursor-pointer flex items-center gap-0.5 text-xs font-bold"
+              className="text-[#f59e0b] hover:text-white active:scale-95 transition-all p-1 -ml-1 rounded-md bg-[#131926] border border-[#1e2638] cursor-pointer flex items-center gap-1 text-xs font-semibold"
               aria-label="Back"
             >
-              <ChevronLeft size={18} strokeWidth={2.5} />
-              <span>&lt;ESC&gt;</span>
+              <ChevronLeft size={16} />
+              <span>Back</span>
             </button>
           )}
 
-          <div className="flex flex-col leading-none">
-            <span className="text-[16px] font-black tracking-wide text-white uppercase">
+          <div className="flex flex-col leading-tight">
+            <span className="text-[15px] font-black tracking-tight text-white">
               {title}
             </span>
-            <span className="text-[9px] font-bold tracking-wider text-[#ff8800] uppercase mt-0.5">
-              {subtitle}
-            </span>
+            {subtitle && (
+              <span className="text-[10px] font-medium tracking-wide text-[#94a3b8]">
+                {subtitle}
+              </span>
+            )}
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           {onSearchClick && (
             <button
               onClick={() => {
                 terminalAudio.playTick();
                 onSearchClick();
               }}
-              className="px-2 py-1 bg-[#101622] hover:bg-[#182030] border border-[#1e2a40] text-[#00e5ff] text-[10px] font-bold rounded-sm transition-colors cursor-pointer flex items-center gap-1"
-              title="Security Finder <SECF>"
+              className="p-1.5 bg-[#131926] hover:bg-[#1a2334] border border-[#1e2638] text-[#38bdf8] rounded-md transition-colors cursor-pointer"
+              title="Search Security"
             >
-              <Search size={12} />
-              <span>&lt;SECF&gt;</span>
+              <Search size={14} />
             </button>
           )}
 
@@ -108,9 +113,10 @@ export const TerminalHeader: React.FC<TerminalHeaderProps> = ({
                 terminalAudio.playTick();
                 onFilterClick();
               }}
-              className="px-2 py-1 bg-[#101622] hover:bg-[#182030] border border-[#1e2a40] text-[#ffd600] text-[10px] font-bold rounded-sm transition-colors cursor-pointer"
+              className="p-1.5 bg-[#131926] hover:bg-[#1a2334] border border-[#1e2638] text-[#f59e0b] rounded-md transition-colors cursor-pointer"
+              title="Filter"
             >
-              <SlidersHorizontal size={12} />
+              <SlidersHorizontal size={14} />
             </button>
           )}
 
@@ -120,11 +126,12 @@ export const TerminalHeader: React.FC<TerminalHeaderProps> = ({
                 terminalAudio.playTick();
                 onAlertsClick();
               }}
-              className="px-2 py-1 bg-[#101622] hover:bg-[#182030] border border-[#1e2a40] text-white text-[10px] font-bold rounded-sm transition-colors relative cursor-pointer"
+              className="p-1.5 bg-[#131926] hover:bg-[#1a2334] border border-[#1e2638] text-white rounded-md transition-colors relative cursor-pointer"
+              title="Alerts"
             >
-              <Bell size={12} />
+              <Bell size={14} />
               {hasUnreadAlerts && (
-                <span className="absolute -top-1 -right-1 w-2 h-2 bg-[#ff8800] rounded-full animate-ping" />
+                <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-[#f59e0b] rounded-full animate-pulse" />
               )}
             </button>
           )}

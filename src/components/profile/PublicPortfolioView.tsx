@@ -52,12 +52,12 @@ export const PublicPortfolioView: React.FC<PublicPortfolioViewProps> = ({ profil
   const holdings = profile.positions || [];
   const rawTransactions = profile.transactions || [];
   const metrics = profile.portfolioMetrics || {
-    totalEquity: profile.stats.currentEquity > 0 ? profile.stats.currentEquity : 617530,
-    availableCash: profile.stats.availableFunds > 0 ? profile.stats.availableFunds : 58380,
-    allocatedMargin: 517620,
-    totalUnrealizedPnl: 41530,
+    totalEquity: profile.stats.currentEquity > 0 ? profile.stats.currentEquity : 36000,
+    availableCash: profile.stats.availableFunds > 0 ? profile.stats.availableFunds : 3400,
+    allocatedMargin: 30200,
+    totalUnrealizedPnl: 2420,
     totalUnrealizedPnlPct: 8.02,
-    totalRealizedPnl: profile.stats.totalRealizedPnl || 31645,
+    totalRealizedPnl: profile.stats.totalRealizedPnl || 1845,
     netReturnPct: profile.stats.realizedPnlPct || 5.49,
     cashAllocationPct: 9.5,
   };

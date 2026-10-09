@@ -42,23 +42,23 @@ const mobileBloombergAnywhereHtml = `<!doctype html>
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>BLOOMBERG PROFESSIONAL — ANYWHERE</title>
+  <title>CELSIUS TERMINAL — ANYWHERE</title>
   <link rel="icon" type="image/png" href="icon.png" />
   <style>
     :root {
-      --bg: #000000;
-      --panel-bg: #070a10;
-      --panel-header: #101520;
-      --panel-border: #182030;
-      --amber: #ff8800;
-      --amber-dim: rgba(255, 136, 0, 0.18);
-      --cyan: #00e5ff;
-      --green: #00ff66;
-      --red: #ff3b30;
-      --yellow: #ffd600;
+      --bg: #080a0f;
+      --panel-bg: #0c1018;
+      --panel-header: #121824;
+      --panel-border: #1a2336;
+      --amber: #f59e0b;
+      --amber-dim: rgba(245, 158, 11, 0.15);
+      --cyan: #38bdf8;
+      --green: #10b981;
+      --red: #f43f5e;
+      --yellow: #eab308;
       --text-white: #ffffff;
-      --text-muted: #8e95a5;
-      --text-dim: #5c6880;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
       --safe-top: env(safe-area-inset-top, 44px);
       --safe-bottom: env(safe-area-inset-bottom, 34px);
     }
@@ -69,7 +69,7 @@ const mobileBloombergAnywhereHtml = `<!doctype html>
       -webkit-tap-highlight-color: transparent;
       user-select: none;
       -webkit-user-select: none;
-      font-family: ui-monospace, Menlo, Monaco, Consolas, "Courier New", monospace;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
     }
     body {
       background-color: var(--bg);
@@ -391,96 +391,251 @@ const mobileBloombergAnywhereHtml = `<!doctype html>
 </head>
 <body>
 
-  <!-- Top Pinned Bloomberg Anywhere Header -->
+  <!-- Top Pinned Celsius Terminal Header -->
   <header class="terminal-header">
     <div class="telemetry-row">
       <div class="brand-id">
         <span class="pulse-dot"></span>
-        <span style="color:#ffffff">BLOOMBERG</span>
-        <span>PROFESSIONAL ANYWHERE</span>
+        <span style="color:#ffffff">CELSIUS</span>
+        <span>TERMINAL ANYWHERE</span>
       </div>
-      <div style="display:flex;gap:8px;align-items:center">
-        <span style="color:var(--green)">LIVE FEED</span>
+      <div style="display:flex;gap:8px;align-items:center;font-family:ui-monospace,monospace;">
+        <span style="color:var(--green)">LIVE FEEDS</span>
         <span id="topClock" style="color:#ffffff;font-weight:700">10:48:12</span>
       </div>
     </div>
 
     <div class="header-main-row">
       <div class="header-title-box">
-        <span class="header-title" id="screenTitle">&lt;MON&gt; MONITORS LAUNCHPAD</span>
-        <span class="header-subtitle" id="screenSubtitle">BLOOMBERG MASTER TERMINAL &lt;GO&gt;</span>
+        <span class="header-title" id="screenTitle">MARKETS &amp; HIGHLIGHTS</span>
+        <span class="header-subtitle" id="screenSubtitle">CELSIUS TERMINAL ANYWHERE</span>
       </div>
 
       <div class="header-actions">
-        <button class="btn-key" onclick="openSearchModal()">&lt;SECF&gt;</button>
-        <button class="btn-key" style="color:var(--amber)" onclick="switchTab('ib')">&lt;IB&gt;</button>
-        <button class="btn-key" style="color:var(--yellow)" onclick="openAlertsModal()">ALRT</button>
+        <button class="btn-key" onclick="openSearchModal()">SEARCH</button>
+        <button class="btn-key" style="color:var(--amber)" onclick="switchTab('ib')">DESK AI</button>
+        <button class="btn-key" style="color:var(--yellow)" onclick="openAlertsModal()">ALERTS</button>
       </div>
     </div>
   </header>
 
-  <!-- Bloomberg Mnemonic Shortcut Strip (<GO>) -->
+  <!-- Mnemonic Shortcut Ribbon -->
   <div class="mnemonic-ribbon">
-    <div class="m-chip active" onclick="switchTab('mon')">&lt;MON&gt; Launchpad</div>
-    <div class="m-chip" onclick="switchTab('emsx')">&lt;EMSX&gt; Blotter</div>
-    <div class="m-chip" onclick="switchTab('top')">&lt;TOP&gt; News Wire</div>
-    <div class="m-chip" onclick="switchTab('ib')">&lt;IB&gt; Messaging Desk</div>
-    <div class="m-chip" onclick="openPortfoliosModal()">&lt;PORT&gt; Holdings</div>
-    <div class="m-chip" onclick="openQuoteDetail('BTCUSD')">&lt;GP&gt; Chart</div>
-    <div class="m-chip" onclick="switchTab('cmd')">&lt;CMD&gt; System Desk</div>
+    <div class="m-chip active" onclick="switchTab('mon')">Markets</div>
+    <div class="m-chip" onclick="switchTab('wl')">Watchlist</div>
+    <div class="m-chip" onclick="switchTab('port')">Portfolio</div>
+    <div class="m-chip" onclick="switchTab('top')">News Wire</div>
+    <div class="m-chip" onclick="switchTab('ib')">Desk AI</div>
+    <div class="m-chip" onclick="switchTab('cmd')">More / Settings</div>
   </div>
 
-  <!-- TAB 1: <MON> MONITORS LAUNCHPAD -->
+  <!-- TAB 1: MARKETS & HIGHLIGHTS -->
   <div class="tab-view active" id="view-mon">
-    <!-- PORT <GO> Institutional Blotter Banner -->
-    <div class="panel" style="border-color:var(--amber);">
+    <!-- Portfolio Summary Card (Tap to open full Portfolio tab) -->
+    <div class="panel" style="border-color:var(--amber);cursor:pointer;" onclick="switchTab('port')">
       <div class="panel-bar">
-        <span><strong>PORT &lt;GO&gt;</strong> MASTER PORTFOLIO BLOTTER</span>
-        <span style="color:var(--green)">1.0% RISK CAP ENFORCED</span>
+        <span><strong>PORTFOLIO BLOTTER</strong> MASTER ACCOUNT #C782-9901</span>
+        <span style="color:var(--amber);font-weight:700;">VIEW DETAILS &rarr;</span>
       </div>
       <div style="padding:10px;display:flex;justify-content:space-between;align-items:center;">
         <div>
-          <div style="font-size:10px;color:var(--text-muted)">ACCOUNT #C782-9901 (INSTITUTIONAL MARGIN)</div>
-          <div style="font-size:22px;font-weight:900;color:#fff;margin-top:2px;" id="navUsd">$617,530.00</div>
-          <div style="font-size:11px;font-weight:800;color:var(--amber);">≈ ₹5.15 Cr INR &bull; MARGIN 99.4% OK</div>
+          <div style="font-size:10px;color:var(--text-muted);font-family:ui-monospace,monospace;">NET WORTH VALUATION</div>
+          <div style="font-size:22px;font-weight:900;color:#fff;margin-top:2px;font-family:ui-monospace,monospace;" id="navUsd">$36,000.00</div>
+          <div style="font-size:11px;font-weight:800;color:var(--amber);font-family:ui-monospace,monospace;">≈ ₹30.00 Lakhs INR &bull; MARGIN 99.4% OK</div>
         </div>
-        <div style="text-align:right;">
+        <div style="text-align:right;font-family:ui-monospace,monospace;">
           <div style="font-size:13px;font-weight:900;color:var(--green)">+2.31% TODAY</div>
-          <div style="font-size:9px;color:var(--text-dim);margin-top:2px;">DAILY VaR (99%): 2.15%</div>
+          <div style="font-size:9px;color:var(--text-dim);margin-top:2px;">+$830.00 GAIN</div>
         </div>
       </div>
       <!-- BTC Benchmark Mirror -->
-      <div style="padding:6px 10px;background:#0d111a;border-top:1px solid #141b26;font-size:10px;display:flex;justify-content:space-between;">
+      <div style="padding:6px 10px;background:#0d111a;border-top:1px solid #141b26;font-size:10px;display:flex;justify-content:space-between;font-family:ui-monospace,monospace;">
         <span style="color:var(--amber)">BENCHMARK MIRROR:</span>
         <span>BTC BUY-AND-HOLD: <strong style="color:var(--green)">+1.42%</strong> &bull; YOU: <strong style="color:var(--green)">+2.31%</strong></span>
       </div>
     </div>
 
-    <!-- Instant Bloomberg Quick Desk Banner -->
+    <!-- Terminal Desk AI Trigger Banner -->
     <div style="padding:8px 10px;background:#0d1422;border:1px solid #20314a;display:flex;align-items:center;justify-content:space-between;cursor:pointer;" onclick="switchTab('ib')">
       <div style="display:flex;align-items:center;gap:8px;">
         <span class="ib-beacon"></span>
-        <span style="font-size:11px;font-weight:900;color:var(--amber);">&lt;IB &lt;GO&gt;&gt; INSTANT BLOOMBERG DESK ACTIVE</span>
+        <span style="font-size:11px;font-weight:800;color:var(--amber);">TERMINAL DESK AI ASSISTANT</span>
       </div>
-      <span style="font-size:10px;color:var(--cyan);font-weight:800;">OPEN CHAT &rarr;</span>
+      <span style="font-size:10px;color:var(--cyan);font-weight:700;">CHAT WITH DESK &rarr;</span>
     </div>
 
     <!-- Active Securities Blotter -->
     <div class="panel">
       <div class="panel-bar">
-        <span><strong>WEI &lt;GO&gt;</strong> MASTER SECURITIES SNAPSHOT</span>
+        <span><strong>LIVE SECURITIES SNAPSHOT</strong></span>
         <span style="color:var(--green)">STREAMING LIVE</span>
       </div>
       <div id="monQuotesBox"></div>
     </div>
 
-    <!-- TOP Wire Headlines -->
+    <!-- Financial Wire Headlines -->
     <div class="panel">
       <div class="panel-bar">
-        <span><strong>TOP &lt;GO&gt;</strong> BLOOMBERG WIRE DISPATCH</span>
+        <span><strong>FINANCIAL WIRE DISPATCH</strong></span>
         <span style="color:var(--cyan);cursor:pointer;" onclick="switchTab('top')">VIEW ALL &rarr;</span>
       </div>
       <div id="monNewsBox"></div>
+    </div>
+  </div>
+
+  <!-- TAB: WATCHLIST VIEW -->
+  <div class="tab-view" id="view-wl">
+    <div class="panel">
+      <div class="panel-bar">
+        <span><strong>WATCHLIST MONITOR</strong></span>
+        <span style="color:var(--green)">CUSTOM SECURITY BASKET</span>
+      </div>
+      <div style="display:flex;gap:4px;overflow-x:auto;padding:8px;">
+        <button class="m-chip active" onclick="filterWlCategory(this, 'all')">My Watchlist</button>
+        <button class="m-chip" onclick="filterWlCategory(this, 'crypto')">Crypto</button>
+        <button class="m-chip" onclick="filterWlCategory(this, 'india')">India 🇮🇳</button>
+        <button class="m-chip" onclick="filterWlCategory(this, 'tech')">Tech 🇺🇸</button>
+      </div>
+      <div id="wlQuotesBox"></div>
+    </div>
+  </div>
+
+  <!-- TAB: PORTFOLIO & MARGIN BLOTTER VIEW -->
+  <div class="tab-view" id="view-port">
+    <!-- Simulation Guard -->
+    <div style="padding:8px 10px;background:#0d121c;border:1px solid #1a2336;display:flex;justify-content:space-between;align-items:center;font-size:11px;">
+      <span style="color:#cbd5e1;font-weight:700;">● SIMULATED PAPER TRADING &bull; LIVE BINANCE SPOT</span>
+      <span style="color:var(--amber);font-weight:800;font-size:10px;padding:2px 6px;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);">1.0% RISK CAP</span>
+    </div>
+
+    <!-- Master Net Worth Card -->
+    <div class="panel" style="border-color:var(--amber);padding:12px;background:linear-gradient(180deg, #0d121c 0%, #070a10 100%);">
+      <div style="font-size:11px;color:var(--text-muted);font-weight:700;">TOTAL PORTFOLIO VALUE (NET WORTH)</div>
+      <div style="display:flex;align-items:baseline;gap:8px;margin-top:2px;font-family:ui-monospace,monospace;">
+        <div style="font-size:26px;font-weight:900;color:#fff;">$36,000.00</div>
+        <div style="font-size:14px;font-weight:800;color:var(--amber);">≈ ₹30.00 Lakhs INR</div>
+      </div>
+      <div style="font-size:10px;color:var(--text-dim);margin-top:2px;font-family:ui-monospace,monospace;">1 USDT &asymp; 83.33 INR &bull; 8-Decimal Integer Ledger (Wei/Satoshi)</div>
+
+      <!-- Quick Metrics Grid -->
+      <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:6px;margin-top:10px;padding-top:8px;border-top:1px solid #1a2336;font-family:ui-monospace,monospace;">
+        <div style="padding:6px;background:#080b12;border:1px solid #161f30;border-radius:4px;">
+          <div style="font-size:9px;color:var(--text-muted)">AVAILABLE CASH</div>
+          <div style="font-size:13px;font-weight:800;color:var(--green)">$3,400.00</div>
+          <div style="font-size:9px;color:var(--text-dim)">9.4% Liquid</div>
+        </div>
+        <div style="padding:6px;background:#080b12;border:1px solid #161f30;border-radius:4px;">
+          <div style="font-size:9px;color:var(--text-muted)">ALLOCATED MARGIN</div>
+          <div style="font-size:13px;font-weight:800;color:#fff">$32,600.00</div>
+          <div style="font-size:9px;color:var(--text-dim)">90.6% Invested</div>
+        </div>
+        <div style="padding:6px;background:#080b12;border:1px solid #161f30;border-radius:4px;">
+          <div style="font-size:9px;color:var(--text-muted)">TODAY'S P&amp;L</div>
+          <div style="font-size:13px;font-weight:800;color:var(--green)">+$830.00</div>
+          <div style="font-size:9px;color:var(--green)">+2.31% Net</div>
+        </div>
+      </div>
+
+      <!-- Asset Allocation Bar -->
+      <div style="margin-top:10px;">
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);margin-bottom:4px;font-family:ui-monospace,monospace;">
+          <span>Asset Allocation</span>
+          <span>BTC 46.4% &bull; ETH 23.7% &bull; SOL 11.3% &bull; Cash 9.4%</span>
+        </div>
+        <div style="height:8px;width:100%;background:#161f30;border-radius:4px;overflow:hidden;display:flex;">
+          <div style="width:46.4%;background:var(--amber);" title="BTC"></div>
+          <div style="width:23.7%;background:#38bdf8;" title="ETH"></div>
+          <div style="width:11.3%;background:#a855f7;" title="SOL"></div>
+          <div style="width:9.4%;background:var(--green);" title="Cash"></div>
+          <div style="width:9.2%;background:#64748b;" title="Other"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Benchmark Mirror -->
+    <div style="padding:8px 10px;background:#0a0e17;border:1px solid #1a2336;font-size:10px;display:flex;justify-content:space-between;align-items:center;font-family:ui-monospace,monospace;">
+      <div>
+        <span style="color:var(--amber);font-weight:700;">BUY-AND-HOLD BENCHMARK:</span>
+        <span style="color:#fff;margin-left:4px;">BTC: <strong style="color:var(--green)">+1.42%</strong> &bull; Strategy: <strong style="color:var(--green)">+2.31%</strong></span>
+      </div>
+      <span style="color:var(--green);font-weight:800;padding:2px 4px;background:rgba(16,185,129,0.1);">OUTPERFORMING</span>
+    </div>
+
+    <!-- Sub-Accounts Blotter -->
+    <div class="panel">
+      <div class="panel-bar">
+        <span><strong>SUB-ACCOUNTS BREAKDOWN</strong></span>
+        <span>STATUS</span>
+      </div>
+      <div style="padding:8px;background:#0b0f17;border-bottom:1px solid #1c2436;display:flex;justify-content:space-between;align-items:center;font-family:ui-monospace,monospace;">
+        <div>
+          <div style="font-size:10px;color:var(--text-muted);font-weight:700">ACCOUNT #C782-9901 (INSTITUTIONAL MASTER MARGIN)</div>
+          <div style="font-size:16px;font-weight:900;color:#fff;margin-top:2px;">$24,500.00</div>
+          <div style="font-size:10px;font-weight:800;color:var(--amber);">≈ ₹20.41 Lakhs INR</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:12px;font-weight:900;color:var(--green)">+2.31%</div>
+          <div style="font-size:9px;color:var(--text-dim);margin-top:2px;">MARGIN OK</div>
+        </div>
+      </div>
+      <div style="padding:8px;background:#0b0f17;display:flex;justify-content:space-between;align-items:center;font-family:ui-monospace,monospace;">
+        <div>
+          <div style="font-size:10px;color:var(--text-muted);font-weight:700">ACCOUNT #D441-2044 (DERIVATIVES &amp; L/S HEDGE)</div>
+          <div style="font-size:16px;font-weight:900;color:#fff;margin-top:2px;">$11,500.00</div>
+          <div style="font-size:10px;font-weight:800;color:var(--amber);">≈ ₹9.58 Lakhs INR</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:12px;font-weight:900;color:var(--green)">+0.92%</div>
+          <div style="font-size:9px;color:var(--text-dim);margin-top:2px;">MARGIN OK</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active Positions Blotter -->
+    <div class="panel">
+      <div class="panel-bar">
+        <span><strong>OPEN POSITIONS BLOTTER</strong></span>
+        <span style="color:var(--green)">3 ACTIVE</span>
+      </div>
+      <div style="padding:8px 10px;border-bottom:1px solid #161f30;display:flex;justify-content:space-between;align-items:center;font-family:ui-monospace,monospace;">
+        <div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <strong style="color:#fff;font-size:12px;">BTC/USDT</strong>
+            <span style="padding:1px 4px;background:rgba(16,185,129,0.15);color:var(--green);font-size:9px;font-weight:700;">LONG 1x</span>
+          </div>
+          <div style="font-size:10px;color:var(--text-muted);margin-top:2px;">Size: 0.264 &bull; Entry: $62,450.00</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:12px;font-weight:800;color:var(--green)">+$220.31 (+1.33%)</div>
+          <button onclick="playOrderFill();this.parentElement.parentElement.remove();" style="margin-top:2px;padding:2px 6px;background:#1a2336;border:1px solid #28354e;color:#fff;font-size:9px;cursor:pointer;">CLOSE</button>
+        </div>
+      </div>
+      <div style="padding:8px 10px;border-bottom:1px solid #161f30;display:flex;justify-content:space-between;align-items:center;font-family:ui-monospace,monospace;">
+        <div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <strong style="color:#fff;font-size:12px;">ETH/USDT</strong>
+            <span style="padding:1px 4px;background:rgba(16,185,129,0.15);color:var(--green);font-size:9px;font-weight:700;">LONG 1x</span>
+          </div>
+          <div style="font-size:10px;color:var(--text-muted);margin-top:2px;">Size: 2.45 &bull; Entry: $3,420.00</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:12px;font-weight:800;color:var(--green)">+$171.99 (+2.05%)</div>
+          <button onclick="playOrderFill();this.parentElement.parentElement.remove();" style="margin-top:2px;padding:2px 6px;background:#1a2336;border:1px solid #28354e;color:#fff;font-size:9px;cursor:pointer;">CLOSE</button>
+        </div>
+      </div>
+      <div style="padding:8px 10px;display:flex;justify-content:space-between;align-items:center;font-family:ui-monospace,monospace;">
+        <div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <strong style="color:#fff;font-size:12px;">SOL/USDT</strong>
+            <span style="padding:1px 4px;background:rgba(16,185,129,0.15);color:var(--green);font-size:9px;font-weight:700;">LONG 1x</span>
+          </div>
+          <div style="font-size:10px;color:var(--text-muted);margin-top:2px;">Size: 26.5 &bull; Entry: $148.50</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:12px;font-weight:800;color:var(--green)">+$156.35 (+3.97%)</div>
+          <button onclick="playOrderFill();this.parentElement.parentElement.remove();" style="margin-top:2px;padding:2px 6px;background:#1a2336;border:1px solid #28354e;color:#fff;font-size:9px;cursor:pointer;">CLOSE</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -533,20 +688,20 @@ const mobileBloombergAnywhereHtml = `<!doctype html>
 
     <div class="panel">
       <div class="panel-bar">
-        <span><strong>TOP &lt;GO&gt;</strong> BLOOMBERG FIRST WORD WIRE DISPATCH</span>
+        <span><strong>FINANCIAL WIRE</strong> REAL-TIME EDITORIAL DISPATCH</span>
         <span style="color:var(--green)">LIVE WIRE FEED</span>
       </div>
       <div id="topNewsBox"></div>
     </div>
   </div>
 
-  <!-- TAB 4: <IB> INSTANT BLOOMBERG MESSAGING -->
+  <!-- TAB 4: <DESK> TERMINAL DESK AI MESSAGING -->
   <div class="tab-view" id="view-ib">
     <div class="panel" style="border-color:var(--amber);">
       <div class="panel-bar">
         <span style="display:flex;align-items:center;gap:6px;">
           <span class="ib-beacon"></span>
-          <strong>INSTANT BLOOMBERG &lt;IB &lt;GO&gt;&gt;</strong>
+          <strong>TERMINAL DESK AI &lt;DESK &lt;GO&gt;&gt;</strong>
         </span>
         <span style="color:var(--cyan)">DESK BOT ARMED</span>
       </div>
@@ -562,11 +717,11 @@ const mobileBloombergAnywhereHtml = `<!doctype html>
       <div class="ib-chat-stream" id="ibChatStream">
         <div class="msg-row msg-bot">
           <div class="msg-header">
-            <span class="msg-sender">[BLOOMBERG DESK BOT]</span>
+            <span class="msg-sender">[CELSIUS DESK AI]</span>
             <span class="msg-time">10:48:10</span>
           </div>
           <div class="msg-body">
-            Welcome to Instant Bloomberg (IB &lt;GO&gt;). I am your institutional terminal assistant. Type <strong>QUOTE BTC</strong>, <strong>PORT STATUS</strong>, <strong>RISK CAP</strong>, or <strong>HELP FUNCTIONS</strong> to interact with the desk.
+            Welcome to Celsius Terminal Desk AI. I am your institutional terminal assistant. Type <strong>QUOTE BTC</strong>, <strong>PORT STATUS</strong>, <strong>RISK CAP</strong>, or <strong>HELP FUNCTIONS</strong> to interact with the desk.
           </div>
         </div>
 
@@ -592,7 +747,7 @@ const mobileBloombergAnywhereHtml = `<!doctype html>
 
       <!-- Chat Input Prompt -->
       <div style="display:flex;align-items:center;background:#070a10;border-top:1px solid var(--panel-border);padding:6px 8px;">
-        <span style="color:var(--amber);font-weight:900;font-size:12px;margin-right:6px;">IB &gt;</span>
+        <span style="color:var(--amber);font-weight:900;font-size:12px;margin-right:6px;">DESK &gt;</span>
         <input type="text" id="ibMessageInput" placeholder="TYPE MESSAGE OR COMMAND TO DESK..." onkeydown="if(event.key==='Enter')sendIbMessage()" style="flex:1;background:transparent;border:none;outline:none;color:#fff;font-size:11px;font-weight:700;text-transform:uppercase;" />
         <button onclick="sendIbMessage()" style="padding:4px 10px;background:var(--amber);color:#000;font-weight:900;font-size:10px;border:none;cursor:pointer;">&lt;SEND&gt;</button>
       </div>
@@ -637,7 +792,7 @@ const mobileBloombergAnywhereHtml = `<!doctype html>
         <span style="color:var(--text-dim)">&rarr;</span>
       </div>
       <div class="quote-row" onclick="switchTab('ib')">
-        <span style="color:var(--green);font-weight:900">&lt;IB&gt; Instant Bloomberg Messaging Desk</span>
+        <span style="color:var(--green);font-weight:900">&lt;DESK&gt; Terminal Desk AI Assistant</span>
         <span style="color:var(--text-dim)">&rarr;</span>
       </div>
     </div>
@@ -667,36 +822,36 @@ const mobileBloombergAnywhereHtml = `<!doctype html>
     </div>
 
     <div style="text-align:center;font-size:10px;color:var(--text-dim);margin-top:10px;">
-      BLOOMBERG PROFESSIONAL ANYWHERE &bull; BUILD 1084-AUTHENTIC
+      CELSIUS TERMINAL ANYWHERE &bull; VERIFIED SECURE CLIENT
     </div>
   </div>
 
   <!-- Bottom 5 Bloomberg Function Keys -->
+  <!-- Bottom 5 Primary Navigation Destinations -->
   <nav class="bottom-nav">
     <button class="nav-btn active" onclick="switchTab('mon')" id="btn-mon">
-      <span>&lt;MON&gt;</span>
-      <span style="font-size:9px;color:var(--text-dim)">MONITORS</span>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+      <span>Markets</span>
     </button>
 
-    <button class="nav-btn" onclick="switchTab('emsx')" id="btn-emsx">
-      <span>&lt;EMSX&gt;</span>
-      <span style="font-size:9px;color:var(--text-dim)">EXECUTION</span>
+    <button class="nav-btn" onclick="switchTab('wl')" id="btn-wl">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+      <span>Watchlist</span>
+    </button>
+
+    <button class="nav-btn" onclick="switchTab('port')" id="btn-port">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path><path d="M22 12A10 10 0 0 0 12 2v10z"></path></svg>
+      <span>Portfolio</span>
     </button>
 
     <button class="nav-btn" onclick="switchTab('top')" id="btn-top">
-      <span>&lt;TOP&gt;</span>
-      <span style="font-size:9px;color:var(--text-dim)">NEWS WIRE</span>
-    </button>
-
-    <button class="nav-btn" onclick="switchTab('ib')" id="btn-ib">
-      <span class="ib-beacon"></span>
-      <span style="color:var(--amber)">&lt;IB&gt;</span>
-      <span style="font-size:9px;color:var(--text-dim)">MESSAGING</span>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+      <span>News</span>
     </button>
 
     <button class="nav-btn" onclick="switchTab('cmd')" id="btn-cmd">
-      <span>&lt;CMD&gt;</span>
-      <span style="font-size:9px;color:var(--text-dim)">SYSTEM</span>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
+      <span>More</span>
     </button>
   </nav>
 
@@ -717,8 +872,8 @@ const mobileBloombergAnywhereHtml = `<!doctype html>
         <div style="padding:8px;background:#0b0f17;border:1px solid #1c2436;display:flex;justify-content:space-between;align-items:center;">
           <div>
             <div style="font-size:10px;color:var(--text-muted);font-weight:700">ACCOUNT #C782-9901 (INSTITUTIONAL MASTER MARGIN)</div>
-            <div style="font-size:17px;font-weight:900;color:#fff;margin-top:2px;">$489,325.89</div>
-            <div style="font-size:10px;font-weight:800;color:var(--amber);">≈ ₹4.08 Cr INR</div>
+            <div style="font-size:17px;font-weight:900;color:#fff;margin-top:2px;">$24,500.00</div>
+            <div style="font-size:10px;font-weight:800;color:var(--amber);">≈ ₹20.41 Lakhs INR</div>
           </div>
           <div style="text-align:right;">
             <div style="font-size:12px;font-weight:900;color:var(--green)">+2.31%</div>
@@ -729,8 +884,8 @@ const mobileBloombergAnywhereHtml = `<!doctype html>
         <div style="padding:8px;background:#0b0f17;border:1px solid #1c2436;display:flex;justify-content:space-between;align-items:center;">
           <div>
             <div style="font-size:10px;color:var(--text-muted);font-weight:700">ACCOUNT #D441-2044 (DERIVATIVES &amp; L/S HEDGE)</div>
-            <div style="font-size:17px;font-weight:900;color:#fff;margin-top:2px;">$128,204.11</div>
-            <div style="font-size:10px;font-weight:800;color:var(--amber);">≈ ₹1.07 Cr INR</div>
+            <div style="font-size:17px;font-weight:900;color:#fff;margin-top:2px;">$11,500.00</div>
+            <div style="font-size:10px;font-weight:800;color:var(--amber);">≈ ₹9.58 Lakhs INR</div>
           </div>
           <div style="text-align:right;">
             <div style="font-size:12px;font-weight:900;color:var(--green)">+0.92%</div>
@@ -1034,13 +1189,15 @@ const mobileBloombergAnywhereHtml = `<!doctype html>
       if (btn) btn.classList.add('active');
 
       const headers = {
-        mon: ['<MON> MONITORS LAUNCHPAD', 'BLOOMBERG MASTER TERMINAL <GO>'],
-        emsx: ['<EMSX> EXECUTION BLOTTER', 'WORLD EQUITY INDICES <WEI <GO>>'],
-        top: ['<TOP> REAL-TIME NEWS WIRE', 'BLOOMBERG FIRST WORD WIRE DISPATCH'],
-        ib: ['<IB> INSTANT BLOOMBERG', 'INSTITUTIONAL MESSAGING DESK & BOT'],
-        cmd: ['<CMD> SYSTEM DESK', 'OPERATOR CONFIGURATION & AUDIT']
+        mon: ['MARKETS LAUNCHPAD', 'REAL-TIME GLOBAL CROSS-ASSET MONITOR'],
+        wl: ['WATCHLIST MONITOR', 'CUSTOM CURATED SECURITY BASKET'],
+        port: ['PORTFOLIO & RISK BLOTTER', 'NAV, ASSET ALLOCATION & POSITIONS'],
+        emsx: ['EXECUTION BLOTTER', 'WORLD EQUITY INDICES & SPOT INSTRUMENTS'],
+        top: ['REAL-TIME NEWS WIRE', 'EDITORIAL DISPATCH & MACRO INTELLIGENCE'],
+        ib: ['TERMINAL DESK AI', 'INSTITUTIONAL QUANTITATIVE ASSISTANT'],
+        cmd: ['SYSTEM CONFIGURATION', 'OPERATOR PROFILE & RISK CONTROLS']
       };
-      const [title, sub] = headers[tab] || ['BLOOMBERG TERMINAL', 'PROFESSIONAL'];
+      const [title, sub] = headers[tab] || ['CELSIUS TERMINAL', 'PROFESSIONAL FINANCIAL PLATFORM'];
       document.getElementById('screenTitle').textContent = title;
       document.getElementById('screenSubtitle').textContent = sub;
       window.scrollTo(0, 0);
@@ -1089,11 +1246,11 @@ const mobileBloombergAnywhereHtml = `<!doctype html>
         } else if (upper.includes('NIFTY') || upper.includes('QUOTE NIFTY')) {
           botText = 'QUOTE: NIFTY 50 Index = 24,612.30 (-0.49%) | NSE India Spot | Range: 24,590.20 — 24,745.10 | Status: Market Open.';
         } else if (upper.includes('PORT') || upper.includes('STATUS')) {
-          botText = 'PORT BLOTTER: Account #C782-9901 NAV = $617,530.00 (≈ ₹5.15 Cr INR) | Day P&L: +$12,480 (+2.31%) | Margin Utilization: 32.4% | VaR: 2.15% (OK).';
+          botText = 'PORT BLOTTER: Account #C782-9901 NAV = $36,000.00 (≈ ₹30.00 Lakhs INR) | Day P&L: +$830 (+2.31%) | Margin Utilization: 32.4% | VaR: 2.15% (OK).';
         } else if (upper.includes('RISK')) {
           botText = 'RISK INVARIANT: Maximum 1.0% risk cap strictly enforced across every trade. Max loss limit locks at 5% daily drawdown. Server ledger append-only.';
         } else if (upper.includes('HELP')) {
-          botText = 'FUNCTIONS: <MON> Launchpad | <EMSX> Execution | <TOP> News Wire | <PORT> Portfolio | <GP> Graph Price | <SECF> Search | <CMD> System Desk.';
+          botText = 'FUNCTIONS: Markets | Watchlist | Portfolio | News | More | Terminal Desk AI.';
         } else {
           botText = \`ACK \${upper}: Desk order book received. Routing through internal matching engine. Ledger state confirmed.\`;
         }
@@ -1102,7 +1259,7 @@ const mobileBloombergAnywhereHtml = `<!doctype html>
         botMsg.className = 'msg-row msg-bot';
         botMsg.innerHTML = \`
           <div class="msg-header">
-            <span class="msg-sender">[BLOOMBERG DESK BOT]</span>
+            <span class="msg-sender">[CELSIUS DESK AI]</span>
             <span class="msg-time">\${nowStr}</span>
           </div>
           <div class="msg-body">\${botText}</div>
@@ -1258,8 +1415,19 @@ const mobileBloombergAnywhereHtml = `<!doctype html>
       renderNews('topNewsBox', filtered);
     }
 
+    function filterWlCategory(el, cat) {
+      playTick();
+      el.parentElement.querySelectorAll('.m-chip').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+      const filtered = cat === 'all'
+        ? masterQuotes.filter(q => ['BTCUSD', 'NIFTY', 'GOLD', 'NVDA', 'ETHUSD'].includes(q.s))
+        : masterQuotes.filter(q => q.cat === cat);
+      renderQuotes('wlQuotesBox', filtered);
+    }
+
     // Initialize Initial Views
     renderQuotes('monQuotesBox', masterQuotes.slice(0, 6));
+    renderQuotes('wlQuotesBox', masterQuotes.filter(q => ['BTCUSD', 'NIFTY', 'GOLD', 'NVDA', 'ETHUSD'].includes(q.s)));
     renderNews('monNewsBox', masterNews.slice(0, 2));
     renderQuotes('emsxQuotesBox', masterQuotes);
     renderIndices('emsxIndicesStrip');

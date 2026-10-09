@@ -233,14 +233,14 @@ export const InstantBloombergModal: React.FC<InstantBloombergModalProps> = ({
 
     // 2. Portfolio / Balance requests
     if (q.includes('PORT') || q.includes('BALANCE') || q.includes('MARGIN') || q.includes('CASH')) {
-      const balanceUsd = account?.balance ? (account.balance / 100000000).toFixed(2) : '10,000.00';
+      const balanceUsd = account?.balance ? (account.balance / 100000000).toFixed(2) : '36,000.00';
       return {
         id: 'bot-' + Date.now(),
         sender: 'BLOOMBERG DESK',
         senderType: 'bot',
         affiliation: 'CLEARING & SETTLEMENT',
         timestamp: nowStr(),
-        text: `Portfolio Telemetry: Account Balance is $${balanceUsd} USDT (10^8 integer units). Risk-per-trade cap is enforced at 1.0% ($100.00 max risk). Total margin utilization: 0.00%. Leverage multiplier: 1x Spot.`,
+        text: `Portfolio Telemetry: Account Balance is $${balanceUsd} USDT (≈ ₹30.00 Lakhs INR). Risk-per-trade cap is enforced at 1.0% ($360.00 max risk). Total margin utilization: 0.00%. Leverage multiplier: 1x Spot.`,
       };
     }
 

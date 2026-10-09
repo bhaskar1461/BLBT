@@ -21,22 +21,22 @@ export const WatchlistView: React.FC<WatchlistViewProps> = ({
   onSearchClick,
   onAlertsClick,
 }) => {
-  const categories = ['<MY WATCHLIST>', '<INDIA 🇮🇳>', '<TECH 🇺🇸>', '<CRYPTO 🌐>'] as const;
-  const [selectedCategory, setSelectedCategory] = useState<string>('<MY WATCHLIST>');
+  const categories = ['My Watchlist', 'Crypto', 'India 🇮🇳', 'Tech 🇺🇸'] as const;
+  const [selectedCategory, setSelectedCategory] = useState<string>('My Watchlist');
 
   const filteredQuotes = useMemo(() => {
-    if (selectedCategory === '<MY WATCHLIST>') return quotes;
-    if (selectedCategory === '<TECH 🇺🇸>') return quotes.filter((q) => q.category === 'tech' || ['AAPL', 'TSLA', 'NVDA', 'MSFT'].includes(q.symbol));
-    if (selectedCategory === '<INDIA 🇮🇳>') return quotes.filter((q) => q.category === 'india' || ['NIFTY', 'SENSEX', 'RELIANCE', 'TCS', 'HDFCBANK'].includes(q.symbol));
-    if (selectedCategory === '<CRYPTO 🌐>') return quotes.filter((q) => q.category === 'crypto' || ['BTCUSD', 'BTCUSDT', 'ETHUSD', 'SOLUSD'].includes(q.symbol));
+    if (selectedCategory === 'My Watchlist') return quotes;
+    if (selectedCategory === 'Tech 🇺🇸') return quotes.filter((q) => q.category === 'tech' || ['AAPL', 'TSLA', 'NVDA', 'MSFT'].includes(q.symbol));
+    if (selectedCategory === 'India 🇮🇳') return quotes.filter((q) => q.category === 'india' || ['NIFTY', 'SENSEX', 'RELIANCE', 'TCS', 'HDFCBANK'].includes(q.symbol));
+    if (selectedCategory === 'Crypto') return quotes.filter((q) => q.category === 'crypto' || ['BTCUSD', 'BTCUSDT', 'ETHUSD', 'SOLUSD'].includes(q.symbol));
     return quotes;
   }, [quotes, selectedCategory]);
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#000000] text-white font-mono select-none pb-24">
+    <div className="flex flex-col min-h-screen bg-[#080a0f] text-white font-sans select-none pb-28">
       <TerminalHeader
-        title="WATCHLIST MONITOR"
-        subtitle="CUSTOM SECURITY BASKET <WL <GO>>"
+        title="WATCHLIST"
+        subtitle="CUSTOM SECURITY BASKET"
         onSearchClick={onSearchClick}
         onAlertsClick={onAlertsClick}
       />
@@ -53,10 +53,10 @@ export const WatchlistView: React.FC<WatchlistViewProps> = ({
                   terminalAudio.playTick();
                   setSelectedCategory(cat);
                 }}
-                className={`px-2.5 py-1 text-[11px] font-bold rounded-sm whitespace-nowrap transition-colors cursor-pointer border ${
+                className={`px-3 py-1 text-xs font-medium rounded-md whitespace-nowrap transition-colors cursor-pointer ${
                   isActive
-                    ? 'bg-[#ff8800] text-black border-[#ff8800]'
-                    : 'bg-[#0c1018] text-[#8e95a5] hover:text-white border-[#1c2436]'
+                    ? 'bg-[#f59e0b] text-black font-bold'
+                    : 'bg-[#0e131d] text-[#94a3b8] hover:text-white border border-[#1e2638]'
                 }`}
               >
                 {cat}
@@ -69,22 +69,22 @@ export const WatchlistView: React.FC<WatchlistViewProps> = ({
               terminalAudio.playTick();
               onSearchClick();
             }}
-            className="px-2 py-1 bg-[#101520] border border-[#1e2a40] text-[#ff8800] text-[10px] font-bold rounded-sm flex items-center gap-1 shrink-0 cursor-pointer"
-            title="Add Security <SECF>"
+            className="px-2.5 py-1 bg-[#131926] hover:bg-[#1a2334] border border-[#1e2638] text-[#f59e0b] text-xs font-medium rounded-md flex items-center gap-1 shrink-0 cursor-pointer"
+            title="Add Security"
           >
-            <Plus size={11} />
-            <span>&lt;ADD&gt;</span>
+            <Plus size={13} />
+            <span>Add</span>
           </button>
         </div>
 
         {/* Watchlist Blotter */}
-        <div className="border border-[#182030] bg-[#070a10]">
-          <div className="px-2.5 py-1 bg-[#101520] border-b border-[#182030] flex items-center justify-between text-[10px] text-[#8e95a5] font-bold">
-            <span className="text-[#ff8800]">SECURITIES IN BASKET: {selectedCategory}</span>
-            <span className="text-[#00ff66]">ACTIVE COUNT: {filteredQuotes.length}</span>
+        <div className="border border-[#1e2638] bg-[#0c1018] rounded-md overflow-hidden">
+          <div className="px-3 py-2 bg-[#121824] border-b border-[#1e2638] flex items-center justify-between text-[11px] text-[#94a3b8] font-mono">
+            <span className="text-white font-semibold">SECURITIES IN BASKET: {selectedCategory}</span>
+            <span className="text-[#10b981]">COUNT: {filteredQuotes.length}</span>
           </div>
 
-          <div className="divide-y divide-[#182030]">
+          <div>
             {filteredQuotes.map((q) => (
               <QuoteRow
                 key={q.id || q.symbol}

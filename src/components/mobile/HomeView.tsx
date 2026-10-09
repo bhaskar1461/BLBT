@@ -3,20 +3,24 @@
 
 import React, { useState } from 'react';
 import type { Quote, NewsItem, PortfolioSummary } from './types';
-import { formatPrice } from '@/lib/utils';
+import { formatPrice, formatInrCrore } from '@/lib/utils';
 import {
-  Terminal,
-  Activity,
+  Search,
+  Bell,
+  MessageSquare,
   ArrowRight,
   TrendingUp,
   TrendingDown,
-  MessageSquare,
-  Search,
-  Bell,
-  Clock,
-  Shield,
+  ArrowUpRight,
+  ArrowDownRight,
+  Layers,
+  Sparkles,
+  ShieldCheck,
+  ChevronRight,
+  SlidersHorizontal,
 } from 'lucide-react';
 import { terminalAudio } from '@/lib/terminalAudio';
+import { MiniSparkline } from './MiniSparkline';
 
 interface HomeViewProps {
   quotes: Quote[];
@@ -59,20 +63,26 @@ export const HomeView: React.FC<HomeViewProps> = ({
     return true;
   });
 
+  // Featured top assets for the hero market cards
+  const featuredQuotes = quotes.slice(0, 4);
+
   return (
-    <div className="flex flex-col min-h-screen bg-[#000000] text-white font-mono select-none pb-24">
-      {/* 1. Bloomberg Professional Terminal Header Bar */}
-      <header className="px-3 py-2 bg-[#05070a] border-b-2 border-[#182030] flex items-center justify-between shrink-0 sticky top-0 z-30">
+    <div className="flex flex-col min-h-screen bg-[#080a0f] text-white font-sans select-none pb-28">
+      {/* 1. Header Bar */}
+      <header className="px-3.5 py-2.5 bg-[#0b0e14] border-b border-[#1a2336] flex items-center justify-between shrink-0 sticky top-0 z-30">
         <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-[#ff8800] shadow-[0_0_8px_#ff8800] animate-pulse" />
-          <span className="text-white font-black text-xs tracking-wider">
-            BLOOMBERG
+          <span className="w-2 h-2 rounded-full bg-[#10b981] animate-pulse" />
+          <div className="flex items-baseline gap-1">
+            <span className="text-white font-bold text-sm tracking-tight">
+              CELSIUS
+            </span>
+            <span className="text-[#f59e0b] font-bold text-xs">
+              TERMINAL
+            </span>
+          </div>
+          <span className="text-[10px] text-[#64748b] hidden xs:inline font-mono">
+            ANYWHERE
           </span>
-          <span className="text-[10px] text-[#ff8800] px-1 bg-[#ff8800]/15 border border-[#ff8800]/40 font-bold">
-            PROFESSIONAL
-          </span>
-          <span className="text-[#2a364d]">|</span>
-          <span className="text-[10px] text-white font-bold">&lt;MON &lt;GO&gt;&gt;</span>
         </div>
 
         <div className="flex items-center gap-1.5">
@@ -81,172 +91,217 @@ export const HomeView: React.FC<HomeViewProps> = ({
               terminalAudio.playTick();
               onSearchClick();
             }}
-            className="p-1.5 bg-[#101520] hover:bg-[#182338] border border-[#1a2333] text-[#ff8800] rounded-sm transition-colors"
-            title="Search Security <SECF>"
+            className="p-1.5 bg-[#131926] hover:bg-[#1a2334] border border-[#1e2638] text-[#38bdf8] rounded-md transition-colors"
+            title="Search Instruments"
           >
-            <Search size={13} />
+            <Search size={14} />
           </button>
+
           <button
             onClick={() => {
               terminalAudio.playTick();
               onAlertsClick();
             }}
-            className="p-1.5 bg-[#101520] hover:bg-[#182338] border border-[#1a2333] text-[#00c176] rounded-sm transition-colors"
+            className="p-1.5 bg-[#131926] hover:bg-[#1a2334] border border-[#1e2638] text-white rounded-md transition-colors relative"
             title="Alerts"
           >
-            <Bell size={13} />
+            <Bell size={14} />
+            <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-[#f59e0b] rounded-full animate-pulse" />
           </button>
+
+          {onOpenIB && (
+            <button
+              onClick={() => {
+                terminalAudio.playTick();
+                onOpenIB();
+              }}
+              className="p-1.5 bg-[#131926] hover:bg-[#1a2334] border border-[#1e2638] text-[#f59e0b] rounded-md transition-colors"
+              title="Terminal Desk Assistant"
+            >
+              <MessageSquare size={14} />
+            </button>
+          )}
         </div>
       </header>
 
-      {/* 2. Global Multi-Timezone & Market Session Telemetry Strip */}
-      <div className="flex items-center justify-between px-3 py-1 bg-[#080b11] border-b border-[#141a26] text-[10px] text-[#8e95a5] overflow-x-auto no-scrollbar shrink-0">
-        <div className="flex items-center gap-2 shrink-0">
-          <span className="text-[#00c176] font-bold">● NSE: OPEN</span>
-          <span className="text-[#5c6475]">·</span>
-          <span className="text-[#00c176] font-bold">● NYSE: OPEN</span>
-          <span className="text-[#5c6475]">·</span>
-          <span className="text-[#ff8800] font-bold">CRYPTO 24/7</span>
+      {/* 2. Global Multi-Exchange Session Status Strip */}
+      <div className="flex items-center justify-between px-3 py-1.5 bg-[#0a0d14] border-b border-[#161f30] text-[10px] text-[#94a3b8] overflow-x-auto no-scrollbar shrink-0 font-mono">
+        <div className="flex items-center gap-2.5 shrink-0">
+          <span className="flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#10b981]" />
+            <strong className="text-white">NSE:</strong> OPEN
+          </span>
+          <span className="text-[#334155]">&bull;</span>
+          <span className="flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#10b981]" />
+            <strong className="text-white">NYSE:</strong> OPEN
+          </span>
+          <span className="text-[#334155]">&bull;</span>
+          <span className="flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#38bdf8]" />
+            <strong className="text-[#38bdf8]">CRYPTO:</strong> 24/7
+          </span>
         </div>
         <div className="flex items-center gap-2 shrink-0 text-[#64748b] ml-4">
           <span>UTC: {new Date().toISOString().substring(11, 16)}</span>
-          <span className="text-[#ff8800]">MUMBAI: 13:30 IST 🇮🇳</span>
+          <span className="text-[#f59e0b] font-semibold">MUMBAI IST</span>
         </div>
       </div>
 
-      {/* 3. Terminal Quick Command Strip */}
-      <div className="px-3 py-1.5 bg-[#05070a] border-b border-[#182030] flex items-center gap-1.5 overflow-x-auto no-scrollbar shrink-0">
-        <span className="text-[10px] text-[#64748b] font-bold">COMMANDS:</span>
-        {[
-          { code: 'WEI', label: 'INDICES' },
-          { code: 'GP', label: 'CHART' },
-          { code: 'TOP', label: 'NEWS' },
-          { code: 'EMSX', label: 'ORDERS' },
-          { code: 'PORT', label: 'PORTFOLIO' },
-          { code: 'IB', label: 'CHAT' },
-        ].map((btn) => (
-          <button
-            key={btn.code}
-            onClick={() => {
-              terminalAudio.playTick();
-              if (btn.code === 'IB' && onOpenIB) {
-                onOpenIB();
-              } else {
-                onSelectFunction(btn.code);
-              }
-            }}
-            className="px-2 py-0.5 bg-[#0e1420] hover:bg-[#182338] border border-[#1a2333] hover:border-[#ff8800] text-[10px] text-[#ff8800] font-bold rounded-sm shrink-0 transition-colors"
-          >
-            &lt;{btn.code}&gt; {btn.label}
-          </button>
-        ))}
-      </div>
+      <div className="p-3 space-y-3.5">
+        {/* 3. Compact Portfolio Summary Card */}
+        <section
+          onClick={() => {
+            terminalAudio.playTick();
+            onViewAllPortfolios();
+          }}
+          className="p-3.5 bg-gradient-to-b from-[#0f1422] to-[#0a0d16] border border-[#1e2638] hover:border-[#2a3854] rounded-lg cursor-pointer transition-all shadow-md group"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1.5">
+              <span className="px-1.5 py-0.5 rounded bg-[#f59e0b]/15 text-[#f59e0b] font-bold text-[10px] font-mono border border-[#f59e0b]/30">
+                PORTFOLIO
+              </span>
+              <span className="text-xs font-semibold text-[#cbd5e1]">
+                Master Blotter &bull; #C782-9901
+              </span>
+            </div>
+            <div className="text-[11px] text-[#f59e0b] font-medium flex items-center gap-0.5 group-hover:translate-x-0.5 transition-transform">
+              <span>View Details</span>
+              <ChevronRight size={14} />
+            </div>
+          </div>
 
-      <div className="p-3 space-y-3">
-        {/* 4. Instant Bloomberg <IB> Live Terminal Desk Banner */}
+          <div className="flex items-baseline justify-between mt-2.5">
+            <div>
+              <div className="flex items-baseline gap-2">
+                <span className="text-xl sm:text-2xl font-black font-mono text-white tabular-nums">
+                  $36,000.00
+                </span>
+                <span className="text-xs font-bold font-mono text-[#f59e0b] tabular-nums">
+                  (&asymp; ₹30.00 Lakhs)
+                </span>
+              </div>
+              <span className="text-[10px] text-[#64748b] font-mono">
+                Available Liquid Cash: $3,400.00 (9.4%)
+              </span>
+            </div>
+
+            <div className="text-right">
+              <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded bg-[#10b981]/15 text-[#10b981] font-mono font-bold text-xs">
+                <ArrowUpRight size={12} />
+                <span>+$830 (2.31%)</span>
+              </span>
+              <span className="text-[10px] text-[#64748b] block font-mono mt-0.5">Today</span>
+            </div>
+          </div>
+
+          {/* Compact Allocation Progress Bar */}
+          <div className="mt-2.5 pt-2 border-t border-[#161f30]">
+            <div className="h-1.5 w-full bg-[#161f30] rounded-full overflow-hidden flex">
+              <div style={{ width: '46.4%' }} className="bg-[#f59e0b] h-full" title="BTC 46.4%" />
+              <div style={{ width: '23.7%' }} className="bg-[#38bdf8] h-full" title="ETH 23.7%" />
+              <div style={{ width: '11.3%' }} className="bg-[#a855f7] h-full" title="SOL 11.3%" />
+              <div style={{ width: '9.4%' }} className="bg-[#10b981] h-full" title="Cash 9.4%" />
+              <div style={{ width: '9.2%' }} className="bg-[#64748b] h-full" title="Other" />
+            </div>
+          </div>
+        </section>
+
+        {/* 4. Featured Market Overview (Cards) */}
+        <section className="space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold text-[#94a3b8] uppercase tracking-wider">
+              Market Highlights
+            </span>
+            <button
+              onClick={() => {
+                terminalAudio.playTick();
+                onViewAllMarkets();
+              }}
+              className="text-xs text-[#f59e0b] hover:underline font-medium"
+            >
+              See All Markets &rarr;
+            </button>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2">
+            {featuredQuotes.map((q) => {
+              const isPos = q.percent >= 0;
+              return (
+                <div
+                  key={q.id || q.symbol}
+                  onClick={() => {
+                    terminalAudio.playTick();
+                    onSelectQuote(q);
+                  }}
+                  className="p-3 bg-[#0e131d] border border-[#1e2638] hover:border-[#2a3854] rounded-lg cursor-pointer transition-all flex flex-col justify-between"
+                >
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <div className="font-bold text-white text-xs font-mono">{q.symbol}</div>
+                      <div className="text-[10px] text-[#94a3b8] truncate max-w-[85px] mt-0.5">{q.name}</div>
+                    </div>
+                    <span
+                      className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded ${
+                        isPos ? 'bg-[#10b981]/15 text-[#10b981]' : 'bg-[#f43f5e]/15 text-[#f43f5e]'
+                      }`}
+                    >
+                      {isPos ? '+' : ''}{q.percent.toFixed(2)}%
+                    </span>
+                  </div>
+
+                  <div className="mt-2.5">
+                    <div className="text-sm font-bold font-mono text-white tabular-nums">
+                      {q.currency === 'INR' ? '₹' : '$'}{formatPrice(q.price, 2)}
+                    </div>
+                    {q.sparkline && (
+                      <div className="mt-1">
+                        <MiniSparkline data={q.sparkline} isPositive={isPos} width={110} height={20} />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* 5. Terminal Desk AI Assistant Trigger */}
         <section
           onClick={() => {
             terminalAudio.playTick();
             onOpenIB?.();
           }}
-          className="p-3 bg-[#070b12] border border-[#ff8800]/60 rounded-sm cursor-pointer hover:bg-[#0c121e] active:scale-[0.99] transition-all flex items-center justify-between"
+          className="p-3 bg-[#0c1018] border border-[#1e2638] hover:border-[#f59e0b]/50 rounded-lg cursor-pointer transition-all flex items-center justify-between"
         >
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-sm bg-[#ff8800] text-black flex items-center justify-center font-black">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-md bg-[#f59e0b]/15 text-[#f59e0b] border border-[#f59e0b]/30 flex items-center justify-center font-bold">
               <MessageSquare size={16} />
             </div>
-            <div className="flex flex-col">
-              <div className="flex items-center gap-2">
-                <span className="text-white font-black text-xs">
-                  INSTANT BLOOMBERG &lt;IB &lt;GO&gt;&gt;
-                </span>
-                <span className="px-1 bg-[#00c176]/20 text-[#00c176] text-[9px] font-bold border border-[#00c176]/40">
-                  LIVE BOT DESK
+            <div>
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs font-bold text-white">Celsius Terminal Desk</span>
+                <span className="px-1 py-0.2 rounded text-[9px] font-mono font-semibold bg-[#10b981]/15 text-[#10b981]">
+                  AI ASSISTANT
                 </span>
               </div>
-              <span className="text-[10px] text-[#8e95a5]">
-                Ask Bloomberg Desk Bot for quotes, margins, or market math
+              <span className="text-[11px] text-[#94a3b8]">
+                Ask Desk Bot for live quotes, margin status &amp; function shortcuts
               </span>
             </div>
           </div>
-          <div className="text-[10px] text-[#ff8800] font-bold flex items-center gap-1">
-            <span>&lt;OPEN&gt;</span>
-            <ArrowRight size={12} />
-          </div>
+          <ChevronRight size={16} className="text-[#64748b] shrink-0" />
         </section>
 
-        {/* 5. Institutional Portfolio & Margin Blotter (PORT <GO>) */}
-        <section className="bg-[#05070a] border border-[#1a2333] rounded-sm overflow-hidden">
-          <div className="px-3 py-1.5 bg-[#0a0f18] border-b border-[#141a26] flex items-center justify-between text-xs">
-            <div className="flex items-center gap-1.5">
-              <span className="px-1 py-0.2 bg-[#ff8800] text-black font-black text-[9px]">
-                &lt;PORT 01&gt;
-              </span>
-              <span className="text-white font-bold text-[11px] tracking-wider uppercase">
-                PORTFOLIO BLOTTER &amp; MARGIN TELEMETRY
-              </span>
-            </div>
-            <button
-              onClick={() => {
-                terminalAudio.playTick();
-                onViewAllPortfolios();
-              }}
-              className="text-[10px] text-[#ff8800] font-bold hover:underline"
-            >
-              &lt;EXPAND &lt;GO&gt;&gt;
-            </button>
-          </div>
+        {/* 6. High-Frequency Market Monitor List */}
+        <section className="bg-[#0e131d] border border-[#1e2638] rounded-lg overflow-hidden">
+          <div className="px-3 py-2 bg-[#121824] border-b border-[#1e2638] flex items-center justify-between text-xs">
+            <span className="font-bold text-white uppercase tracking-wider text-[11px]">
+              Market Monitor
+            </span>
 
-          <div className="p-3 space-y-2">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-              <div className="p-2 bg-[#000000] border border-[#141a26] rounded-sm">
-                <span className="text-[9px] text-[#64748b] block uppercase">ACCOUNT NAV</span>
-                <span className="text-sm font-black text-white">$10,000.00</span>
-                <span className="text-[9px] text-[#64748b] block">USDT Base (10^8)</span>
-              </div>
-
-              <div className="p-2 bg-[#000000] border border-[#141a26] rounded-sm">
-                <span className="text-[9px] text-[#64748b] block uppercase">AVAIL CASH</span>
-                <span className="text-sm font-black text-[#00c176]">$9,850.00</span>
-                <span className="text-[9px] text-[#64748b] block">98.5% Liquid</span>
-              </div>
-
-              <div className="p-2 bg-[#000000] border border-[#141a26] rounded-sm">
-                <span className="text-[9px] text-[#64748b] block uppercase">REALIZED P&amp;L</span>
-                <span className="text-sm font-black text-[#00c176]">+$150.00</span>
-                <span className="text-[9px] text-[#00c176] block">+1.50% Net</span>
-              </div>
-
-              <div className="p-2 bg-[#000000] border border-[#141a26] rounded-sm">
-                <span className="text-[9px] text-[#64748b] block uppercase">RISK PER TRADE</span>
-                <span className="text-sm font-black text-[#ff8800]">1.0% MAX</span>
-                <span className="text-[9px] text-[#ff8800] block">Enforced Hard Cap</span>
-              </div>
-            </div>
-
-            {/* Benchmark Mirror Line */}
-            <div className="p-2 bg-[#000000] border border-[#141a26] rounded-sm flex items-center justify-between text-[10px]">
-              <span className="text-[#8e95a5]">
-                BENCHMARK: Same capital in BTC buy-and-hold: <strong className="text-white">+0.66%</strong>. Active P&amp;L: <strong className="text-[#00c176]">+1.50%</strong>.
-              </span>
-              <span className="text-[#00c176] font-bold uppercase shrink-0">OUTPERFORMING</span>
-            </div>
-          </div>
-        </section>
-
-        {/* 6. World Equity & Market Monitors (WEI <GO>) */}
-        <section className="bg-[#05070a] border border-[#1a2333] rounded-sm overflow-hidden">
-          <div className="px-3 py-1.5 bg-[#0a0f18] border-b border-[#141a26] flex items-center justify-between text-xs">
-            <div className="flex items-center gap-1.5">
-              <span className="px-1 py-0.2 bg-[#ff8800] text-black font-black text-[9px]">
-                &lt;WEI 02&gt;
-              </span>
-              <span className="text-white font-bold text-[11px] tracking-wider uppercase">
-                WORLD MARKET MONITORS
-              </span>
-            </div>
-
-            <div className="flex items-center gap-1 text-[10px]">
+            <div className="flex items-center gap-1 text-[10px] font-mono">
               {(['ALL', 'CRYPTO', 'INDIA', 'TECH'] as const).map((cat) => (
                 <button
                   key={cat}
@@ -254,10 +309,10 @@ export const HomeView: React.FC<HomeViewProps> = ({
                     terminalAudio.playTick();
                     setFilterCategory(cat);
                   }}
-                  className={`px-1.5 py-0.5 rounded-sm font-bold transition-colors ${
+                  className={`px-2 py-0.5 rounded font-medium transition-colors cursor-pointer ${
                     filterCategory === cat
-                      ? 'bg-[#ff8800] text-black'
-                      : 'text-[#8e95a5] hover:text-white bg-[#0e1420]'
+                      ? 'bg-[#f59e0b] text-black font-bold'
+                      : 'text-[#94a3b8] hover:text-white bg-[#161f30]'
                   }`}
                 >
                   {cat}
@@ -266,108 +321,91 @@ export const HomeView: React.FC<HomeViewProps> = ({
             </div>
           </div>
 
-          {/* High-Density Monospace Quotes Table */}
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead>
-                <tr className="border-b border-[#141a26] bg-[#080b11] text-[#ff8800] text-[10px] uppercase">
-                  <th className="py-2 px-3 font-bold">Security</th>
-                  <th className="py-2 px-3 font-bold text-right">Last</th>
-                  <th className="py-2 px-3 font-bold text-right">Net Chg</th>
-                  <th className="py-2 px-3 font-bold text-right">% Chg</th>
-                  <th className="py-2 px-3 font-bold text-right">Volume</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[#141a26]">
-                {filteredQuotes.map((q) => {
-                  const isPos = q.percent >= 0;
-                  return (
-                    <tr
-                      key={q.id || q.symbol}
-                      onClick={() => {
-                        terminalAudio.playTick();
-                        onSelectQuote(q);
-                      }}
-                      className="hover:bg-[#0c121e] active:bg-[#141c2c] cursor-pointer transition-colors"
-                    >
-                      <td className="py-2.5 px-3">
-                        <div className="flex items-center gap-1.5">
-                          <span className="font-bold text-white text-xs">{q.symbol}</span>
-                          <span className="text-[10px] text-[#64748b] truncate max-w-[90px]">
-                            {q.name}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="py-2.5 px-3 text-right font-black text-white">
-                        ${formatPrice(q.price, 2)}
-                      </td>
-                      <td
-                        className={`py-2.5 px-3 text-right font-bold text-xs ${
-                          isPos ? 'text-[#00c176]' : 'text-red-400'
-                        }`}
-                      >
-                        {isPos ? '+' : ''}
-                        {formatPrice(q.change, 2)}
-                      </td>
-                      <td
-                        className={`py-2.5 px-3 text-right font-black text-xs ${
-                          isPos ? 'text-[#00c176]' : 'text-red-400'
-                        }`}
-                      >
-                        {isPos ? '+' : ''}
-                        {q.percent.toFixed(2)}%
-                      </td>
-                      <td className="py-2.5 px-3 text-right text-[10px] text-[#8e95a5]">
-                        {q.volume || '—'}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+          <div className="divide-y divide-[#161f30]">
+            {filteredQuotes.slice(0, 5).map((q) => {
+              const isPos = q.percent >= 0;
+              return (
+                <div
+                  key={q.id || q.symbol}
+                  onClick={() => {
+                    terminalAudio.playTick();
+                    onSelectQuote(q);
+                  }}
+                  className="p-2.5 hover:bg-[#131926] active:bg-[#1a2334] cursor-pointer transition-colors flex items-center justify-between"
+                >
+                  <div className="flex-1 min-w-0 pr-2">
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-bold text-white text-xs font-mono">{q.symbol}</span>
+                      <span className="text-[9px] font-mono text-[#64748b] uppercase">
+                        {q.category}
+                      </span>
+                    </div>
+                    <div className="text-[11px] text-[#94a3b8] truncate mt-0.5">{q.name}</div>
+                  </div>
+
+                  <div className="text-right font-mono">
+                    <div className="text-xs font-bold text-white tabular-nums">
+                      {q.currency === 'INR' ? '₹' : '$'}{formatPrice(q.price, 2)}
+                    </div>
+                    <div className={`text-[10px] font-semibold tabular-nums mt-0.5 ${
+                      isPos ? 'text-[#10b981]' : 'text-[#f43f5e]'
+                    }`}>
+                      {isPos ? '+' : ''}{q.percent.toFixed(2)}%
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="p-2 bg-[#0a0d14] border-t border-[#161f30] text-center">
+            <button
+              onClick={() => {
+                terminalAudio.playTick();
+                onViewAllMarkets();
+              }}
+              className="text-xs text-[#f59e0b] hover:underline font-medium"
+            >
+              View All Instruments &rarr;
+            </button>
           </div>
         </section>
 
-        {/* 7. Bloomberg News Wire Dispatch (<TOP <GO>>) */}
-        <section className="bg-[#05070a] border border-[#1a2333] rounded-sm overflow-hidden">
-          <div className="px-3 py-1.5 bg-[#0a0f18] border-b border-[#141a26] flex items-center justify-between text-xs">
-            <div className="flex items-center gap-1.5">
-              <span className="px-1 py-0.2 bg-[#ff8800] text-black font-black text-[9px]">
-                &lt;TOP 03&gt;
-              </span>
-              <span className="text-white font-bold text-[11px] tracking-wider uppercase">
-                BLOOMBERG REAL-TIME WIRE DISPATCH
-              </span>
-            </div>
+        {/* 7. Real-Time Financial News Feed */}
+        <section className="bg-[#0e131d] border border-[#1e2638] rounded-lg overflow-hidden">
+          <div className="px-3 py-2 bg-[#121824] border-b border-[#1e2638] flex items-center justify-between text-xs">
+            <span className="font-bold text-white uppercase tracking-wider text-[11px]">
+              Financial Wire Dispatch
+            </span>
             <button
               onClick={() => {
                 terminalAudio.playTick();
                 onViewAllNews();
               }}
-              className="text-[10px] text-[#ff8800] font-bold hover:underline"
+              className="text-[11px] text-[#f59e0b] hover:underline font-medium"
             >
-              &lt;READ &lt;GO&gt;&gt;
+              Full Feed &rarr;
             </button>
           </div>
 
-          <div className="divide-y divide-[#141a26]">
-            {news.slice(0, 4).map((item) => (
+          <div className="divide-y divide-[#161f30]">
+            {news.slice(0, 3).map((item) => (
               <div
                 key={item.id}
                 onClick={() => {
                   terminalAudio.playTick();
                   onSelectNews(item);
                 }}
-                className="p-2.5 hover:bg-[#0c121e] active:bg-[#141c2c] cursor-pointer transition-colors space-y-1"
+                className="p-3 hover:bg-[#131926] active:bg-[#1a2334] cursor-pointer transition-colors space-y-1"
               >
-                <div className="flex items-center gap-2 text-[10px]">
-                  <span className="text-[#ff8800] font-bold">{item.time}</span>
-                  <span className="text-[#5c6475]">·</span>
-                  <span className="text-[#00c176] font-bold uppercase">{item.source}</span>
-                  <span className="text-[#5c6475]">·</span>
+                <div className="flex items-center gap-1.5 text-[10px] font-mono">
+                  <span className="text-[#f59e0b] font-semibold">{item.time}</span>
+                  <span className="text-[#334155]">&bull;</span>
+                  <span className="text-[#10b981] font-semibold uppercase">{item.source}</span>
+                  <span className="text-[#334155]">&bull;</span>
                   <span className="text-[#64748b] uppercase">{item.category}</span>
                 </div>
-                <h4 className="text-xs font-bold text-white hover:text-[#ff8800] leading-snug">
+                <h4 className="text-xs font-semibold text-white hover:text-[#f59e0b] leading-snug line-clamp-2">
                   {item.title}
                 </h4>
               </div>

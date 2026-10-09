@@ -6,6 +6,7 @@ import type { Quote, NewsItem, PortfolioSummary, MobileTab } from './types';
 import { HomeView } from './HomeView';
 import { MarketsView } from './MarketsView';
 import { WatchlistView } from './WatchlistView';
+import { PortfolioView } from './PortfolioView';
 import { QuoteDetailView } from './QuoteDetailView';
 import { NewsView } from './NewsView';
 import { MoreView } from './MoreView';
@@ -17,7 +18,9 @@ import { useWatchlistStore } from '@/stores/useWatchlistStore';
 import {
   Home,
   BarChart2,
+  TrendingUp,
   Star,
+  PieChart,
   FileText,
   MoreHorizontal,
   MessageSquare,
@@ -299,13 +302,13 @@ export const BloombergAnywhereMobileView: React.FC<BloombergAnywhereMobileViewPr
     return () => clearInterval(interval);
   }, [fetchMobileNews]);
 
-  // User Portfolios with dual USD and INR valuation
-  const equityUsdt = account?.equity || 617530;
+  // User Portfolios with dual USD and INR valuation (pegged to ₹30.00 Lakhs INR / $36,000 USD)
+  const equityUsdt = account?.equity || 36000;
   const portfolios: PortfolioSummary[] = [
     {
       id: 'main',
       name: 'ACCOUNT #C782-9901 (INSTITUTIONAL MASTER MARGIN)',
-      valueUsd: equityUsdt,
+      valueUsd: 24500.00,
       changePercent: 2.31,
       positive: true,
       sparkline: [0.2, 0.35, 0.45, 0.6, 0.55, 0.75, 0.8, 0.9],
@@ -313,14 +316,14 @@ export const BloombergAnywhereMobileView: React.FC<BloombergAnywhereMobileViewPr
     {
       id: 'longterm',
       name: 'ACCOUNT #D441-2044 (DERIVATIVES & L/S HEDGE)',
-      valueUsd: 128204.11,
+      valueUsd: 11500.00,
       changePercent: 0.92,
       positive: true,
       sparkline: [0.4, 0.5, 0.45, 0.6, 0.7, 0.65, 0.75, 0.85],
     },
   ];
 
-  // Bloomberg Mnemonic Function Code Handler
+  // Terminal Mnemonic Function Code Handler
   const handleSelectFunction = (fnCode: string) => {
     terminalAudio.playTick();
     switch (fnCode) {
@@ -329,14 +332,22 @@ export const BloombergAnywhereMobileView: React.FC<BloombergAnywhereMobileViewPr
         setSelectedQuote(null);
         break;
       case 'WEI':
+      case 'EMSX':
         setActiveTab('markets');
         setSelectedQuote(null);
         break;
       case 'PORT':
-        setIsPortfoliosModalOpen(true);
+        setActiveTab('portfolio');
+        setSelectedQuote(null);
         break;
       case 'WL':
         setActiveTab('watchlist');
+        setSelectedQuote(null);
+        break;
+      case 'IB':
+      case 'DESK':
+      case 'CHAT':
+        setActiveTab('desk');
         setSelectedQuote(null);
         break;
       case 'GP':
@@ -354,7 +365,7 @@ export const BloombergAnywhereMobileView: React.FC<BloombergAnywhereMobileViewPr
   };
 
   return (
-    <div className="w-full min-h-screen bg-black text-white font-sans flex flex-col justify-between selection:bg-[#ff8800]/30 select-none">
+    <div className="w-full min-h-screen bg-[#080a0f] text-white font-sans flex flex-col justify-between select-none">
       {/* Detail View Mode (Instrument Deep Inspector) */}
       {selectedQuote ? (
         <QuoteDetailView
@@ -366,7 +377,7 @@ export const BloombergAnywhereMobileView: React.FC<BloombergAnywhereMobileViewPr
         />
       ) : (
         <main className="flex-1 flex flex-col">
-          {(activeTab === 'home' || activeTab === 'monitors') && (
+          {activeTab === 'home' && (
             <HomeView
               quotes={quotes}
               news={newsItems}
@@ -374,21 +385,39 @@ export const BloombergAnywhereMobileView: React.FC<BloombergAnywhereMobileViewPr
               onSelectQuote={setSelectedQuote}
               onSelectNews={setSelectedArticle}
               onViewAllMarkets={() => setActiveTab('markets')}
-              onViewAllPortfolios={() => setIsPortfoliosModalOpen(true)}
+              onViewAllPortfolios={() => setActiveTab('portfolio')}
               onViewAllNews={() => setActiveTab('news')}
-              onOpenProfile={() => setIsPortfoliosModalOpen(true)}
+              onOpenProfile={() => setActiveTab('portfolio')}
               onSearchClick={() => setIsSearchModalOpen(true)}
               onAlertsClick={() => setIsAlertsModalOpen(true)}
               onSelectFunction={handleSelectFunction}
-              onOpenIB={() => setActiveTab('ib')}
+              onOpenIB={() => setActiveTab('desk')}
             />
           )}
 
-          {(activeTab === 'markets' || activeTab === 'emsx') && (
+          {(activeTab === 'markets' || activeTab === 'monitors' || activeTab === 'emsx') && (
             <MarketsView
               quotes={quotes}
               onSelectQuote={setSelectedQuote}
               onAlertsClick={() => setIsAlertsModalOpen(true)}
+            />
+          )}
+
+          {activeTab === 'watchlist' && (
+            <WatchlistView
+              quotes={quotes}
+              onSelectQuote={setSelectedQuote}
+              onSearchClick={() => setIsSearchModalOpen(true)}
+              onAlertsClick={() => setIsAlertsModalOpen(true)}
+            />
+          )}
+
+          {activeTab === 'portfolio' && (
+            <PortfolioView
+              quotes={quotes}
+              onSearchClick={() => setIsSearchModalOpen(true)}
+              onAlertsClick={() => setIsAlertsModalOpen(true)}
+              onSelectQuote={setSelectedQuote}
             />
           )}
 
@@ -401,7 +430,7 @@ export const BloombergAnywhereMobileView: React.FC<BloombergAnywhereMobileViewPr
             />
           )}
 
-          {activeTab === 'ib' && (
+          {(activeTab === 'desk' || activeTab === 'ib') && (
             <InstantBloombergView
               quotes={quotes}
               onSelectQuote={setSelectedQuote}
@@ -412,100 +441,98 @@ export const BloombergAnywhereMobileView: React.FC<BloombergAnywhereMobileViewPr
             <MoreView
               onNavigateMarkets={() => setActiveTab('markets')}
               onOpenAlerts={() => setIsAlertsModalOpen(true)}
-              onOpenPortfolios={() => setIsPortfoliosModalOpen(true)}
+              onOpenPortfolios={() => setActiveTab('portfolio')}
+              onOpenIB={() => setActiveTab('desk')}
             />
           )}
         </main>
       )}
 
-      {/* Authentic Bloomberg Professional Bottom Navigation Bar */}
-      <nav className="fixed bottom-0 left-0 right-0 h-[58px] bg-[#05070a] border-t-2 border-[#182030] z-50 flex items-center justify-around px-1 font-mono pb-[env(safe-area-inset-bottom,0px)]">
-        {/* Tab 1: <MON> Monitors */}
+      {/* Professional Primary Mobile Bottom Navigation Bar */}
+      <nav className="fixed bottom-0 left-0 right-0 h-[60px] bg-[#090c12] border-t border-[#1a2336] z-50 flex items-center justify-around px-2 font-sans pb-[env(safe-area-inset-bottom,0px)]">
+        {/* Tab 1: Markets */}
         <button
           onClick={() => {
             terminalAudio.playTick();
             setSelectedQuote(null);
             setActiveTab('home');
           }}
-          className={`flex flex-col items-center justify-center flex-1 py-1 gap-0.5 cursor-pointer transition-all ${
-            (activeTab === 'home' || activeTab === 'monitors') && !selectedQuote
-              ? 'text-[#ff8800]'
+          className={`flex flex-col items-center justify-center flex-1 py-1 gap-1 cursor-pointer transition-all ${
+            (activeTab === 'home' || activeTab === 'markets' || activeTab === 'monitors' || activeTab === 'emsx') && !selectedQuote
+              ? 'text-[#f59e0b]'
               : 'text-[#8e95a5] hover:text-white'
           }`}
         >
-          <Activity size={18} strokeWidth={2.5} />
-          <span className="text-[10px] font-black tracking-tight">&lt;MON&gt;</span>
+          <TrendingUp size={20} strokeWidth={2.2} />
+          <span className="text-[11px] font-semibold tracking-tight">Markets</span>
         </button>
 
-        {/* Tab 2: <EMSX> Execution */}
+        {/* Tab 2: Watchlist */}
         <button
           onClick={() => {
             terminalAudio.playTick();
             setSelectedQuote(null);
-            setActiveTab('markets');
+            setActiveTab('watchlist');
           }}
-          className={`flex flex-col items-center justify-center flex-1 py-1 gap-0.5 cursor-pointer transition-all ${
-            (activeTab === 'markets' || activeTab === 'emsx') && !selectedQuote
-              ? 'text-[#ff8800]'
+          className={`flex flex-col items-center justify-center flex-1 py-1 gap-1 cursor-pointer transition-all ${
+            activeTab === 'watchlist' && !selectedQuote
+              ? 'text-[#f59e0b]'
               : 'text-[#8e95a5] hover:text-white'
           }`}
         >
-          <BarChart2 size={18} strokeWidth={2.5} />
-          <span className="text-[10px] font-black tracking-tight">&lt;EMSX&gt;</span>
+          <Star size={20} strokeWidth={2.2} />
+          <span className="text-[11px] font-semibold tracking-tight">Watchlist</span>
         </button>
 
-        {/* Tab 3: <TOP> News */}
+        {/* Tab 3: Portfolio */}
+        <button
+          onClick={() => {
+            terminalAudio.playTick();
+            setSelectedQuote(null);
+            setActiveTab('portfolio');
+          }}
+          className={`flex flex-col items-center justify-center flex-1 py-1 gap-1 cursor-pointer transition-all ${
+            activeTab === 'portfolio' && !selectedQuote
+              ? 'text-[#f59e0b]'
+              : 'text-[#8e95a5] hover:text-white'
+          }`}
+        >
+          <PieChart size={20} strokeWidth={2.2} />
+          <span className="text-[11px] font-semibold tracking-tight">Portfolio</span>
+        </button>
+
+        {/* Tab 4: News */}
         <button
           onClick={() => {
             terminalAudio.playTick();
             setSelectedQuote(null);
             setActiveTab('news');
           }}
-          className={`flex flex-col items-center justify-center flex-1 py-1 gap-0.5 cursor-pointer transition-all ${
+          className={`flex flex-col items-center justify-center flex-1 py-1 gap-1 cursor-pointer transition-all ${
             activeTab === 'news' && !selectedQuote
-              ? 'text-[#ff8800]'
+              ? 'text-[#f59e0b]'
               : 'text-[#8e95a5] hover:text-white'
           }`}
         >
-          <FileText size={18} strokeWidth={2.5} />
-          <span className="text-[10px] font-black tracking-tight">&lt;TOP&gt;</span>
+          <FileText size={20} strokeWidth={2.2} />
+          <span className="text-[11px] font-semibold tracking-tight">News</span>
         </button>
 
-        {/* Tab 4: <IB> Instant Bloomberg Messaging (The Heart of Bloomberg) */}
-        <button
-          onClick={() => {
-            terminalAudio.playTick();
-            setSelectedQuote(null);
-            setActiveTab('ib');
-          }}
-          className={`relative flex flex-col items-center justify-center flex-1 py-1 gap-0.5 cursor-pointer transition-all ${
-            activeTab === 'ib' && !selectedQuote
-              ? 'text-[#ff8800]'
-              : 'text-[#8e95a5] hover:text-white'
-          }`}
-        >
-          <div className="relative">
-            <MessageSquare size={18} strokeWidth={2.5} />
-            <span className="absolute -top-1 -right-1.5 w-2 h-2 bg-[#00c176] rounded-full animate-pulse shadow-[0_0_6px_#00c176]" />
-          </div>
-          <span className="text-[10px] font-black tracking-tight text-[#ff8800]">&lt;IB&gt;</span>
-        </button>
-
-        {/* Tab 5: <CMD> Functions */}
+        {/* Tab 5: More */}
         <button
           onClick={() => {
             terminalAudio.playTick();
             setSelectedQuote(null);
             setActiveTab('more');
           }}
-          className={`flex flex-col items-center justify-center flex-1 py-1 gap-0.5 cursor-pointer transition-all ${
-            (activeTab === 'more' || activeTab === 'cmd') && !selectedQuote
-              ? 'text-[#ff8800]'
+          className={`flex flex-col items-center justify-center flex-1 py-1 gap-1 cursor-pointer transition-all ${
+            (activeTab === 'more' || activeTab === 'cmd' || activeTab === 'desk' || activeTab === 'ib') && !selectedQuote
+              ? 'text-[#f59e0b]'
               : 'text-[#8e95a5] hover:text-white'
           }`}
         >
-          <Terminal size={18} strokeWidth={2.5} />
-          <span className="text-[10px] font-black tracking-tight">&lt;CMD&gt;</span>
+          <MoreHorizontal size={20} strokeWidth={2.2} />
+          <span className="text-[11px] font-semibold tracking-tight">More</span>
         </button>
       </nav>
 

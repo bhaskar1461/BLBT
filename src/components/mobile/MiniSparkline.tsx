@@ -4,8 +4,10 @@
 import React from 'react';
 
 interface MiniSparklineProps {
-  positive: boolean;
+  positive?: boolean;
+  isPositive?: boolean;
   points?: number[];
+  data?: number[];
   width?: number | string;
   height?: number | string;
   strokeWidth?: number;
@@ -14,19 +16,24 @@ interface MiniSparklineProps {
 
 export const MiniSparkline: React.FC<MiniSparklineProps> = ({
   positive,
+  isPositive,
   points,
+  data: dataProp,
   width = 58,
   height = 24,
   strokeWidth = 1.6,
   className = '',
 }) => {
+  const isPos = isPositive !== undefined ? isPositive : (positive ?? true);
+  const inputData = points || dataProp;
+
   // Default points matching SwiftUI QuoteRow.swift MiniSparkline implementation
-  const defaultPoints = positive
+  const defaultPoints = isPos
     ? [0.8, 0.65, 0.7, 0.45, 0.5, 0.25, 0.35, 0.15]
     : [0.2, 0.35, 0.3, 0.55, 0.5, 0.75, 0.65, 0.85];
 
-  const data = points && points.length > 1 ? points : defaultPoints;
-  const strokeColor = positive ? '#00c176' : '#ff4d4f';
+  const data = inputData && inputData.length > 1 ? inputData : defaultPoints;
+  const strokeColor = isPos ? '#10b981' : '#f43f5e';
 
   // SVG viewBox coordinates
   const svgWidth = 60;

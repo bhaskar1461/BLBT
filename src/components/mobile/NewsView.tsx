@@ -22,11 +22,11 @@ export const NewsView: React.FC<NewsViewProps> = ({
   const [selectedFilter, setSelectedFilter] = useState<'ALL' | 'MACRO' | 'EQUITIES' | 'CRYPTO' | 'COMDTY'>('ALL');
 
   const filters = [
-    { id: 'ALL', label: '<ALL WIRE>' },
-    { id: 'MACRO', label: '<MACRO>' },
-    { id: 'EQUITIES', label: '<EQUITIES>' },
-    { id: 'CRYPTO', label: '<CRYPTO>' },
-    { id: 'COMDTY', label: '<COMDTY>' },
+    { id: 'ALL', label: 'All Wire' },
+    { id: 'MACRO', label: 'Macro' },
+    { id: 'EQUITIES', label: 'Equities' },
+    { id: 'CRYPTO', label: 'Crypto' },
+    { id: 'COMDTY', label: 'Commodities' },
   ] as const;
 
   const filteredNews = useMemo(() => {
@@ -42,17 +42,17 @@ export const NewsView: React.FC<NewsViewProps> = ({
   }, [news, selectedFilter]);
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#000000] text-white font-mono select-none pb-24">
+    <div className="flex flex-col min-h-screen bg-[#080a0f] text-white font-sans select-none pb-28">
       <TerminalHeader
-        title="TOP WIRE DISPATCH"
-        subtitle="REAL-TIME NEWS <TOP <GO>>"
+        title="NEWS WIRE"
+        subtitle="REAL-TIME FINANCIAL DISPATCH"
         onSearchClick={onSearchClick}
         onAlertsClick={onAlertsClick}
       />
 
       <div className="flex flex-col gap-3 px-3 pt-3">
         {/* Wire Filter Chips */}
-        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar border-b border-[#182030] pb-2">
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1">
           {filters.map((f) => {
             const isActive = selectedFilter === f.id;
             return (
@@ -62,10 +62,10 @@ export const NewsView: React.FC<NewsViewProps> = ({
                   terminalAudio.playTick();
                   setSelectedFilter(f.id);
                 }}
-                className={`px-2.5 py-1 text-[11px] font-bold rounded-sm whitespace-nowrap transition-colors cursor-pointer border ${
+                className={`px-3 py-1 text-xs font-medium rounded-md whitespace-nowrap transition-colors cursor-pointer ${
                   isActive
-                    ? 'bg-[#ff8800] text-black border-[#ff8800]'
-                    : 'bg-[#0c1018] text-[#8e95a5] hover:text-white border-[#1c2436]'
+                    ? 'bg-[#f59e0b] text-black font-bold'
+                    : 'bg-[#0e131d] text-[#94a3b8] hover:text-white border border-[#1e2638]'
                 }`}
               >
                 {f.label}
@@ -75,10 +75,10 @@ export const NewsView: React.FC<NewsViewProps> = ({
         </div>
 
         {/* Master News Wire Feed */}
-        <div className="border border-[#182030] bg-[#070a10] divide-y divide-[#182030]">
-          <div className="px-2.5 py-1 bg-[#101520] flex items-center justify-between text-[10px] text-[#8e95a5] font-bold">
-            <span className="text-[#ff8800]">BLOOMBERG FIRST WORD WIRE &amp; EXCLUSIVE STORIES</span>
-            <span className="text-[#00ff66]">COUNT: {filteredNews.length}</span>
+        <div className="border border-[#1e2638] bg-[#0c1018] rounded-md overflow-hidden divide-y divide-[#161f30]">
+          <div className="px-3 py-2 bg-[#121824] flex items-center justify-between text-[11px] text-[#94a3b8] font-mono">
+            <span className="text-white font-semibold">FINANCIAL DISPATCH FEED</span>
+            <span className="text-[#10b981]">COUNT: {filteredNews.length}</span>
           </div>
 
           {filteredNews.map((item, idx) => (
@@ -88,29 +88,28 @@ export const NewsView: React.FC<NewsViewProps> = ({
                 terminalAudio.playTick();
                 onSelectNews(item);
               }}
-              className="p-3 hover:bg-[#0e131d] active:bg-[#141b26] cursor-pointer transition-colors"
+              className="p-3.5 hover:bg-[#121824] active:bg-[#182030] cursor-pointer transition-colors space-y-1.5"
             >
-              {/* Header: Story #, Time, Source, Urgency */}
-              <div className="flex items-center justify-between text-[10px] text-[#8e95a5] mb-1">
-                <div className="flex items-center gap-1.5">
-                  <span className="font-bold text-[#ff8800]">{idx + 1})</span>
-                  <span className="text-white font-bold">{item.time || '10:48:12'}</span>
-                  <span className="text-[#00e5ff] font-semibold">[{item.source || 'BN'}]</span>
-                  <span className="text-[#ffd600] font-bold">***</span>
+              {/* Header: Time, Source, Category */}
+              <div className="flex items-center justify-between text-[10px] font-mono">
+                <div className="flex items-center gap-2">
+                  <span className="text-[#f59e0b] font-semibold">{item.time || '10:48:12'}</span>
+                  <span className="text-[#334155]">&bull;</span>
+                  <span className="text-[#38bdf8] font-semibold uppercase">[{item.source || 'WIRE'}]</span>
                 </div>
-                <span className="text-[9px] uppercase px-1 py-0.2 bg-[#121824] border border-[#1e283d] text-[#6b768e]">
-                  {item.category || 'WIRE'}
+                <span className="text-[9px] uppercase px-1.5 py-0.5 rounded bg-[#131926] border border-[#1e2638] text-[#94a3b8]">
+                  {item.category || 'MARKETS'}
                 </span>
               </div>
 
               {/* Headline */}
-              <h4 className="text-xs font-bold text-white leading-snug hover:text-[#ff8800] transition-colors">
+              <h4 className="text-xs font-semibold text-white hover:text-[#f59e0b] leading-snug transition-colors">
                 {item.title}
               </h4>
 
               {/* Bullets Preview if available */}
               {item.bullets && item.bullets.length > 0 && (
-                <ul className="mt-1.5 space-y-0.5 border-l-2 border-[#1f2d45] pl-2 text-[10px] text-[#94a3b8]">
+                <ul className="mt-1 space-y-0.5 border-l-2 border-[#1e2638] pl-2 text-[11px] text-[#94a3b8]">
                   {item.bullets.slice(0, 2).map((bullet, bIdx) => (
                     <li key={bIdx} className="line-clamp-1">
                       &bull; {bullet}
@@ -119,10 +118,10 @@ export const NewsView: React.FC<NewsViewProps> = ({
                 </ul>
               )}
 
-              {/* Footer metadata */}
-              <div className="mt-1.5 flex items-center justify-between text-[9px] text-[#55637d]">
-                <span>PRESS &lt;GO&gt; TO EXPAND FULL STORY</span>
-                <span>DESK: GLOBAL MARKETS</span>
+              {/* Tap prompt */}
+              <div className="pt-1 flex items-center justify-between text-[10px] text-[#64748b] font-mono">
+                <span>Tap to expand full story</span>
+                <span>DESK VERIFIED</span>
               </div>
             </div>
           ))}

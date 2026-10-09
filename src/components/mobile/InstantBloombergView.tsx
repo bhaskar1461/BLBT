@@ -76,15 +76,15 @@ export const InstantBloombergView: React.FC<InstantBloombergViewProps> = ({
         sender: 'SYSTEM',
         senderType: 'system',
         timestamp: '13:00:00 UTC',
-        text: 'SESSION OPENED. Connected to Bloomberg Help Desk <HELP <GO>> & Terminal Analytics Service.',
+        text: 'SESSION OPENED. Connected to Celsius Terminal Market Desk & AI Specialist Service.',
       },
       {
         id: 'h2',
-        sender: 'BLOOMBERG ANALYTICS',
+        sender: 'TERMINAL DESK',
         senderType: 'bot',
-        affiliation: 'BLOOMBERG L.P.',
+        affiliation: 'CELSIUS NETWORK',
         timestamp: '13:00:02 UTC',
-        text: 'Welcome to Instant Bloomberg (IB). I am your terminal market specialist bot. Ask me for live quotes ("BTC", "ETH", "TSLA", "NIFTY"), portfolio margin status, function codes (<WEI>, <GP>, <EMSX>), or market math.',
+        text: 'Welcome to Celsius Terminal Desk. I am your market specialist and assistant. Ask me for live quotes ("BTC", "ETH", "TSLA", "NIFTY"), portfolio margin status, function codes (<WEI>, <GP>, <EMSX>), or risk limits.',
       },
     ],
     liquidity: [
@@ -223,14 +223,14 @@ export const InstantBloombergView: React.FC<InstantBloombergViewProps> = ({
     }
 
     if (q.includes('PORT') || q.includes('BALANCE') || q.includes('MARGIN') || q.includes('CASH')) {
-      const balanceUsd = account?.balance ? (account.balance / 100000000).toFixed(2) : '10,000.00';
+      const balanceUsd = account?.balance ? (account.balance / 100000000).toFixed(2) : '36,000.00';
       return {
         id: 'bot-' + Date.now(),
         sender: 'BLOOMBERG DESK',
         senderType: 'bot',
         affiliation: 'CLEARING & SETTLEMENT',
         timestamp: nowStr(),
-        text: `Portfolio Telemetry: Account Balance is $${balanceUsd} USDT (10^8 integer units). Risk-per-trade cap is enforced at 1.0% ($100.00 max risk). Total margin utilization: 0.00%. Leverage multiplier: 1x Spot.`,
+        text: `Portfolio Telemetry: Account Balance is $${balanceUsd} USDT (≈ ₹30.00 Lakhs INR). Risk-per-trade cap is enforced at 1.0% ($360.00 max risk). Total margin utilization: 0.00%. Leverage multiplier: 1x Spot.`,
       };
     }
 

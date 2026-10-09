@@ -41,8 +41,8 @@ export const BloombergNetWorthBar: React.FC<BloombergNetWorthBarProps> = ({
   const isRealizedBull = metrics.totalRealizedPnl >= 0;
 
   // Calculate dynamic asset weights from positions if available, or realistic defaults
-  const totalEquity = metrics.totalEquity > 0 ? metrics.totalEquity : 617530;
-  const cashAmount = metrics.availableCash > 0 ? metrics.availableCash : 58380;
+  const totalEquity = metrics.totalEquity > 0 ? metrics.totalEquity : 36000;
+  const cashAmount = metrics.availableCash > 0 ? metrics.availableCash : 3400;
   const cashPct = Number(((cashAmount / totalEquity) * 100).toFixed(1));
 
   // Compute breakdown
@@ -71,7 +71,7 @@ export const BloombergNetWorthBar: React.FC<BloombergNetWorthBarProps> = ({
   const solVal = totalEquity * (solPct / 100);
 
   // INR Equivalence Values (1 USDT ~ 83.33 INR)
-  const dayPnlUsdt = 12480;
+  const dayPnlUsdt = 830;
 
   return (
     <div className="w-full bg-[#0a0d14] border border-[#212a36] rounded-[6px] overflow-hidden shadow-2xl font-mono text-xs">

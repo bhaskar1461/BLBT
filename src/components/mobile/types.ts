@@ -40,5 +40,18 @@ export interface PortfolioSummary {
   sparkline?: number[];
 }
 
-export type MobileTab = 'monitors' | 'emsx' | 'news' | 'ib' | 'cmd' | 'home' | 'markets' | 'watchlist' | 'more';
+export interface PositionItem {
+  id: string;
+  symbol: string;
+  side: 'LONG' | 'SHORT';
+  size: number;
+  entryPrice: number;
+  markPrice: number;
+  unrealizedPnl: number;
+  unrealizedPnlPct: number;
+  marginUsed: number;
+  leverage: string;
+}
+
+export type MobileTab = 'markets' | 'watchlist' | 'portfolio' | 'news' | 'more' | 'home' | 'desk' | 'monitors' | 'emsx' | 'ib' | 'cmd';
 export type Timeframe = '1D' | '1W' | '1M' | '3M' | '1Y' | '5Y';

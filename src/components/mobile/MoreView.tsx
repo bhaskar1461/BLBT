@@ -17,6 +17,8 @@ import {
   ToggleRight,
   ExternalLink,
   Terminal,
+  MessageSquare,
+  Lock,
 } from 'lucide-react';
 import Link from 'next/link';
 import { terminalAudio } from '@/lib/terminalAudio';
@@ -25,75 +27,88 @@ interface MoreViewProps {
   onNavigateMarkets: () => void;
   onOpenAlerts: () => void;
   onOpenPortfolios: () => void;
+  onOpenIB?: () => void;
 }
 
 export const MoreView: React.FC<MoreViewProps> = ({
   onNavigateMarkets,
   onOpenAlerts,
   onOpenPortfolios,
+  onOpenIB,
 }) => {
   const [faceIdEnabled, setFaceIdEnabled] = useState(true);
   const [livePricesEnabled, setLivePricesEnabled] = useState(true);
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#000000] text-white font-mono select-none pb-28">
-      <TerminalHeader title="SYSTEM CONFIGURATION" subtitle="OPERATOR COMMAND DESK <CMD <GO>>" />
+    <div className="flex flex-col min-h-screen bg-[#080a0f] text-white font-sans select-none pb-28">
+      <TerminalHeader title="MORE" subtitle="SETTINGS &amp; TERMINAL DESK" />
 
       <div className="flex flex-col gap-3 px-3 pt-3">
         {/* Terminal Operator Profile Strip */}
-        <section className="p-3 bg-[#070a10] border border-[#182030] flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 bg-[#101520] border border-[#ff8800] flex items-center justify-center text-xs font-black text-[#ff8800]">
+        <section className="p-3 bg-[#0e131d] border border-[#1e2638] rounded-lg flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-[#131926] border border-[#f59e0b] flex items-center justify-center text-sm font-black text-[#f59e0b] font-mono">
               BS
             </div>
 
             <div className="flex flex-col leading-tight">
-              <span className="text-xs font-black text-white">
-                BHASKAR SHARMA
+              <span className="text-sm font-bold text-white">
+                Bhaskar Sharma
               </span>
-              <span className="text-[10px] text-[#8e95a5]">
-                OPERATOR ID: BS-8841-TERMINAL
+              <span className="text-[11px] text-[#94a3b8] font-mono">
+                ID: BS-8841-TERMINAL
               </span>
             </div>
           </div>
 
           <div className="text-right">
-            <span className="text-[9px] font-bold px-1.5 py-0.5 bg-[#00ff66]/10 text-[#00ff66] border border-[#00ff66]/30 uppercase">
-              PROFESSIONAL ACTIVE
+            <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-[#10b981]/15 text-[#10b981] border border-[#10b981]/30 uppercase font-mono">
+              VERIFIED ACTIVE
             </span>
           </div>
         </section>
 
-        {/* Section 1: FUNCTION SHORTCUTS */}
-        <section className="border border-[#182030] bg-[#070a10]">
-          <div className="px-2.5 py-1 bg-[#101520] border-b border-[#182030] text-[10px] text-[#ff8800] font-bold">
-            BLOTTER &amp; ANALYTICS FUNCTIONS
+        {/* Section 1: TERMINAL DESK & ANALYTICS SHORTCUTS */}
+        <section className="border border-[#1e2638] bg-[#0c1018] rounded-lg overflow-hidden">
+          <div className="px-3 py-1.5 bg-[#121824] border-b border-[#1e2638] text-[11px] text-[#f59e0b] font-bold font-mono">
+            TERMINAL TOOLS &amp; ANALYTICS
           </div>
 
-          <div className="divide-y divide-[#141b28] text-xs">
-            <Link
-              href="/u/Bhaskar1461"
-              className="p-2.5 flex items-center justify-between hover:bg-[#0e131d] transition-colors"
-            >
-              <div className="flex items-center gap-2">
-                <span className="text-[#ff8800] font-bold">&lt;TRAC&gt;</span>
-                <span className="text-white">Public Cryptographic Track Record</span>
+          <div className="divide-y divide-[#161f30] text-xs">
+            {onOpenIB && (
+              <div
+                onClick={() => {
+                  terminalAudio.playTick();
+                  onOpenIB();
+                }}
+                className="p-3 flex items-center justify-between hover:bg-[#121824] cursor-pointer transition-colors"
+              >
+                <div className="flex items-center gap-2.5">
+                  <MessageSquare size={16} className="text-[#f59e0b]" />
+                  <div>
+                    <span className="text-white font-medium block">Celsius Terminal Desk AI</span>
+                    <span className="text-[10px] text-[#94a3b8]">Live market specialist assistant</span>
+                  </div>
+                </div>
+                <ChevronRight size={14} className="text-[#64748b]" />
               </div>
-              <ChevronRight size={14} className="text-[#5c6475]" />
-            </Link>
+            )}
 
             <div
               onClick={() => {
                 terminalAudio.playTick();
                 onOpenPortfolios();
               }}
-              className="p-2.5 flex items-center justify-between hover:bg-[#0e131d] cursor-pointer transition-colors"
+              className="p-3 flex items-center justify-between hover:bg-[#121824] cursor-pointer transition-colors"
             >
-              <div className="flex items-center gap-2">
-                <span className="text-[#ff8800] font-bold">&lt;PORT&gt;</span>
-                <span className="text-white">Portfolio &amp; Risk Blotter Analytics</span>
+              <div className="flex items-center gap-2.5">
+                <PieChart size={16} className="text-[#38bdf8]" />
+                <div>
+                  <span className="text-white font-medium block">Portfolio &amp; Risk Blotter</span>
+                  <span className="text-[10px] text-[#94a3b8]">Sub-accounts, positions &amp; drawdown limits</span>
+                </div>
               </div>
-              <ChevronRight size={14} className="text-[#5c6475]" />
+              <ChevronRight size={14} className="text-[#64748b]" />
             </div>
 
             <div
@@ -101,30 +116,47 @@ export const MoreView: React.FC<MoreViewProps> = ({
                 terminalAudio.playTick();
                 onOpenAlerts();
               }}
-              className="p-2.5 flex items-center justify-between hover:bg-[#0e131d] cursor-pointer transition-colors"
+              className="p-3 flex items-center justify-between hover:bg-[#121824] cursor-pointer transition-colors"
             >
-              <div className="flex items-center gap-2">
-                <span className="text-[#ff8800] font-bold">&lt;ALRT&gt;</span>
-                <span className="text-white">Price Volatility &amp; Drawdown Triggers</span>
+              <div className="flex items-center gap-2.5">
+                <Bell size={16} className="text-[#f59e0b]" />
+                <div>
+                  <span className="text-white font-medium block">Price Volatility &amp; Breakout Alerts</span>
+                  <span className="text-[10px] text-[#94a3b8]">Multi-asset armed price triggers</span>
+                </div>
               </div>
-              <ChevronRight size={14} className="text-[#5c6475]" />
+              <ChevronRight size={14} className="text-[#64748b]" />
             </div>
+
+            <Link
+              href="/u/Bhaskar1461"
+              className="p-3 flex items-center justify-between hover:bg-[#121824] transition-colors"
+            >
+              <div className="flex items-center gap-2.5">
+                <Shield size={16} className="text-[#10b981]" />
+                <div>
+                  <span className="text-white font-medium block">Public Cryptographic Track Record</span>
+                  <span className="text-[10px] text-[#94a3b8]">Complete verified trade history</span>
+                </div>
+              </div>
+              <ChevronRight size={14} className="text-[#64748b]" />
+            </Link>
           </div>
         </section>
 
-        {/* Section 2: TERMINAL TELEMETRY & PREFERENCES */}
-        <section className="border border-[#182030] bg-[#070a10]">
-          <div className="px-2.5 py-1 bg-[#101520] border-b border-[#182030] text-[10px] text-[#ff8800] font-bold">
-            TELEMETRY &amp; ENGINE CONFIGURATION
+        {/* Section 2: PREFERENCES & CONNECTIVITY */}
+        <section className="border border-[#1e2638] bg-[#0c1018] rounded-lg overflow-hidden">
+          <div className="px-3 py-1.5 bg-[#121824] border-b border-[#1e2638] text-[11px] text-[#f59e0b] font-bold font-mono">
+            PREFERENCES &amp; FEED SETTINGS
           </div>
 
-          <div className="divide-y divide-[#141b28] text-xs">
-            <div className="p-2.5 flex items-center justify-between">
+          <div className="divide-y divide-[#161f30] text-xs">
+            <div className="p-3 flex items-center justify-between">
               <div>
-                <span className="text-white font-bold">Base Currency Valuation</span>
-                <p className="text-[10px] text-[#8e95a5]">Dual USD ($) and INR (₹) institutional peg</p>
+                <span className="text-white font-medium">Base Currency Valuation</span>
+                <p className="text-[10px] text-[#94a3b8]">Dual USD ($) and INR (₹) institutional peg</p>
               </div>
-              <span className="text-[10px] font-bold text-[#ff8800] bg-[#141a26] px-1.5 py-0.5 border border-[#1f2838]">
+              <span className="text-[10px] font-mono font-bold text-[#f59e0b] bg-[#141a26] px-2 py-0.5 rounded border border-[#1e2638]">
                 USD + INR
               </span>
             </div>
@@ -134,13 +166,13 @@ export const MoreView: React.FC<MoreViewProps> = ({
                 terminalAudio.playTick();
                 setLivePricesEnabled(!livePricesEnabled);
               }}
-              className="p-2.5 flex items-center justify-between cursor-pointer hover:bg-[#0e131d]"
+              className="p-3 flex items-center justify-between cursor-pointer hover:bg-[#121824]"
             >
               <div>
-                <span className="text-white font-bold">Binance Spot Feed Sub-Second</span>
-                <p className="text-[10px] text-[#8e95a5]">High-frequency WebSocket execution connection</p>
+                <span className="text-white font-medium">Binance Spot Feed Sub-Second</span>
+                <p className="text-[10px] text-[#94a3b8]">Real-time WebSocket streaming connection</p>
               </div>
-              <span className={`text-[10px] font-bold ${livePricesEnabled ? 'text-[#00ff66]' : 'text-[#8e95a5]'}`}>
+              <span className={`text-[10px] font-mono font-bold ${livePricesEnabled ? 'text-[#10b981]' : 'text-[#64748b]'}`}>
                 {livePricesEnabled ? 'ONLINE' : 'PAUSED'}
               </span>
             </div>
@@ -150,52 +182,40 @@ export const MoreView: React.FC<MoreViewProps> = ({
                 terminalAudio.playTick();
                 setFaceIdEnabled(!faceIdEnabled);
               }}
-              className="p-2.5 flex items-center justify-between cursor-pointer hover:bg-[#0e131d]"
+              className="p-3 flex items-center justify-between cursor-pointer hover:bg-[#121824]"
             >
               <div>
-                <span className="text-white font-bold">Biometric Terminal Authentication</span>
-                <p className="text-[10px] text-[#8e95a5]">Face ID &amp; Secure Enclave hardware verification</p>
+                <span className="text-white font-medium">Biometric Terminal Authentication</span>
+                <p className="text-[10px] text-[#94a3b8]">Face ID &amp; Secure Enclave verification</p>
               </div>
-              <span className={`text-[10px] font-bold ${faceIdEnabled ? 'text-[#00ff66]' : 'text-[#8e95a5]'}`}>
+              <span className={`text-[10px] font-mono font-bold ${faceIdEnabled ? 'text-[#10b981]' : 'text-[#64748b]'}`}>
                 {faceIdEnabled ? 'ARMED' : 'DISARMED'}
               </span>
             </div>
           </div>
         </section>
 
-        {/* Action: Open Markets */}
-        <button
-          onClick={() => {
-            terminalAudio.playTick();
-            onNavigateMarkets();
-          }}
-          className="w-full py-2.5 bg-[#ff8800] hover:bg-[#ffa033] active:bg-[#e07700] text-black font-black text-xs tracking-wider transition-colors cursor-pointer flex items-center justify-center gap-1.5 shadow-[0_0_12px_rgba(255,136,0,0.25)]"
-        >
-          <Terminal size={14} />
-          <span>&lt;EXECUTE WEI &amp; EMSX MARKETS &lt;GO&gt;&gt;</span>
-        </button>
-
-        {/* Section 3: AUDIT & LEDGER INTEGRITY */}
-        <section className="border border-[#182030] bg-[#070a10]">
-          <div className="px-2.5 py-1 bg-[#101520] border-b border-[#182030] text-[10px] text-[#ff8800] font-bold">
+        {/* Section 3: AUDIT & PLATFORM INTEGRITY */}
+        <section className="border border-[#1e2638] bg-[#0c1018] rounded-lg overflow-hidden">
+          <div className="px-3 py-1.5 bg-[#121824] border-b border-[#1e2638] text-[11px] text-[#f59e0b] font-bold font-mono">
             AUDIT, INTEGRITY &amp; DISCLOSURES
           </div>
 
-          <div className="divide-y divide-[#141b28] text-xs">
+          <div className="divide-y divide-[#161f30] text-xs">
             <Link
               href="/transparency"
-              className="p-2.5 flex items-center justify-between hover:bg-[#0e131d] transition-colors"
+              className="p-3 flex items-center justify-between hover:bg-[#121824] transition-colors"
             >
-              <span className="text-white">&lt;TRAN&gt; Cryptographic Hash-Chained Transparency</span>
-              <ChevronRight size={14} className="text-[#5c6475]" />
+              <span className="text-white">Daily Merkle Ledger Roots &amp; Hash Proofs</span>
+              <ChevronRight size={14} className="text-[#64748b]" />
             </Link>
 
             <Link
               href="/about"
-              className="p-2.5 flex items-center justify-between hover:bg-[#0e131d] transition-colors"
+              className="p-3 flex items-center justify-between hover:bg-[#121824] transition-colors"
             >
-              <span className="text-white">&lt;ABOU&gt; Anti-Casino Platform Manifesto</span>
-              <ChevronRight size={14} className="text-[#5c6475]" />
+              <span className="text-white">Anti-Casino Platform Manifesto</span>
+              <ChevronRight size={14} className="text-[#64748b]" />
             </Link>
 
             <div
@@ -205,16 +225,16 @@ export const MoreView: React.FC<MoreViewProps> = ({
                   window.location.reload();
                 }
               }}
-              className="p-2.5 flex items-center justify-between cursor-pointer hover:bg-[#0e131d] text-[#ff3b30]"
+              className="p-3 flex items-center justify-between cursor-pointer hover:bg-[#121824] text-[#f43f5e]"
             >
-              <span className="font-bold">&lt;RESET&gt; Disconnect Session / Reload Terminal</span>
+              <span className="font-semibold">Reset Session / Reload Terminal</span>
               <LogOut size={14} />
             </div>
           </div>
         </section>
 
-        <div className="text-center text-[10px] text-[#55637d] pt-1">
-          BLOOMBERG ANYWHERE · PROFESSIONAL EDITION · BUILD 1084-SECURE
+        <div className="text-center text-[10px] text-[#64748b] font-mono pt-1">
+          CELSIUS TERMINAL &bull; INSTITUTIONAL MOBILE PLATFORM &bull; BUILD 2026.10
         </div>
       </div>
     </div>
