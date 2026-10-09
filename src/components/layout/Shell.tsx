@@ -29,6 +29,7 @@ import { HonestOnboardingModal } from '@/components/onboarding/HonestOnboardingM
 import { PostSessionReviewModal } from '@/components/trading/PostSessionReviewModal';
 import { LandingHeroBanner } from './LandingHeroBanner';
 import { BloombergAnywhereMobileView } from '@/components/mobile/BloombergAnywhereMobileView';
+import { BloombergTerminalDesktop } from '@/components/bloomberg/BloombergTerminalDesktop';
 import { TerminalSentimentStrip } from '@/components/sentiment/TerminalSentimentStrip';
 import { BeginnerTradingSuite } from '@/components/trading/BeginnerTradingSuite';
 import { QuickWalletModal } from '@/components/wallet/QuickWalletModal';
@@ -55,6 +56,7 @@ export const Shell: React.FC = () => {
 
   const [isMobileDevice, setIsMobileDevice] = useState(false);
   const [showBloombergMobile, setShowBloombergMobile] = useState(false);
+  const [desktopLayoutMode, setDesktopLayoutMode] = useState<'bloomberg' | 'tradingview'>('bloomberg');
 
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -88,6 +90,10 @@ export const Shell: React.FC = () => {
     const savedView = localStorage.getItem('celsius_view_mode');
     if (savedView === 'summary' || savedView === 'chart') {
       setViewMode(savedView);
+    }
+    const savedDesktop = localStorage.getItem('celsius_desktop_mode');
+    if (savedDesktop === 'tradingview' || savedDesktop === 'bloomberg') {
+      setDesktopLayoutMode(savedDesktop);
     }
   }, []);
 
@@ -259,6 +265,20 @@ export const Shell: React.FC = () => {
     );
   }
 
+  // Authentic Bloomberg Professional Terminal Desktop Workspace
+  if (desktopLayoutMode === 'bloomberg') {
+    return (
+      <BloombergTerminalDesktop
+        onToggleToTradingView={() => {
+          setDesktopLayoutMode('tradingview');
+          try {
+            localStorage.setItem('celsius_desktop_mode', 'tradingview');
+          } catch {}
+        }}
+      />
+    );
+  }
+
   return (
     <div className="flex flex-col w-screen h-screen overflow-hidden bg-canvas text-main font-sans">
       {/* Mobile Return to Bloomberg Terminal */}
@@ -288,6 +308,12 @@ export const Shell: React.FC = () => {
         onOpenWallet={handleOpenWallet}
         viewMode={viewMode}
         onToggleViewMode={handleToggleViewMode}
+        onToggleDesktopLayout={() => {
+          setDesktopLayoutMode('bloomberg');
+          try {
+            localStorage.setItem('celsius_desktop_mode', 'bloomberg');
+          } catch {}
+        }}
       />
 
       {/* 1.5 Announcements and Banners below top bar */}

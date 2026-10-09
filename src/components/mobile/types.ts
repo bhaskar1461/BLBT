@@ -25,6 +25,9 @@ export interface NewsItem {
   time: string;
   category: string;
   iconType?: 'macro' | 'chart' | 'crypto' | 'india';
+  bullets?: string[];
+  body?: string;
+  readTime?: string;
 }
 
 export interface PortfolioSummary {
